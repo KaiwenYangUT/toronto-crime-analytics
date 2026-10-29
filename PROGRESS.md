@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P2 complete; P3 Shared Python pipeline next (environment ready on Kevins-iMac.local) |
-| In progress | — |
+| Current phase | P3 Shared Python pipeline (started) |
+| In progress | P3 item 1: package skeleton + `definitions`, `io` (CSV read exactness), `explore_legacy` vs R events \| started 2026-10-29 \| files: pipeline/src/tca/, pipeline/tests/, pyproject.toml \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
 | Next action | Start P3: read only PLAN.md P3, then `io`, `schema`, `definitions`, `features` and the legacy frames, compared with `parity/r_outputs/` |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
