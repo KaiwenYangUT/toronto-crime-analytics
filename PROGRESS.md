@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P1 Setup and inventory (started) |
-| In progress | P1 environment bootstrap plus independent inventories \| started 2026-10-29 \| files: Makefile, tools/, requirements*, pyproject.toml, web/, parity/inventory/{jsc370,sta303,explorer}.md, PROGRESS.md \| machine: Kevins-MacBook-Pro-128.local \| command: make env (logs in .cache/logs/) |
+| In progress | P1 environment bootstrap \| started 2026-10-29 \| files: Makefile, tools/, requirements*, pyproject.toml, web/, PROGRESS.md \| machine: Kevins-MacBook-Pro-128.local \| command: make env (logs in .cache/logs/) |
 | Last sitting | 2026-10-29 (Codex P1 setup) |
 | Next action | Create the project-local environment and run independent inventory agents; resolve R/tectonic prerequisites before dependent checks |
 | Blockers | Q5 approved; setup may proceed. This machine has R 4.3.2 and no runnable tectonic on PATH; R/tectonic system installation is now separately approved if needed; other outside-folder installs remain unapproved. Q2 blocks P4c. Q1 blocks P9 |
@@ -66,10 +66,10 @@ Add a row whenever work moves to a different machine or app.
 - [ ] `data/manifest.json` + `make data` with checksum verification
 - [ ] `DATA_LICENSE.md` (TPS + City of Toronto terms verified)
 - [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
-- [ ] `parity/inventory/{jsc370,sta303,explorer}.md` (3 inventory agents)
+- [x] `parity/inventory/{jsc370,sta303,explorer}.md` completed by 3 independent read-only inventory agents
   - [x] STA303 source inventory: all charts and printed outputs, model formulas, preprocessing and caveats; original final summary is Gaussian. Static inspection only, not parity evidence.
   - [x] Explorer source inventory: all UI outputs, filters, counts, maps and tests; missing raw/RDS assets and incomplete coordinate provenance recorded. Static inspection only.
-  - [ ] JSC370 source inventory
+  - [x] JSC370 source inventory: every current widget and historical model/chart output, all stored metric tables, source/render differences and report limitations. Fresh R parity remains P2.
 - [ ] Tool versions recorded here
 
 ### P2 R reference re-runs
