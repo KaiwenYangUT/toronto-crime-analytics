@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P3 Shared Python pipeline (started) |
-| In progress | P3 item 1: package skeleton + `definitions`, `io` (CSV read exactness), `explore_legacy` vs R events \| started 2026-10-29 \| files: pipeline/src/tca/, pipeline/tests/, pyproject.toml \| machine: Kevins-iMac.local |
+| In progress | P3 item 2: `sta303_legacy` vs R model frame (`parity/r_outputs/sta303/model_frame.csv.xz`) \| started 2026-10-29 \| files: pipeline/src/tca/build.py, pipeline/tests/, parity/compare/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | Start P3: read only PLAN.md P3, then `io`, `schema`, `definitions`, `features` and the legacy frames, compared with `parity/r_outputs/` |
+| Next action | `sta303_legacy` (DST-gap NA rows, Sunday-first weekday, complete.cases), then `jsc370_legacy`, `unified`, `schema`, tests, code review |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -89,8 +89,8 @@ Add a row whenever work moves to a different machine or app.
 - [x] `parity/PARITY.md`: JSC370 published vs re-run: all 30 metrics equal at 7 dp (max diff 0.0), 4 printed matrices equal. Sections for STA303, Explorer and determinism added.
 
 ### P3 Shared Python pipeline
-- [ ] `io`, `schema`, `definitions`, `features`
-- [ ] `explore_legacy` == `crime.rds` (exact, float64 bit-equal)
+- [ ] `io`, `definitions`, `features` done (`schema` pending with the other tables)
+- [x] `explore_legacy` == R events: 25,242 rows, all 10 columns equal, R's row order reproduced, coordinates bit-equal (0 ulp), per-file manifest equal; robbery 8,455 (VALIDATION.md). `parity/compare/compare_explore.py`, `pipeline/tests/test_explore_legacy.py`
 - [ ] `sta303_legacy` == R model frame (exact)
 - [ ] `jsc370_legacy` == R `final_data` (multiset exact)
 - [ ] `unified` table + cross-category duplicate count + rule

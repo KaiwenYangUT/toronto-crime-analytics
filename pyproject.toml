@@ -17,3 +17,4 @@ line-length = 100
 
 [tool.pytest.ini_options]
 testpaths = ["pipeline/tests"]
+pythonpath = ["pipeline/src"]
