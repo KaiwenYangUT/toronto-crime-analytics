@@ -67,7 +67,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `DATA_LICENSE.md`: official TPS page data and City catalogue/licence verified 2026-10-29; attribution, TPS-specific restrictions, historic snapshot limitations and unresolved Explorer coordinate rights documented. Sources/hash in `parity/licence-sources.json`.
 - [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
   - [x] PMTiles HTTP ranges: 20,000,136-byte Toronto z14 extract verified; local preview 206/content ranges and tile decode pass (119,442 bytes requested). Existing GitHub Pages sample also returns 206. Evidence: `parity/spikes/map-ranges.json`, `parity/spikes/README.md`; no deployment performed.
-  - [ ] vl-convert PDF text and static Inter
+  - [x] vl-convert PDF text and static Inter: title/axis/category text extractable, static Inter embedded, no variable-font table; actual PDF rendered with Poppler and visually checked. Evidence: `parity/spikes/pdf-fonts.json`, `assets.json`, `README.md`.
   - [ ] tectonic/fontspec and static Source Serif 4
   - [ ] React Router 7 prerender and base path
 - [x] `parity/inventory/{jsc370,sta303,explorer}.md` completed by 3 independent read-only inventory agents

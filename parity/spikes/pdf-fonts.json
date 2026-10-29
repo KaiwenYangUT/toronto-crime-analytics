@@ -1,0 +1,20 @@
+[
+  {
+    "file": "chart.pdf",
+    "pages": 1,
+    "fonts": {
+      "/LBCIXZ+Inter-Regular": true
+    },
+    "text": "Alpha\nBeta\nCategory\n0.0\n0.5\n1.0\n1.5\n2.0\n2.5\n3.0\nSynthetic count\nStatic Inter PDF text probe"
+  },
+  {
+    "file": "font-probe.pdf",
+    "pages": 1,
+    "fonts": {
+      "/IHAIZV+SourceSerif4-Regular": true,
+      "/BZIVMZ+Inter-Regular": true,
+      "/LBCIXZ+Inter-Regular": true
+    },
+    "text": "Static font compilation probe\nSource Serif 4 body text remains searchable and embeds its font. Inter sans-\nserif text also embeds its static font.\nAlpha\nBeta\nCategory\n0.0\n0.5\n1.0\n1.5\n2.0\n2.5\n3.0\nSynthetic count\nStatic Inter PDF text probe\n1"
+  }
+]

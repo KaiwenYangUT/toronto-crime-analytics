@@ -1,0 +1,43 @@
+{
+  "assets": [
+    {
+      "path": ".cache/fonts/Inter-4.1.zip",
+      "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+      "sha256": "9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e",
+      "extract": {
+        "extras/otf/Inter-Regular.otf": ".cache/fonts/inter/Inter-Regular.otf",
+        "LICENSE.txt": ".cache/fonts/inter/LICENSE.txt"
+      }
+    },
+    {
+      "path": ".cache/fonts/source-serif/SourceSerif4-Regular.otf",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/OTF/SourceSerif4-Regular.otf",
+      "sha256": "edf160d0d584deee8a3bb2c3371b2a7624ca63580fbe02c57c1f4c91e84d8787"
+    },
+    {
+      "path": ".cache/fonts/source-serif/LICENSE.md",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/LICENSE.md",
+      "sha256": "c21d7293d87b6d7ab1d0229a2f55b77f33a7613a6a4e66f6693d68d7d8d09464"
+    },
+    {
+      "path": ".cache/tools/go-pmtiles-1.31.2_Darwin_arm64.zip",
+      "url": "https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles-1.31.2_Darwin_arm64.zip",
+      "sha256": "40528f7f616fcbf91207cd48c8fc023d213f6d86c0cbf1f748732803d1880f3d",
+      "extract": {
+        "pmtiles": ".cache/tools/bin/pmtiles"
+      }
+    }
+  ],
+  "static_font_checks": [
+    {
+      "path": ".cache/fonts/inter/Inter-Regular.otf",
+      "sha256": "d4f2b9e148059a15f014cb0f0b8fea8cd11bfa447dd483bedf1b0adc0e2ba799",
+      "variable_font_table_present": false
+    },
+    {
+      "path": ".cache/fonts/source-serif/SourceSerif4-Regular.otf",
+      "sha256": "edf160d0d584deee8a3bb2c3371b2a7624ca63580fbe02c57c1f4c91e84d8787",
+      "variable_font_table_present": false
+    }
+  ]
+}

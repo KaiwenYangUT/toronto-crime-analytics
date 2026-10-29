@@ -46,3 +46,21 @@ interrupted/corrupt file without user approval.
 
 Sources: [official CLI](https://docs.protomaps.com/pmtiles/cli),
 [publisher basemap downloads and retention](https://docs.protomaps.com/basemaps/downloads).
+
+## Vega-Lite PDF text and static Inter — passed
+
+`python tools/spikes/font_probe.py` uses vl-convert-python 1.9.0.post1 with
+registered Inter 4.1 static `Inter-Regular.otf`. The generated chart retains
+searchable title, axis and category text; pypdf confirms the Inter font program
+is embedded. The OTF has no `fvar` table (it is not a variable font).
+`pdf-fonts.json` records extraction/font checks; `assets.json` pins font source
+URLs and SHA-256, including the OFL licence.
+
+`python tools/spikes/fetch_assets.py` restores checksum-verified fonts/CLI into
+`.cache/` without overwriting changed assets. Use the bundled PDF runtime for
+`tools/spikes/inspect_pdf.py`, or a project-local Python containing pypdf. The
+probe is synthetic; it publishes no crime-analysis number. Poppler rendered the
+actual chart PDF and the rendered PNG was visually checked: legible, no clipping
+or overlap. Files remain ignored under `build/spikes/pdf/`.
+
+Source: [Inter 4.1 release](https://github.com/rsms/inter/releases/tag/v4.1).
