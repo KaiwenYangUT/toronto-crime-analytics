@@ -4,11 +4,11 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P1 Setup and inventory (started) |
-| In progress | P1 technical spikes \| started 2026-10-29 \| files: tools/spikes/, parity/spikes/, build/spikes/, PROGRESS.md \| machine: Kevins-MacBook-Pro-128.local \| commands logged per spike |
-| Last sitting | 2026-10-29 (Codex P1 setup) |
-| Next action | Run P1 technical spikes: PMTiles ranges, static fonts/PDF text, tectonic/fontspec, React Router 7 prerender/base path |
-| Blockers | Q5 approved; setup may proceed. R 4.6.2 and tectonic 0.17.0 installed with separate user approval; machine prerequisites now pass. Other outside-folder installs remain unapproved. Q2 blocks P4c. Q1 blocks P9 |
+| Current phase | P1 Setup and inventory complete; P2 R reference re-runs next (not started) |
+| In progress | — |
+| Last sitting | 2026-10-29 (Codex P1 complete; evidence and checkpoints committed locally) |
+| Next action | Read only PLAN.md P2 and its referenced R rerun requirements; write-ahead and implement project-local pinned R package installation/sessionInfo, then rerun each original on copies under build/r-work/ with cached exports |
+| Blockers | None for P2. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -16,17 +16,17 @@ Add a row whenever work moves to a different machine or app.
 | Date | Hostname | App | Phases worked | Produced `results/`? |
 |---|---|---|---|---|
 | 2026-10-29 | (planning laptop) | Claude Code desktop | P0 | no |
-| 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 setup; environment recreation underway | no |
+| 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 setup completed | no |
 
-### Resume preflight (Codex, 2026-10-29)
-- `git status` and `git log --oneline -15` both report that this folder is not a Git repository. No interrupted item or existing Git history to reconcile; P1 Git initialization remains unchecked.
+### Initial resume preflight (historical; resolved during P1)
+- `git status` and `git log --oneline -15` both report that this folder is not a Git repository. There was no interrupted item or existing Git history to reconcile; Git initialization was still pending at that point.
 - Machine prerequisites checked: R 4.3.2 (below required 4.5), Python 3.14.6 (Python 3.12 also available), Node 24.13.0, Git present. `tectonic` is not found by `type -a` or at the standard Homebrew paths; invocation failed.
 - `.venv`, `.r-lib`, `.cache`, and `web/` are absent; `_reference/` exists. No downloads or installs attempted because Q5 has no default and remains unanswered.
-- This preflight update cannot yet be committed: the plan places local Git initialization after Q5. Include it in the first P1 commit after approval.
+- Preflight was included in the first P1 commit after Q5 approval and local Git initialization (`de5cbb6`).
 
 ## Decisions (answered by the user)
 - 2026-10-29: User separately approved installing/upgrading R ≥4.5 and tectonic outside the project if a project-local setup is unavailable. This does not authorize other outside-folder installations (for example libomp).
-- 2026-10-29: Q5 approved: R/PyPI/npm packages, Playwright Chromium and a Protomaps extract may download/install inside this project only. No approval for push, deployment or deletion; R/tectonic system installation was authorized separately below.
+- 2026-10-29: Q5 approved: R/PyPI/npm packages, Playwright Chromium and a Protomaps extract may download/install inside this project only. No approval for push, deployment or deletion; R/tectonic system installation was authorized separately.
 - 2026-10-29: the JSC370 reference is `feat/eda-visual-refresh` @ 4af4309. The stale root `visual.html` is ignored.
 - 2026-10-29: the JSC370 parity reference is a fresh R re-run in a pinned environment, with tier-based ranking. Published numbers are recorded alongside.
 - 2026-10-29: original captions the data contradicts are kept in the port and flagged in PARITY.md, then corrected in P5 and logged in CHANGES.md.
@@ -37,7 +37,7 @@ Add a row whenever work moves to a different machine or app.
 - [ ] Q2 STA313 team credit and consent to port
 - [ ] Q3 Licence (MIT default)
 - [ ] Q4 JSC370 Fig 1: 3D scatter becomes a 2D scatter with colour and size
-- [x] Q5 Project-local installs approved 2026-10-29 (system-wide installations remain unapproved)
+- [x] Q5 Project-local installs approved 2026-10-29 (R/tectonic system setup separately approved; other system installations need approval)
 - [ ] Q6 Author line; STA303 term and year
 - [ ] Q7 Pointer READMEs in the old repos (outside this folder)
 - [ ] Q8 Outside-folder fallbacks (libomp, Python 3.12), asked only if needed
@@ -65,7 +65,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `make env`: Python 3.12.2 `.venv` with exact `requirements.lock`, `.r-lib`, locked Vite React/TypeScript scaffold with ESLint/Vitest, Chromium in `.cache/playwright`; all caches redirected by `tools/env.sh`. Second locked bootstrap and `pip check` passed; scaffold lint/build passed.
 - [x] `data/manifest.json` captures all 8 pinned inputs (bytes, rows, columns, MD5, SHA-256); bytes checked against Git blobs. `make data` passed initial copy and cached recheck. Five integrity tests pass, including corrupt cache/source, SHA mismatch, interrupted completion and pinned-download filename handling; Ruff passes. Raw inputs stay ignored.
 - [x] `DATA_LICENSE.md`: official TPS page data and City catalogue/licence verified 2026-10-29; attribution, TPS-specific restrictions, historic snapshot limitations and unresolved Explorer coordinate rights documented. Sources/hash in `parity/licence-sources.json`.
-- [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
+- [x] All four P1 technical spikes passed; evidence and limitations in `parity/spikes/README.md`
   - [x] PMTiles HTTP ranges: 20,000,136-byte Toronto z14 extract verified; local preview 206/content ranges and tile decode pass (119,442 bytes requested). Existing GitHub Pages sample also returns 206. Evidence: `parity/spikes/map-ranges.json`, `parity/spikes/README.md`; no deployment performed.
   - [x] vl-convert PDF text and static Inter: title/axis/category text extractable, static Inter embedded, no variable-font table; actual PDF rendered with Poppler and visually checked. Evidence: `parity/spikes/pdf-fonts.json`, `assets.json`, `README.md`.
   - [x] tectonic/fontspec and static Source Serif 4: compiled one-page synthetic document with chart; both fonts embedded, all text searchable, Poppler render visually checked, no overfull boxes. Font-path/PDF-version warnings documented for P7.
@@ -135,7 +135,11 @@ Add a row whenever work moves to a different machine or app.
 |---|---|---|---|
 | 2026-10-29 | P0 | Inventoried all 3 originals (read-only); 4 decisions answered; plan stress-tested and revised; plan files written | Q5, then P1 |
 | 2026-10-29 | Resume preflight | Read rules and resume state; checked Git, hostname and prerequisites; recorded fresh-machine blockers | Q5 approval and R/tectonic prerequisite decision, then P1 |
+| 2026-10-29 | P1 | Q5 and R/tectonic approvals recorded; local Git/checkpoints; pinned read-only references; locked env and Chromium; verified raw inputs; publisher licences; 3 inventories; 4 spikes passed | P2 pinned R dependencies and cached reference reruns |
+
+## P1 verification notes
 
 - P1 checkpoint: Q5 recorded, local `main` initialized, `.editorconfig` added; initial commit includes the existing planning files and the resume preflight. No remote configured.
 
 - P1 environment acceptance: `make env` completed twice, `pip check` reports no broken requirements, analysis imports pass, `npm run lint` and `npm run build` pass, Playwright Chromium downloaded. TypeScript 6.0 selected for typescript-eslint compatibility; no analysis or parity result generated. System installation: R/tectonic and their required dependencies; Homebrew cleanup disabled.
+
