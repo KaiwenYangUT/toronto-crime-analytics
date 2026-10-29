@@ -1,0 +1,90 @@
+{
+  "reactRouter": "7.18.5",
+  "basePath": "/toronto-crime-analytics/",
+  "prerenderedRoutes": [
+    "/",
+    "/explore"
+  ],
+  "javascriptDisabled": "both routes render H1",
+  "navigation": "hydrated link and nested hard refresh pass",
+  "pageErrors": [],
+  "requests": [
+    {
+      "path": "/toronto-crime-analytics/",
+      "status": 200,
+      "bytes": 2938
+    },
+    {
+      "path": "/toronto-crime-analytics/explore/",
+      "status": 200,
+      "bytes": 2942
+    },
+    {
+      "path": "/toronto-crime-analytics/",
+      "status": 200,
+      "bytes": 2938
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/manifest-aafde17b.js",
+      "status": 200,
+      "bytes": 1357
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/entry.client-D0UnS__K.js",
+      "status": 200,
+      "bytes": 214796
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/jsx-runtime-Z4YcYI44.js",
+      "status": 200,
+      "bytes": 126318
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/root-BGd3PgO6.js",
+      "status": 200,
+      "bytes": 305
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/home-DeqzhmsB.js",
+      "status": 200,
+      "bytes": 252
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/explore-QDie-6c_.js",
+      "status": 200,
+      "bytes": 248
+    },
+    {
+      "path": "/toronto-crime-analytics/explore",
+      "status": 200,
+      "bytes": 2942
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/manifest-aafde17b.js",
+      "status": 200,
+      "bytes": 1357
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/entry.client-D0UnS__K.js",
+      "status": 200,
+      "bytes": 214796
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/root-BGd3PgO6.js",
+      "status": 200,
+      "bytes": 305
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/jsx-runtime-Z4YcYI44.js",
+      "status": 200,
+      "bytes": 126318
+    },
+    {
+      "path": "/toronto-crime-analytics/assets/explore-QDie-6c_.js",
+      "status": 200,
+      "bytes": 248
+    }
+  ],
+  "packaging": "Copy client/assets plus contents of client/toronto-crime-analytics into artifact root.",
+  "scope": "Static file server only; generated server bundle retained and unused, no deployment."
+}

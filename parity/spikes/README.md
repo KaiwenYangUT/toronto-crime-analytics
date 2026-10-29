@@ -91,3 +91,42 @@ output PDF version is raised. Rendering, searchability and embedding pass; use
 project-relative font paths and align PDF versions in the P7 paper build.
 
 Source: [Adobe Source Serif static OTFs at pinned commit](https://github.com/adobe-fonts/source-serif/tree/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/OTF).
+
+## React Router 7 prerender and base path — passed
+
+The isolated locked project in `tools/spikes/router/` uses React Router 7.18.5
+framework mode with React 19.3.1 and Vite 8.3.5. It prerenders `/` and `/explore`
+with basename `/toronto-crime-analytics`. The Node adapter and isbot are explicitly
+locked because the default build entry needs them even for prerendering.
+Build output lives inside the spike package so server imports can resolve
+build-time dependencies. It is gitignored.
+
+RR7 emits HTML under `client/toronto-crime-analytics/` and assets under
+`client/assets/`. For a project Pages artifact, copy the **contents** of the
+prefixed HTML directory plus `assets/` into the artifact root.
+`tools/spikes/router_static.mjs` performs this packaging into
+`build/spikes/router-static/` and serves it under the external base path.
+There is no application server or fallback rewriting in that test.
+
+Project-local Chromium verifies both route headings with JavaScript disabled,
+then hydrated link navigation and a hard refresh on `/explore`; all HTML and
+asset requests return 200 and no browser page errors occur. Evidence:
+`router-static.json`. No output was uploaded or deployed. This is an
+infrastructure test, not the later page design review.
+
+The probe retains its generated server bundle (`ssr: true`) and tests only
+static `client/` output. All probe routes are prerendered and route discovery is
+`initial`, so navigation needs no manifest endpoint. This avoids RR7's automatic
+server-directory removal for `ssr: false`; no existing output was discarded.
+Vite `emptyOutDir: false` preserves earlier output as well. P6 should use the
+verified static packaging and decide its final build-cleanup configuration
+under the repository's deletion rule.
+
+```bash
+source tools/env.sh
+(cd tools/spikes/router && npm ci --include=dev && npm run build)
+node tools/spikes/router_static.mjs
+```
+
+Source: [React Router 7 docs](https://reactrouter.com/7.18.5/home), plus installed
+`@react-router/dev` config types and the observed prerendered output.

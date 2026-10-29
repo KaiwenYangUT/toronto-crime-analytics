@@ -4,6 +4,7 @@ import importlib.metadata
 import json
 import platform
 import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -15,7 +16,7 @@ def output(*args: str) -> str:
 
 
 record = {
-    "recorded": "2026-10-29",
+    "recorded": datetime.now(UTC).date().isoformat(),
     "hostname": platform.node(),
     "platform": platform.platform(),
     "python": platform.python_version(),
