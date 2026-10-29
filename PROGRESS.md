@@ -83,7 +83,7 @@ Add a row whenever work moves to a different machine or app.
 ### P2 R reference re-runs
 - [x] `parity/r/install_r_lib.R` (shiny 1.14.0, testthat 3.3.2, shinytest2 0.5.1, xgboost 1.7.8.1 compiled from the CRAN archive without extra flags) + `sessionInfo` saved to `parity/r_outputs/session_install.txt`; pins in `parity/r/r_packages.lock.csv`. xgboost smoke test passes. R 4.5.3 on this machine.
 - [ ] `PATCHES.md` (local paths, no `download.file`, export hooks only)
-- [ ] Explorer: 28/28 tests, shinytest, byte-identical RDS rebuild, `fixtures.json`
+- [x] Explorer (R part): 28/28 analytical checks; both `testServer` module modes pass (source has no committed shinytest2 browser suite: a browser check is a P6 item); RDS rebuild byte-identical across two runs (md5 72d62cfd…, no original RDS exists to compare); `fixtures.json` 2,565 cases / 2.37 MB (seed 303313, 100 with full arrays and CSV); VALIDATION.md values reproduced: 566/563, 702/697, 8,455; smallest radius-boundary gap 3.2e-5 m; events (25,242) with hex-double coordinates in `events_hex.csv.gz`. Run: `bash parity/r/run_explorer.sh`, `Rscript parity/r/explorer_fixtures.R`.
 - [x] STA303: knit twice with 11 export hooks; all exports and the HTML are byte-identical across the two knits; n = 174,976 (33,919 robbery); AIC keeps 6/6 terms, BIC keeps 4; AUC 0.597875; `foldid` rebuilt with `set.seed(123); sample(rep(1:10, length = n))` and matches `cv.glmnet` to 2e-16. Exports in `parity/r_outputs/sta303/` (3.8 MB, large files xz); run: `bash parity/r/run_sta303.sh`, then `collect_exports.sh`, `sta303_foldid.R`.
 - [ ] JSC370: knit with xgboost; collation experiment; train/test frames + predictions + hyperparameters exported
 - [ ] PARITY.md: published vs re-run table for JSC370

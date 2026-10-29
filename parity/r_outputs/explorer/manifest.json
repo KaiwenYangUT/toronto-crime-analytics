@@ -1,0 +1,35 @@
+{
+  "Bicycle_Thefts_Open_Data.csv": {
+    "file": "Bicycle_Thefts_Open_Data.csv",
+    "md5": "6c4aa1de1ef2cb88120d28a3148e274e",
+    "source_rows": 34985,
+    "invalid_rows": 325,
+    "valid_rows_before_2020": 21732,
+    "exact_duplicate_rows_removed": 1444,
+    "retained_rows": 11484,
+    "first_date": "2020-01-01",
+    "last_date": "2023-12-31"
+  },
+  "Robbery_Open_Data.csv": {
+    "file": "Robbery_Open_Data.csv",
+    "md5": "ee4b4dd20704d984950fe85f5760d73b",
+    "source_rows": 33921,
+    "invalid_rows": 1014,
+    "valid_rows_before_2020": 21949,
+    "exact_duplicate_rows_removed": 2503,
+    "retained_rows": 8455,
+    "first_date": "2020-01-01",
+    "last_date": "2023-12-31"
+  },
+  "Theft_Over_Open_Data.csv": {
+    "file": "Theft_Over_Open_Data.csv",
+    "md5": "0184455f71aa8f64543ab94c242e064f",
+    "source_rows": 12483,
+    "invalid_rows": 228,
+    "valid_rows_before_2020": 6943,
+    "exact_duplicate_rows_removed": 9,
+    "retained_rows": 5303,
+    "first_date": "2020-01-01",
+    "last_date": "2023-12-31"
+  }
+}
