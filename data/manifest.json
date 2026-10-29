@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "captured": "2026-10-29",
+  "provenance": "Hashes verified against Git blobs at the agreed commit; original publisher download date unknown. CSV rows exclude header; XLSX rows exclude first-sheet header.",
+  "commit": "4af4309b904f853fefe5ca84cce6d53d2820a588",
+  "reference": "_reference/robbery/data",
+  "snapshot_url": "https://raw.githubusercontent.com/KaiwenYangUT/Robbery_Crime_Classification/4af4309b904f853fefe5ca84cce6d53d2820a588/data/",
+  "sources": {
+    "tps": "https://data.torontopolice.on.ca/pages/open-data",
+    "city": "https://open.toronto.ca/dataset/neighbourhood-profiles/"
+  },
+  "files": [
+    {
+      "file": "Auto_Theft_Open_Data.csv",
+      "source": "tps",
+      "bytes": 20878383,
+      "rows": 58441,
+      "columns": 31,
+      "md5": "57582b85021f6fa603fb88ca228faf57",
+      "sha256": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c"
+    },
+    {
+      "file": "Bicycle_Thefts_Open_Data.csv",
+      "source": "tps",
+      "bytes": 12319258,
+      "rows": 34985,
+      "columns": 35,
+      "md5": "6c4aa1de1ef2cb88120d28a3148e274e",
+      "sha256": "ada41ff1eefc5ce5866a490e33790c79bb42904dabe87ff1132b03df61796f69"
+    },
+    {
+      "file": "Break_and_Enter_Open_Data.csv",
+      "source": "tps",
+      "bytes": 23977143,
+      "rows": 70148,
+      "columns": 31,
+      "md5": "e96634f7cb9c0c588acc05aa63237b40",
+      "sha256": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b"
+    },
+    {
+      "file": "Homicides_Open_Data_(ASR-RC-TBL-002).csv",
+      "source": "tps",
+      "bytes": 276245,
+      "rows": 1396,
+      "columns": 18,
+      "md5": "5e5f4bbcc8ab9b24134e33473a43b440",
+      "sha256": "9e23c93cdeaf93a123d2d7e9ff65700810c38a49e2532d3d1a35033d6170590a"
+    },
+    {
+      "file": "Income_Dataset.xlsx",
+      "source": "city",
+      "bytes": 1855906,
+      "rows": 158,
+      "columns": 2604,
+      "md5": "94510034ca308e84ea6f0d0aaee463c9",
+      "sha256": "d9c60864972635e1a37fdbce55899ce02da4a4aff500301546ae9562205c3f2b"
+    },
+    {
+      "file": "Robbery_Open_Data.csv",
+      "source": "tps",
+      "bytes": 11672278,
+      "rows": 33921,
+      "columns": 31,
+      "md5": "ee4b4dd20704d984950fe85f5760d73b",
+      "sha256": "214aaf0e5f3a34511c37e31d326659780285e6f00cac1a58cfe08acbe934086b"
+    },
+    {
+      "file": "Shooting_and_Firearm_Discharges_Open_Data.csv",
+      "source": "tps",
+      "bytes": 1235309,
+      "rows": 6051,
+      "columns": 21,
+      "md5": "8b72ca8cc54d848ac9786c37cd5b93b7",
+      "sha256": "c67b58896652198db970bf14a29a9d99cb523decb83040bbbb8544831b9a9b52"
+    },
+    {
+      "file": "Theft_Over_Open_Data.csv",
+      "source": "tps",
+      "bytes": 4404336,
+      "rows": 12483,
+      "columns": 31,
+      "md5": "0184455f71aa8f64543ab94c242e064f",
+      "sha256": "cec58ac7aaa1def1a32827818a43c214ce0a52f8cfa5f4cc1772f30585aba5f5"
+    }
+  ]
+}

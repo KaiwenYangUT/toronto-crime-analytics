@@ -7,7 +7,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P1 Setup and inventory (started) |
 | In progress | — |
 | Last sitting | 2026-10-29 (Codex P1 setup) |
-| Next action | Capture pinned input checksums and implement verified make data, then licence verification and P1 technical spikes |
+| Next action | Complete publisher licence verification, then run P1 technical spikes |
 | Blockers | Q5 approved; setup may proceed. R 4.6.2 and tectonic 0.17.0 installed with separate user approval; machine prerequisites now pass. Other outside-folder installs remain unapproved. Q2 blocks P4c. Q1 blocks P9 |
 
 ## Machine log
@@ -63,7 +63,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `git init` (local `main`), `.editorconfig`, first commit (`.gitignore` already exists)
 - [x] Pinned references cloned and checked out detached: Robbery `4af4309b904f853fefe5ca84cce6d53d2820a588`; Explorer `dd5d689e6a9e83e09f64de0b12d77d30793c6356`; STA303 copy matches root. `_reference/` made read-only; provenance in `parity/references.json`.
 - [x] `make env`: Python 3.12.2 `.venv` with exact `requirements.lock`, `.r-lib`, locked Vite React/TypeScript scaffold with ESLint/Vitest, Chromium in `.cache/playwright`; all caches redirected by `tools/env.sh`. Second locked bootstrap and `pip check` passed; scaffold lint/build passed.
-- [ ] `data/manifest.json` + `make data` with checksum verification
+- [x] `data/manifest.json` captures all 8 pinned inputs (bytes, rows, columns, MD5, SHA-256); bytes checked against Git blobs. `make data` passed initial copy and cached recheck. Five integrity tests pass, including corrupt cache/source, SHA mismatch, interrupted completion and pinned-download filename handling; Ruff passes. Raw inputs stay ignored.
 - [ ] `DATA_LICENSE.md` (TPS + City of Toronto terms verified)
 - [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
 - [x] `parity/inventory/{jsc370,sta303,explorer}.md` completed by 3 independent read-only inventory agents
