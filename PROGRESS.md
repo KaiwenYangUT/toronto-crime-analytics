@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P3 complete; P4 Faithful ports next (4c needs Q2) |
-| In progress | — |
+| Current phase | P4 Faithful ports (started; 4a first, 4c waits for Q2) |
+| In progress | P4a Explain port, step 1: GLM + summary, GVIF, stepwise AIC/BIC, LRT, influence (DFBETAS/DFFITS/Cook/working residuals) in `pipeline/src/tca/explain/sta303_port.py`, compared with `parity/r_outputs/sta303/` \| started 2026-10-29 \| files: pipeline/src/tca/explain/, parity/compare/compare_sta303_model.py, pipeline/tests/ \| machine: Kevins-iMac.local \| scope note: working inline (no subagents); chart specs (Vega-Lite) belong to P5 figure-specs, P4 compares chart aggregates; 4c blocked on Q2 |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
 | Next action | Read only PLAN.md P4. Start 4a (Explain port) and 4b (Predict port); 4d tokens/palette; 4c waits for Q2 (STA313 team credit and consent) |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
