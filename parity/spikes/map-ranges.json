@@ -1,0 +1,71 @@
+{
+  "archive": {
+    "bytes": 20000136,
+    "sha256": "93f086e6378c522f802758e664a2cda8eb1a31cc4d0b2cd7bb49f38ff2bff445"
+  },
+  "header": {
+    "specVersion": 3,
+    "rootDirectoryOffset": 127,
+    "rootDirectoryLength": 1692,
+    "jsonMetadataOffset": 1819,
+    "jsonMetadataLength": 1179,
+    "leafDirectoryOffset": 2998,
+    "leafDirectoryLength": 0,
+    "tileDataOffset": 2998,
+    "tileDataLength": 19997138,
+    "numAddressedTiles": 682,
+    "numTileEntries": 567,
+    "numTileContents": 543,
+    "clustered": true,
+    "internalCompression": 2,
+    "tileCompression": 2,
+    "tileType": 1,
+    "minZoom": 0,
+    "maxZoom": 14,
+    "minLon": -79.64,
+    "minLat": 43.58,
+    "maxLon": -79.12,
+    "maxLat": 43.86,
+    "centerZoom": 0,
+    "centerLon": -79.38,
+    "centerLat": 43.72
+  },
+  "requests": [
+    {
+      "range": "bytes=127-254",
+      "status": 206,
+      "contentRange": "bytes 127-254/20000136",
+      "contentLength": "128",
+      "contentEncoding": null
+    },
+    {
+      "range": "bytes=0-16383",
+      "status": 206,
+      "contentRange": "bytes 0-16383/20000136",
+      "contentLength": "16384",
+      "contentEncoding": null
+    },
+    {
+      "range": "bytes=3094659-3197588",
+      "status": 206,
+      "contentRange": "bytes 3094659-3197588/20000136",
+      "contentLength": "102930",
+      "contentEncoding": null
+    }
+  ],
+  "transferredBytes": 119442,
+  "decodedTile": {
+    "zoom": 12,
+    "x": 1144,
+    "y": 1494,
+    "bytes": 153438
+  },
+  "source": "https://build.protomaps.com/20261029.pmtiles",
+  "bbox": [
+    -79.64,
+    43.58,
+    -79.12,
+    43.86
+  ],
+  "scope": "Vite preview range and one tile probe; full MapLibre viewport budget remains P6."
+}
