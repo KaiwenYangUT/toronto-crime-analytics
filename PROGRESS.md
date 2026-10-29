@@ -17,7 +17,7 @@ Add a row whenever work moves to a different machine or app.
 |---|---|---|---|---|
 | 2026-10-29 | (planning laptop) | Claude Code desktop | P0 | no |
 | 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 complete; P2 started, no files kept | no |
-| 2026-10-29 | Kevins-iMac.local | Claude Code desktop | P2 R reference re-runs (complete) | yes: `parity/r_outputs/` only (R reference, 4.9 MB); no `results/` yet |
+| 2026-10-29 | Kevins-iMac.local | Claude Code desktop | P2 R reference re-runs (complete) | yes: `parity/r_outputs/` only (R reference, 8.7 MB of the 15 MB budget); no `results/` yet |
 
 ### Initial resume preflight (historical; resolved during P1)
 - `git status` and `git log --oneline -15` both report that this folder is not a Git repository. There was no interrupted item or existing Git history to reconcile; Git initialization was still pending at that point.
