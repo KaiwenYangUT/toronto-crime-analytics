@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import locale
+import re
 from pathlib import Path
 
 import numpy as np
@@ -11,9 +13,11 @@ import pandas as pd
 from tca.definitions import (
     EXPLORE_SPEC,
     EXPLORE_START,
+    JSC370_YEAR,
     LAT_RANGE,
     LEGACY_ORDER,
     LON_RANGE,
+    NSA,
     RAW_FILES,
 )
 from tca.features import (
@@ -23,7 +27,7 @@ from tca.features import (
     month_from_name,
     season,
 )
-from tca.io import RAW_DIR, as_char, as_num, read_text_csv
+from tca.io import RAW_DIR, as_char, as_num, census_column, read_census, read_text_csv
 
 EXPLORE_COLUMNS = [
     "event_id",
@@ -197,3 +201,201 @@ def sta303_legacy(
         }
     )
     return frame.dropna().reset_index(drop=True)[STA303_COLUMNS]
+
+
+# (header in the workbook, name used by the original) for the 19 selected census columns.
+_CENSUS_SELECT = {
+    "Neighbourhood Name": "Neighbourhood",
+    "Median total income in 2020  among recipients ($)": "Individual_Median_Income",
+    "Average total income in 2020 among recipients ($)": "Individual_Average_Income",
+    "Number of persons in private households": "Population",
+    "One-census-family households without additional persons": "h_one_census",
+    "Couple-family households": "h_couple",
+    "One-parent-family households": "h_one_parent",
+    "Multigenerational households": "h_multigen",
+    "Multiple-census-family households": "h_multiple",
+    "One-census-family households with additional persons": "h_one_census_plus",
+    "Two-or-more-person non-census-family households": "h_two_plus_non_census",
+    "Average household size": "Average_Household_Size",
+    "Renter": "Number_of_Rental_Properties",
+    "Total - Labour force aged 15 years and over by class of worker including job permanency - 25% sample data": "Total_Labour_Force",
+    "Permanent position": "Permanent_Job_Position",
+    "48-49 Transportation and warehousing": "Transportation_Services_Position",
+    "62 Health care and social assistance": "Healthcare_Services_Position",
+}
+_HOUSEHOLD_COLUMNS = [
+    "h_multiple",
+    "h_one_census",
+    "h_couple",
+    "h_one_parent",
+    "h_multigen",
+    "h_one_census_plus",
+    "h_two_plus_non_census",
+]
+# Seven spelling fixes, applied as regular expressions exactly as R's gsub did
+# (the "." in "St. James" matches any character there too).
+NEIGHBOURHOOD_FIXES = [
+    ("O`Connor Parkview", "O'Connor-Parkview"),
+    ("Danforth-East York", "Danforth East York"),
+    ("Taylor Massey", "Taylor-Massey"),
+    ("East End Danforth", "East End-Danforth"),
+    ("Cabbagetown-South St. James Town", "Cabbagetown-South St.James Town"),
+    ("North St. James Town", "North St.James Town"),
+    ("Yonge-St. Clair", "Yonge-St.Clair"),
+]
+JSC370_CENSUS_FEATURES = [
+    "Individual_Median_Income",
+    "Individual_Average_Income",
+    "Population",
+    "Average_Household_Size",
+    "Number_of_Rental_Properties",
+    "Permanent_Job_and_Labour_Force_Ratio",
+    "Transportation_Service_Worker_and_Population_Ratio",
+    "HealthCare_Service_Worker_and_Population_Ratio",
+    "Difference_in_Individual_Median_Average_Income",
+]
+JSC370_COLUMNS = [
+    "Robbery",
+    "Month",
+    "Day_Of_Week_Numeric",
+    "Hour",
+    "Premises_Type",
+    "Longitude",
+    "Latitude",
+    "Season",
+    "Darkness",
+    *JSC370_CENSUS_FEATURES,
+]
+
+
+def jsc370_census(path: Path | None = None) -> pd.DataFrame:
+    """``income_2020`` after the original's derivations and name fixes (158 neighbourhoods)."""
+    census = read_census(path)
+    inc = pd.DataFrame(
+        {
+            new: census_column(census, old).reset_index(drop=True)
+            for old, new in _CENSUS_SELECT.items()
+        }
+    )
+    for col in inc.columns.drop("Neighbourhood"):
+        inc[col] = pd.to_numeric(inc[col], errors="raise").astype("float64")
+    # rowSums(..., na.rm = TRUE) over the seven (overlapping) household columns is computed
+    # by the original but never used as a feature; kept out of the output on purpose.
+    inc["Permanent_Job_and_Labour_Force_Ratio"] = (
+        inc["Permanent_Job_Position"] / inc["Total_Labour_Force"]
+    )
+    inc["Transportation_Service_Worker_and_Population_Ratio"] = (
+        inc["Transportation_Services_Position"] / inc["Population"]
+    )
+    inc["HealthCare_Service_Worker_and_Population_Ratio"] = (
+        inc["Healthcare_Services_Position"] / inc["Population"]
+    )
+    inc["Difference_in_Individual_Median_Average_Income"] = (
+        inc["Individual_Average_Income"] - inc["Individual_Median_Income"]
+    ).abs()
+    inc = inc.drop(columns=_HOUSEHOLD_COLUMNS)
+    for old, new in NEIGHBOURHOOD_FIXES:
+        inc["Neighbourhood"] = inc["Neighbourhood"].map(lambda v, o=old, n=new: re.sub(o, n, v))
+    return inc
+
+
+def _r_collation_key():
+    """Sort key matching R's ``order()`` on strings under the process locale (same C library)."""
+    try:
+        locale.setlocale(locale.LC_COLLATE, "en_CA.UTF-8")
+        return locale.strxfrm
+    except locale.Error:
+        return str
+
+
+def _isort_with_index(codes: list[int], index: list[int]) -> None:
+    """R's ``isort_with_index`` (src/main/sort.c): an unstable Shell sort that merge() uses on
+    the key codes. Its tie order is what puts rows of one neighbourhood in R's order."""
+    n = len(codes)
+    h = 1
+    while h <= n // 9:
+        h = 3 * h + 1
+    while h > 0:
+        for i in range(h, n):
+            v, iv, j = codes[i], index[i], i
+            while j >= h and codes[j - h] > v:
+                codes[j], index[j] = codes[j - h], index[j - h]
+                j -= h
+            codes[j], index[j] = v, iv
+        h //= 3
+
+
+def r_left_merge_order(x_keys: list[str], y_keys: list[str]) -> list[int]:
+    """Row order of R's ``merge(x, y, by = key, all.x = TRUE)`` for unique ``y_keys``: x rows
+    ordered by the internal merge, then stably by key under R's collation (``sort = TRUE``)."""
+    in_y = set(y_keys)
+    matched = [k for k in x_keys if k in in_y]
+    first_pos: dict[str, int] = {}
+    for pos, k in enumerate(matched, start=1):
+        first_pos.setdefault(k, pos)
+    codes = [first_pos.get(k, 0) for k in x_keys]
+    index = list(range(len(x_keys)))
+    _isort_with_index(codes, index)
+    lone = sum(1 for c in codes if c == 0)  # x rows without a census match, appended last
+    order = index[lone:] + index[:lone]
+    key = _r_collation_key()
+    return sorted(order, key=lambda i: key(x_keys[i]))  # sorted() is stable
+
+
+def jsc370_legacy(
+    raw_dir: Path = RAW_DIR,
+    drop_dst_gap_rows: bool = True,
+    dow_sunday_first: bool = True,
+    keep_neighbourhood: bool = False,
+) -> pd.DataFrame:
+    """R's ``final_data`` (or ``merged_data`` with ``keep_neighbourhood``): 2020 incidents with
+    a known neighbourhood, left-joined to the census features, sorted by neighbourhood.
+    Quirk kept: the join uses the census table before ``na.omit``, so census gaps stay as NA."""
+    crime = _legacy_stack(raw_dir)
+    month = month_from_name(crime["OCC_MONTH"])
+    when = _occurrence_time(crime, month, drop_dst_gap_rows)
+    iso = when.dt.isocalendar().day.astype("float64")
+    dow = ((iso % 7) + 1 if dow_sunday_first else iso).where(when.notna())
+    frame = pd.DataFrame(
+        {
+            "Robbery": (crime["MCI_CATEGORY"] == "Robbery").where(crime["MCI_CATEGORY"].notna()),
+            "Occurrence_Time": when,
+            "Year": crime["OCC_YEAR"],
+            "Month": month,
+            "Day_Of_Week_Numeric": dow,
+            "Hour": crime["OCC_HOUR"],
+            "Neighbourhood": crime["NEIGHBOURHOOD_158"],
+            "Location_Type": crime["LOCATION_TYPE"],
+            "Premises_Type": crime["PREMISES_TYPE"],
+            "Longitude": crime["LONG_WGS84"],
+            "Latitude": crime["LAT_WGS84"],
+            "Season": season(month),
+            "Darkness": darkness_fixed(crime["OCC_HOUR"]),
+        }
+    )
+    # subset(Year == 2020), subset(Neighbourhood != "NSA"), then na.omit; NA conditions drop rows.
+    frame = frame[(frame["Year"] == JSC370_YEAR) & (frame["Neighbourhood"] != NSA)]
+    frame = frame.dropna(
+        subset=[
+            "Robbery",
+            "Occurrence_Time",
+            "Month",
+            "Day_Of_Week_Numeric",
+            "Hour",
+            "Neighbourhood",
+            "Location_Type",
+            "Premises_Type",
+            "Longitude",
+            "Latitude",
+            "Season",
+            "Darkness",
+        ]
+    )
+    census = jsc370_census()
+    merged = frame.merge(census, on="Neighbourhood", how="left", sort=False)  # keeps frame order
+    order = r_left_merge_order(merged["Neighbourhood"].tolist(), census["Neighbourhood"].tolist())
+    merged = merged.iloc[order].reset_index(drop=True)
+    cols = (["Neighbourhood"] if keep_neighbourhood else []) + JSC370_COLUMNS
+    out = merged[cols].copy()
+    out["Robbery"] = out["Robbery"].astype(bool)
+    return out

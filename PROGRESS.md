@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P3 Shared Python pipeline (started) |
-| In progress | P3 item 3: `jsc370_legacy` vs R `final_data` (`parity/r_outputs/jsc370/final_data.csv.xz`): census join, 7 name fixes, merge, multiset match \| started 2026-10-29 \| files: pipeline/src/tca/build.py, io.py, pipeline/tests/, parity/compare/ \| machine: Kevins-iMac.local |
+| In progress | P3 item 4: `unified` table (2014-2023, 4 classes, validity rules, dedup), cross-category duplicate count + rule, `schema` (pandera) \| started 2026-10-29 \| files: pipeline/src/tca/build.py, schema.py, pipeline/tests/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | `jsc370_legacy`, then `unified` + cross-category duplicate count, `schema`, tests, code review |
+| Next action | `unified` + duplicate count + rule, `schema`, tests, then code review (end of P3) |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -92,7 +92,7 @@ Add a row whenever work moves to a different machine or app.
 - [ ] `io`, `definitions`, `features` done (`schema` pending with the other tables)
 - [x] `explore_legacy` == R events: 25,242 rows, all 10 columns equal, R's row order reproduced, coordinates bit-equal (0 ulp), per-file manifest equal; robbery 8,455 (VALIDATION.md). `parity/compare/compare_explore.py`, `pipeline/tests/test_explore_legacy.py`
 - [x] `sta303_legacy` == R model frame: 174,976 rows, all 15 columns equal, coordinates bit-equal, class counts 33,919 / 58,434 / 70,143 / 12,480; the DST gap removes 6 rows (flag `drop_dst_gap_rows`), `dow_sunday_first` reproduces the Rmd's weekday coding. `parity/compare/compare_sta303.py`, `pipeline/tests/test_sta303_legacy.py`
-- [ ] `jsc370_legacy` == R `final_data` (multiset exact)
+- [x] `jsc370_legacy` == R `final_data`: 16,611 rows, 2,779 robberies, 158/158 neighbourhoods, census features bit-identical (0 relative difference); full-row multiset equal AND R's row order reproduced exactly (R's merge() Shell-sort tie order ported, `r_left_merge_order`). `parity/compare/compare_jsc370.py`, `pipeline/tests/test_jsc370_legacy.py`
 - [ ] `unified` table + cross-category duplicate count + rule
 - [ ] pytest green; code review
 

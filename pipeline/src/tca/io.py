@@ -44,8 +44,21 @@ def as_num(col: pd.Series, name: str = "") -> pd.Series:
 
 
 def read_census(path: Path | None = None) -> pd.DataFrame:
-    """The neighbourhood-profile workbook, first sheet, headers as in the file."""
-    return pd.read_excel(path or raw_path(CENSUS_FILE), sheet_name=0, engine="openpyxl")
+    """The neighbourhood-profile workbook, first sheet. Header cells are trimmed like readxl's
+    ``trim_ws`` (the file indents sub-rows with spaces); names may still repeat elsewhere in the
+    sheet, so select columns with ``census_column``."""
+    raw = pd.read_excel(path or raw_path(CENSUS_FILE), sheet_name=0, engine="openpyxl", header=None)
+    frame = raw.iloc[1:].reset_index(drop=True)
+    frame.columns = [h.strip() if isinstance(h, str) else h for h in raw.iloc[0]]
+    return frame
+
+
+def census_column(census: pd.DataFrame, name: str) -> pd.Series:
+    """One column by trimmed header; fails if the name is missing or repeated (R would too)."""
+    hits = census.loc[:, census.columns == name]
+    if hits.shape[1] != 1:
+        raise KeyError(f"census header {name!r} matched {hits.shape[1]} columns")
+    return hits.iloc[:, 0]
 
 
 def manifest(root: Path = ROOT) -> dict:
