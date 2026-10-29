@@ -181,6 +181,42 @@
   "rf_top3_set_equal": false,
   "bag_top3_set_equal": true
  },
+ "tiers": {
+  "r": [
+   [
+    "rf",
+    "bagging"
+   ],
+   [
+    "xgb"
+   ],
+   [
+    "tree"
+   ],
+   [
+    "gbm",
+    "glm"
+   ]
+  ],
+  "python": [
+   [
+    "rf",
+    "bagging"
+   ],
+   [
+    "xgb"
+   ],
+   [
+    "tree"
+   ],
+   [
+    "gbm",
+    "glm"
+   ]
+  ],
+  "r_prediction_counts_match_matrices": true,
+  "identical": true
+ },
  "forest_alternative_response_rate_ordering": {
   "bagging": {
    "python": {

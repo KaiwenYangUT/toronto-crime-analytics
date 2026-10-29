@@ -13,6 +13,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "pipeline" / "src"))
+from tca.predict import evaluate as ev
 from tca.predict import jsc370_port as j
 
 R = ROOT / "parity/r_outputs/jsc370"
@@ -90,6 +91,27 @@ def compare() -> dict:
     out["importance"]["bag_top3_set_equal"] = set(out["importance"]["bag_top3_python"]) == set(
         out["importance"]["bag_top3_r"]
     )
+    # tier rule on the same bootstrap indices for R's and Python's predictions
+    with lzma.open(R / "test_predictions.csv.xz", "rt") as fh:
+        rp = pd.read_csv(fh)
+    r_preds = {
+        "glm": rp["glm_class"].astype(int).astype(bool).to_numpy(),
+        "tree": rp["tree_class"].astype(str).str.upper().eq("TRUE").to_numpy(),
+        "bagging": rp["bag_class"].astype(str).str.upper().eq("TRUE").to_numpy(),
+        "rf": rp["rf_class"].astype(str).str.upper().eq("TRUE").to_numpy(),
+        "gbm": rp["gbm_class"].astype(int).astype(bool).to_numpy(),
+        "xgb": rp["xgb_class"].astype(str).str.upper().eq("TRUE").to_numpy(),
+    }
+    idx = ev.bootstrap_indices(len(yte), reps=1000)
+    py_preds = {m: res[m]["test_pred"] for m in KEYS}
+    out["tiers"] = {
+        "r": ev.tier_partition(yte, r_preds, idx),
+        "python": ev.tier_partition(yte, py_preds, idx),
+        "r_prediction_counts_match_matrices": all(
+            j.confusion(yte, r_preds[m]) == r_cm(KEYS[m], "test") for m in KEYS
+        ),
+    }
+    out["tiers"]["identical"] = out["tiers"]["r"] == out["tiers"]["python"]
     # the alternative factor handling for the forests, for transparency
     alt = {}
     for name, mtry, rname in (("bagging", len(j.PREDICTORS), "bag"), ("rf", 4, "rf")):

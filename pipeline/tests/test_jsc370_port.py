@@ -59,3 +59,10 @@ def test_documented_deviations(report):
         and report["tree"]["f1_within"]
     )
     assert not report["importance"]["rf_top3_set_equal"]
+
+
+def test_tier_partition_identical_to_r(report):
+    t = report["tiers"]
+    assert t["r_prediction_counts_match_matrices"]
+    assert t["identical"]
+    assert t["r"] == [["rf", "bagging"], ["xgb"], ["tree"], ["gbm", "glm"]]
