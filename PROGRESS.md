@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P4 Faithful ports (started; 4a first, 4c waits for Q2) |
-| In progress | P4b Predict port: GLM (aliased column), tree, bagging, RF, GBM, XGBoost on R's exported train/test frames at R's hyperparameters, in `pipeline/src/tca/predict/jsc370_port.py` \| started 2026-10-29 \| files: pipeline/src/tca/predict/, parity/compare/compare_jsc370_models.py, pipeline/tests/ \| machine: Kevins-iMac.local |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
-| Next action | 4b Predict port, then 4d tokens/palette, chart checklist, PARITY.md fill, 4c when Q2 is answered |
+| Next action | 4b remainder: tier-rule bootstrap (same indices for R and Python predictions), then 4d design tokens/Vega theme/palette validation, chart-aggregate checklist, PARITY.md fill; 4c waits for Q2; ask the user to accept the two 4b deviations |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -99,7 +99,7 @@ Add a row whenever work moves to a different machine or app.
 
 ### P4 Faithful ports
 - [x] 4a Explain port (numeric outputs), `pipeline/src/tca/explain/{sta303_port,lasso}.py`, report `parity/reports/sta303_port.json`, tests `pipeline/tests/test_sta303_port.py`. Observed vs R: full-model coefficients/SE/z 7e-14, deviance/AIC/BIC 1e-15, GVIF 3e-15, AIC 6/6 and BIC 4 terms equal, LRT chi2 2e-10, DFBETAS max 5e-10 and DFFITS/Cook 6e-8 (float32 export), all top-20 index lists equal, ROC and AUC 1e-12 (label 0.60 equal), lrm stats 1e-12, Gaussian table 1e-12, apparent calibration 7e-12, bias-corrected curve 0.0044 (tolerance 0.02), printed calibration stats 5.7e-5 (tolerance 1e-3), LASSO: same 44-value path, lambda.min equal, coefficients 2.4e-5, linear predictor 2.6e-5, Covid contrast 2.5e-6, zero pattern equal, cvm 3.7e-5. Chart aggregates (Vega-Lite specs) deferred to the figure phase. Deviations: own R-faithful IRLS instead of statsmodels GLM (R's epsilon-1e-8 stop and last-iteration weights drive SE/influence); own proximal-Newton coordinate descent for glmnet; glmnet early-stop rule matched empirically (absolute 1e-5 gain).
-- [ ] 4b Predict port: GLM confusion matrix exact; others within tolerance; tier partition identical
+- [~] 4b Predict port (point metrics), `pipeline/src/tca/predict/jsc370_port.py`, report `parity/reports/jsc370_port.json`, tests `pipeline/tests/test_jsc370_port.py`. GLM: confusion matrix identical, coefficients 1e-11, aliased term the same. GBM: matrix identical. Bagging TP 408/407 FP 187/190, RF TP 383/380 FP 111/112 (within tolerance). XGBoost: judged on the mean of 10 pre-declared seeds (SEED..SEED+9): TP 215 vs 199, FP 123 vs 133, F1 .363 vs .337 (within); the single SEED fit (TP 232) is outside, seed luck. DEVIATIONS needing the user's acceptance: (1) tree test TP 83 vs R 71 (tolerance 10; FP and F1 within), 12 leaves vs 8, pruned at R's cp on a scikit-learn tree with response-rate-ordered factors; other encodings tried (alphabetical codes: TP 76 FP 38; 8-leaf best-first; one-hot) all differ somewhere; (2) RF top-3 importance has Hour where R has Premises_Type (0.115 vs 0.113, near tie); bagging top-3 equal; with response-rate factor ordering RF's top 3 match but RF FP is 135 (R 112). Still open for 4b: the tier-partition test (paired bootstrap, 1,000 reps), Python's own CV-selected hyperparameter row, and chart aggregates (varImp, ROC, tree plots).
 - [ ] 4c Explore engine (TS) + legacy bundle; 100% of fixtures exact (needs Q2)
 - [ ] 4d Design tokens + Vega theme + palette validation report
 - [ ] Chart checklist (`compare_charts.py`) green; mismatched messages flagged

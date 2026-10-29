@@ -1,0 +1,282 @@
+{
+ "glm": {
+  "python": {
+   "tn": 4124,
+   "fp": 12,
+   "fn": 823,
+   "tp": 25
+  },
+  "r": {
+   "tn": 4124,
+   "fn": 823,
+   "fp": 12,
+   "tp": 25
+  },
+  "f1_python": 0.056497175141242945,
+  "f1_r": 0.056497175141242945,
+  "train_accuracy_python": 0.8382213812677389,
+  "train_accuracy_r": 0.8382213812677389,
+  "test_accuracy_python": 0.8324638844301766,
+  "test_accuracy_r": 0.8324638844301766,
+  "tp_within": true,
+  "fp_within": true,
+  "f1_within": true,
+  "identical_matrix": true
+ },
+ "tree": {
+  "python": {
+   "tn": 4082,
+   "fp": 54,
+   "fn": 765,
+   "tp": 83
+  },
+  "r": {
+   "tn": 4087,
+   "fn": 777,
+   "fp": 49,
+   "tp": 71
+  },
+  "f1_python": 0.1685279187817259,
+  "f1_r": 0.14669421487603304,
+  "train_accuracy_python": 0.8439838307387977,
+  "train_accuracy_r": 0.8417476563171927,
+  "test_accuracy_python": 0.8356741573033708,
+  "test_accuracy_r": 0.8342696629213483,
+  "tp_within": false,
+  "fp_within": true,
+  "f1_within": true,
+  "identical_matrix": false
+ },
+ "bagging": {
+  "python": {
+   "tn": 3949,
+   "fp": 187,
+   "fn": 440,
+   "tp": 408
+  },
+  "r": {
+   "tn": 3946,
+   "fn": 441,
+   "fp": 190,
+   "tp": 407
+  },
+  "f1_python": 0.5654885654885655,
+  "f1_r": 0.5633217993079584,
+  "train_accuracy_python": 0.9980218457039649,
+  "train_accuracy_r": 0.9980218457039649,
+  "test_accuracy_python": 0.8741974317817014,
+  "test_accuracy_r": 0.8733948635634029,
+  "tp_within": true,
+  "fp_within": true,
+  "f1_within": true,
+  "identical_matrix": false
+ },
+ "rf": {
+  "python": {
+   "tn": 4025,
+   "fp": 111,
+   "fn": 465,
+   "tp": 383
+  },
+  "r": {
+   "tn": 4024,
+   "fn": 468,
+   "fp": 112,
+   "tp": 380
+  },
+  "f1_python": 0.5707898658718331,
+  "f1_r": 0.5671641791044777,
+  "train_accuracy_python": 0.9980218457039649,
+  "train_accuracy_r": 0.9973337920357788,
+  "test_accuracy_python": 0.884430176565008,
+  "test_accuracy_r": 0.8836276083467095,
+  "tp_within": true,
+  "fp_within": true,
+  "f1_within": true,
+  "identical_matrix": false
+ },
+ "gbm": {
+  "python": {
+   "tn": 4127,
+   "fp": 9,
+   "fn": 819,
+   "tp": 29
+  },
+  "r": {
+   "tn": 4127,
+   "fn": 819,
+   "fp": 9,
+   "tp": 29
+  },
+  "f1_python": 0.0654627539503386,
+  "f1_r": 0.0654627539503386,
+  "train_accuracy_python": 0.8395114818955879,
+  "train_accuracy_r": 0.8395974886041111,
+  "test_accuracy_python": 0.833868378812199,
+  "test_accuracy_r": 0.833868378812199,
+  "tp_within": true,
+  "fp_within": true,
+  "f1_within": true,
+  "identical_matrix": true
+ },
+ "xgb": {
+  "python": {
+   "tn": 4010,
+   "fp": 126,
+   "fn": 616,
+   "tp": 232
+  },
+  "r": {
+   "tn": 4003,
+   "fn": 649,
+   "fp": 133,
+   "tp": 199
+  },
+  "f1_python": 0.384742951907131,
+  "f1_r": 0.33728813559322035,
+  "train_accuracy_python": 0.8879332587941859,
+  "train_accuracy_r": 0.8879332587941859,
+  "test_accuracy_python": 0.851123595505618,
+  "test_accuracy_r": 0.8430979133226324,
+  "tp_within": false,
+  "fp_within": true,
+  "f1_within": false,
+  "identical_matrix": false
+ },
+ "glm_detail": {
+  "aliased_python": [
+   "Difference_in_Individual_Median_Average_Income"
+  ],
+  "aliased_r": "Difference_in_Individual_Median_Average_Income",
+  "coef_rtol": 1.1395464817015588e-11,
+  "auc_python": 0.7357994461880953,
+  "test_prob_max_abs_diff": 6.206701819166938e-13
+ },
+ "tree_detail": {
+  "leaves_python": 12,
+  "leaves_r": 8,
+  "note": "pruned at R's cp on a scikit-learn tree; factors ordered by response rate"
+ },
+ "importance": {
+  "rf_top3_python": [
+   "Longitude",
+   "Latitude",
+   "Hour"
+  ],
+  "rf_top3_r": [
+   "Longitude",
+   "Latitude",
+   "Premises_Type"
+  ],
+  "bag_top3_python": [
+   "Longitude",
+   "Latitude",
+   "Hour"
+  ],
+  "bag_top3_r": [
+   "Longitude",
+   "Latitude",
+   "Hour"
+  ],
+  "rf_top3_set_equal": false,
+  "bag_top3_set_equal": true
+ },
+ "forest_alternative_response_rate_ordering": {
+  "bagging": {
+   "python": {
+    "tn": 3957,
+    "fp": 179,
+    "fn": 433,
+    "tp": 415
+   },
+   "r": {
+    "tn": 3946,
+    "fn": 441,
+    "fp": 190,
+    "tp": 407
+   },
+   "f1": 0.5755894590846047,
+   "top3": [
+    "Longitude",
+    "Latitude",
+    "Premises_Type"
+   ]
+  },
+  "rf": {
+   "python": {
+    "tn": 4001,
+    "fp": 135,
+    "fn": 460,
+    "tp": 388
+   },
+   "r": {
+    "tn": 4024,
+    "fn": 468,
+    "fp": 112,
+    "tp": 380
+   },
+   "f1": 0.5660102115244346,
+   "top3": [
+    "Longitude",
+    "Latitude",
+    "Premises_Type"
+   ]
+  }
+ },
+ "xgb_seed_spread": {
+  "seeds": [
+   303313,
+   303314,
+   303315,
+   303316,
+   303317,
+   303318,
+   303319,
+   303320,
+   303321,
+   303322
+  ],
+  "tp": [
+   232,
+   208,
+   217,
+   212,
+   213,
+   210,
+   215,
+   219,
+   224,
+   203
+  ],
+  "fp": [
+   126,
+   130,
+   121,
+   125,
+   115,
+   123,
+   122,
+   131,
+   120,
+   116
+  ],
+  "f1": [
+   0.3847,
+   0.3508,
+   0.3659,
+   0.3578,
+   0.3622,
+   0.3556,
+   0.3629,
+   0.3656,
+   0.3758,
+   0.3479
+  ],
+  "tp_mean": 215.3,
+  "fp_mean": 122.9,
+  "f1_mean": 0.3629337423951385,
+  "tp_mean_within": "True",
+  "fp_mean_within": "True",
+  "f1_mean_within": true
+ }
+}
