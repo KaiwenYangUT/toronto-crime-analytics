@@ -272,7 +272,7 @@ Helpers: `parity/r/hooks/jsc370_hooks.R`. Builder: `parity/r/make_jsc370_copy.R`
 +  glm_prob = glm_test_predictions, glm_class = glm_test_predictions_binary,
 +  tree_class = as.character(test_predictions_tree), bag_class = as.character(test_predictions_bag),
 +  rf_class = as.character(test_predictions_rf), gbm_prob = boost_test_pred,
-+  gbm_class = boost_test_pred_binary, xgb_class = as.character(xgb_test_pred), xgb_prob_1 = xgb_prob[['1']])
++  gbm_class = boost_test_pred_binary, xgb_class = as.character(xgb_test_pred), xgb_prob_1 = xgb_prob[['TRUE']])
 +wcsv(preds, 'test_predictions')
 +wcsv(data.frame(orig_row = rownames(train_data), glm_prob = glm_train_predictions), 'glm_train_prob', gz = TRUE)
 +cms <- list(glm_train = glm_conf_matrix_train, glm_test = test_glm_conf_matrix, tree_train = tree_conf_matrix_train,

@@ -1,0 +1,18 @@
+{
+  "best_tune": {
+    "nrounds": 150,
+    "max_depth": 3,
+    "eta": 0.4,
+    "gamma": 0,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 1,
+    "subsample": 1
+  },
+  "n_grid": 108,
+  "tune_length": 10,
+  "method": "cv",
+  "xgboost_version": "1.7.8.1",
+  "caret_version": "7.0.1",
+  "accuracy_best": 0.855164526675751,
+  "unused_grid_rows": 40
+}

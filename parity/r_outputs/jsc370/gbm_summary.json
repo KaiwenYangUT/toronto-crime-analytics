@@ -1,0 +1,10 @@
+{
+  "n_trees": 100,
+  "interaction_depth": 1,
+  "shrinkage": 0.1,
+  "n_minobsinnode": 10,
+  "bag_fraction": 0.5,
+  "train_fraction": 1,
+  "distribution": "bernoulli",
+  "gbm_version": "2.2.3"
+}

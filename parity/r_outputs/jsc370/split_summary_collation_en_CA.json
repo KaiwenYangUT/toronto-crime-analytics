@@ -1,0 +1,16 @@
+{
+ "n_final": 16611,
+ "n_train": 11627,
+ "n_test": 4984,
+ "test_robbery": 848,
+ "train_robbery": 1931,
+ "collate": "en_CA.UTF-8",
+ "locale": "en_CA.UTF-8/en_CA.UTF-8/en_CA.UTF-8/C/en_CA.UTF-8/en_CA.UTF-8",
+ "tz": "America/Toronto",
+ "seed": 123,
+ "robbery_levels": [
+  "FALSE",
+  "TRUE"
+ ],
+ "note": "counts recomputed from the exported frames; the experiment hook counted 0 because Robbery is a FALSE/TRUE factor"
+}

@@ -1,0 +1,86 @@
+{
+  "glm_train": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["0", "1"]
+    },
+    "counts": [9661, 1846, 35, 85]
+  },
+  "glm_test": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["0", "1"]
+    },
+    "counts": [4124, 823, 12, 25]
+  },
+  "tree_train": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [9604, 1748, 92, 183]
+  },
+  "tree_test": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [4087, 777, 49, 71]
+  },
+  "bag_train": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [9693, 20, 3, 1911]
+  },
+  "bag_test": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [3946, 441, 190, 407]
+  },
+  "rf_train": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [9691, 26, 5, 1905]
+  },
+  "rf_test": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [4024, 468, 112, 380]
+  },
+  "gbm_train": {
+    "dimnames": {
+      "Actual": ["0", "1"],
+      "Predicted": ["0", "1"]
+    },
+    "counts": [9667, 1836, 29, 95]
+  },
+  "gbm_test": {
+    "dimnames": {
+      "Actual": ["0", "1"],
+      "Predicted": ["0", "1"]
+    },
+    "counts": [4127, 819, 9, 29]
+  },
+  "xgb_train": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [9579, 1186, 117, 745]
+  },
+  "xgb_test": {
+    "dimnames": {
+      "Actual": ["FALSE", "TRUE"],
+      "Predicted": ["FALSE", "TRUE"]
+    },
+    "counts": [4003, 649, 133, 199]
+  }
+}

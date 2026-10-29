@@ -1,0 +1,10 @@
+{
+  "aliased": "Difference_in_Individual_Median_Average_Income",
+  "deviance": 9118.73905407686,
+  "aic": 9166.73905407686,
+  "iterations": 6,
+  "xlevels": {
+    "Premises_Type": ["Apartment", "Commercial", "Educational", "House", "Other", "Outside", "Transit"],
+    "Season": ["Fall", "Spring", "Summer", "Winter"]
+  }
+}

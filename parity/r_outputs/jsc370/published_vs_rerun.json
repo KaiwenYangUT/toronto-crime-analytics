@@ -1,0 +1,65 @@
+{
+ "max_abs_diff_at_7dp": 0.0,
+ "matrices": {
+  "glm_test": {
+   "published": [
+    4124,
+    12,
+    823,
+    25
+   ],
+   "rerun": [
+    4124,
+    12,
+    823,
+    25
+   ],
+   "equal": true
+  },
+  "tree_test": {
+   "published": [
+    4087,
+    49,
+    777,
+    71
+   ],
+   "rerun": [
+    4087,
+    49,
+    777,
+    71
+   ],
+   "equal": true
+  },
+  "bag_test": {
+   "published": [
+    3946,
+    190,
+    441,
+    407
+   ],
+   "rerun": [
+    3946,
+    190,
+    441,
+    407
+   ],
+   "equal": true
+  },
+  "rf_test": {
+   "published": [
+    4024,
+    112,
+    468,
+    380
+   ],
+   "rerun": [
+    4024,
+    112,
+    468,
+    380
+   ],
+   "equal": true
+  }
+ }
+}

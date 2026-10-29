@@ -4,11 +4,11 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P2 R reference re-runs (started) |
-| In progress | P2 remaining: Explorer fixtures (`parity/r/explorer_fixtures.R`, batches cached in build/r-work/explorer_fixtures, resumable) and JSC370 full knit (`bash parity/r/run_jsc370.sh full en_CA`, log .cache/logs/jsc370_full.log), then PARITY.md JSC370 table and PATCHES.md \| started 2026-10-29 \| files: parity/r/, parity/r_outputs/{explorer,jsc370}/, PARITY.md \| machine: Kevins-iMac.local |
-| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local; resumed P2, machine check done) |
-| Next action | Write PATCHES.md and the three patched copies under build/r-work/, then run Explorer (28/28, shinytest, RDS rebuild, fixtures), STA303, JSC370 per PLAN.md section 4 |
-| Blockers | None for P2. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
+| Current phase | P2 R reference re-runs complete (acceptance below); P3 Shared Python pipeline next, blocked on Q8 (Python 3.12) |
+| In progress | — |
+| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
+| Next action | Ask the user about Q8 (install Python 3.12 outside the folder, or another route) so `make env` can build `.venv`; then start P3 (`io`, `schema`, `definitions`, `features`, legacy frames compared with `parity/r_outputs/`). Read only PLAN.md P3 first |
+| Blockers | Q8 blocks P3 (Python 3.12 missing on Kevins-iMac.local; asked, not installed). Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -17,7 +17,7 @@ Add a row whenever work moves to a different machine or app.
 |---|---|---|---|---|
 | 2026-10-29 | (planning laptop) | Claude Code desktop | P0 | no |
 | 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 complete; P2 started, no files kept | no |
-| 2026-10-29 | Kevins-iMac.local | Claude Code desktop | P2 R reference re-runs | no |
+| 2026-10-29 | Kevins-iMac.local | Claude Code desktop | P2 R reference re-runs (complete) | yes: `parity/r_outputs/` only (R reference, 4.9 MB); no `results/` yet |
 
 ### Initial resume preflight (historical; resolved during P1)
 - `git status` and `git log --oneline -15` both report that this folder is not a Git repository. There was no interrupted item or existing Git history to reconcile; Git initialization was still pending at that point.
@@ -82,11 +82,11 @@ Add a row whenever work moves to a different machine or app.
 
 ### P2 R reference re-runs
 - [x] `parity/r/install_r_lib.R` (shiny 1.14.0, testthat 3.3.2, shinytest2 0.5.1, xgboost 1.7.8.1 compiled from the CRAN archive without extra flags) + `sessionInfo` saved to `parity/r_outputs/session_install.txt`; pins in `parity/r/r_packages.lock.csv`. xgboost smoke test passes. R 4.5.3 on this machine.
-- [ ] `PATCHES.md` (local paths, no `download.file`, export hooks only)
+- [x] `parity/r/PATCHES.md` generated from the real diffs (`make_patches_md.sh`): Explorer none; STA303 11 hook chunks; JSC370 2 data patches + 3 hooks. No modelling line changed.
 - [x] Explorer (R part): 28/28 analytical checks; both `testServer` module modes pass (source has no committed shinytest2 browser suite: a browser check is a P6 item); RDS rebuild byte-identical across two runs (md5 72d62cfd…, no original RDS exists to compare); `fixtures.json` 2,565 cases / 2.37 MB (seed 303313, 100 with full arrays and CSV); VALIDATION.md values reproduced: 566/563, 702/697, 8,455; smallest radius-boundary gap 3.2e-5 m; events (25,242) with hex-double coordinates in `events_hex.csv.gz`. Run: `bash parity/r/run_explorer.sh`, `Rscript parity/r/explorer_fixtures.R`.
 - [x] STA303: knit twice with 11 export hooks; all exports and the HTML are byte-identical across the two knits; n = 174,976 (33,919 robbery); AIC keeps 6/6 terms, BIC keeps 4; AUC 0.597875; `foldid` rebuilt with `set.seed(123); sample(rep(1:10, length = n))` and matches `cv.glmnet` to 2e-16. Exports in `parity/r_outputs/sta303/` (3.8 MB, large files xz); run: `bash parity/r/run_sta303.sh`, then `collect_exports.sh`, `sta303_foldid.R`.
-- [ ] JSC370: knit with xgboost; collation experiment; train/test frames + predictions + hyperparameters exported
-- [ ] PARITY.md: published vs re-run table for JSC370
+- [x] JSC370: full knit with xgboost 1.7.8.1 (caret default 108-combo grid) twice, identical exports; `en_CA` and `C` collation both reproduce the published split (848 test robberies of 4,984); train/test frames, predictions, matrices, hyperparameters exported to `parity/r_outputs/jsc370/`. Run: `bash parity/r/run_jsc370.sh full en_CA`, then `collect_exports.sh`.
+- [x] `parity/PARITY.md`: JSC370 published vs re-run: all 30 metrics equal at 7 dp (max diff 0.0), 4 printed matrices equal. Sections for STA303, Explorer and determinism added.
 
 ### P3 Shared Python pipeline
 - [ ] `io`, `schema`, `definitions`, `features`
@@ -140,6 +140,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | P0 | Inventoried all 3 originals (read-only); 4 decisions answered; plan stress-tested and revised; plan files written | Q5, then P1 |
 | 2026-10-29 | Resume preflight | Read rules and resume state; checked Git, hostname and prerequisites; recorded fresh-machine blockers | Q5 approval and R/tectonic prerequisite decision, then P1 |
 | 2026-10-29 | P1 | Q5 and R/tectonic approvals recorded; local Git/checkpoints; pinned read-only references; locked env and Chromium; verified raw inputs; publisher licences; 3 inventories; 4 spikes passed | P2 pinned R dependencies and cached reference reruns |
+| 2026-10-29 | P2 | Pinned R library (shiny 1.14.0, xgboost 1.7.8.1); Explorer 28/28, RDS byte-identical, 2,565 fixtures; STA303 n = 174,976, identical double knit, foldid verified; JSC370 reproduces the published table exactly, identical double knit; PATCHES.md, PARITY.md | Q8, then P3 |
 
 ## P1 verification notes
 
