@@ -59,6 +59,9 @@ hooks <- list(
     "cal <- unclass(cross.calib)",
     "wcsv(as.data.frame(matrix(as.numeric(cal), nrow = nrow(cal), dimnames = dimnames(cal))), 'calibration_matrix')",
     "wtext(capture.output(print(cross.calib)), 'calibration_printed')",
+    "pr <- attr(cross.calib, 'predicted'); cm <- unclass(cross.calib)",
+    "err <- pr - approx(cm[, 'predy'], cm[, 'calibrated.corrected'], xout = pr, ties = mean)$y",
+    "wjson(list(n = length(pr), mean_abs_error = mean(abs(err)), mean_squared_error = mean(err^2), q90_abs_error = unname(quantile(abs(err), 0.9))), 'calibration_errors')",
     "wjson(list(method = 'crossvalidation', B = 10, dim = dim(cal), seed_note = 'set.seed(123) at the LASSO chunk is the last RNG use before calibrate()'), 'calibration_meta')")),
   list(anchor = "text(0.7, 0.4, label = paste(\"AUC = \", round(auc(roc_logit), 2)))", id = "roc", code = c(
     "wjson(list(levels = roc_logit$levels, direction = roc_logit$direction, auc = as.numeric(auc(roc_logit)),",

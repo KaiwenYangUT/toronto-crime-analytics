@@ -18,3 +18,5 @@ line-length = 100
 [tool.pytest.ini_options]
 testpaths = ["pipeline/tests"]
 pythonpath = ["pipeline/src"]
+addopts = "-m \"not slow\""
+markers = ["slow: minutes-long parity runs (LASSO cross-validation, ablations); run with -m slow"]

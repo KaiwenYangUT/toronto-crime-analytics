@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P4 Faithful ports (started; 4a first, 4c waits for Q2) |
-| In progress | P4a Explain port, step 1: GLM + summary, GVIF, stepwise AIC/BIC, LRT, influence (DFBETAS/DFFITS/Cook/working residuals) in `pipeline/src/tca/explain/sta303_port.py`, compared with `parity/r_outputs/sta303/` \| started 2026-10-29 \| files: pipeline/src/tca/explain/, parity/compare/compare_sta303_model.py, pipeline/tests/ \| machine: Kevins-iMac.local \| scope note: working inline (no subagents); chart specs (Vega-Lite) belong to P5 figure-specs, P4 compares chart aggregates; 4c blocked on Q2 |
+| In progress | P4b Predict port: GLM (aliased column), tree, bagging, RF, GBM, XGBoost on R's exported train/test frames at R's hyperparameters, in `pipeline/src/tca/predict/jsc370_port.py` \| started 2026-10-29 \| files: pipeline/src/tca/predict/, parity/compare/compare_jsc370_models.py, pipeline/tests/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
-| Next action | Read only PLAN.md P4. Start 4a (Explain port) and 4b (Predict port); 4d tokens/palette; 4c waits for Q2 (STA313 team credit and consent) |
+| Next action | 4b Predict port, then 4d tokens/palette, chart checklist, PARITY.md fill, 4c when Q2 is answered |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -98,7 +98,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] pytest green (24 tests, ruff clean); code review (/code-review high, 9 findings): fixed R-collation fallback and global setlocale, unique-key check in the merge-order port, spelling-fix test, missing-neighbourhood handling, empty-file manifest, duplicate subset label, dead code; skipped the shared legacy-wrangling refactor and rebuild caching as low-value. All three parity comparisons PASS.
 
 ### P4 Faithful ports
-- [ ] 4a Explain port: all items in PLAN.md §5 P4 within tolerance
+- [x] 4a Explain port (numeric outputs), `pipeline/src/tca/explain/{sta303_port,lasso}.py`, report `parity/reports/sta303_port.json`, tests `pipeline/tests/test_sta303_port.py`. Observed vs R: full-model coefficients/SE/z 7e-14, deviance/AIC/BIC 1e-15, GVIF 3e-15, AIC 6/6 and BIC 4 terms equal, LRT chi2 2e-10, DFBETAS max 5e-10 and DFFITS/Cook 6e-8 (float32 export), all top-20 index lists equal, ROC and AUC 1e-12 (label 0.60 equal), lrm stats 1e-12, Gaussian table 1e-12, apparent calibration 7e-12, bias-corrected curve 0.0044 (tolerance 0.02), printed calibration stats 5.7e-5 (tolerance 1e-3), LASSO: same 44-value path, lambda.min equal, coefficients 2.4e-5, linear predictor 2.6e-5, Covid contrast 2.5e-6, zero pattern equal, cvm 3.7e-5. Chart aggregates (Vega-Lite specs) deferred to the figure phase. Deviations: own R-faithful IRLS instead of statsmodels GLM (R's epsilon-1e-8 stop and last-iteration weights drive SE/influence); own proximal-Newton coordinate descent for glmnet; glmnet early-stop rule matched empirically (absolute 1e-5 gain).
 - [ ] 4b Predict port: GLM confusion matrix exact; others within tolerance; tier partition identical
 - [ ] 4c Explore engine (TS) + legacy bundle; 100% of fixtures exact (needs Q2)
 - [ ] 4d Design tokens + Vega theme + palette validation report
