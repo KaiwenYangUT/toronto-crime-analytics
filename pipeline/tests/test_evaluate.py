@@ -4,7 +4,7 @@ from tca.predict import evaluate as ev
 
 def test_f1_from_counts_undefined_is_nan():
     assert np.isnan(ev.f1_from_counts(np.array(0), np.array(0), np.array(0)))
-    assert ev.f1_from_counts(np.array(2), np.array(1), np.array(1)) == 0.5
+    assert ev.f1_from_counts(np.array(2), np.array(1), np.array(1)) == 4 / 6
 
 
 def test_bootstrap_indices_are_seeded_and_shared():
