@@ -7,8 +7,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P1 Setup and inventory (started) |
 | In progress | — |
 | Last sitting | 2026-10-29 (Codex P1 setup) |
-| Next action | Clone pinned references and create the project-local environment; resolve R/tectonic prerequisites before dependent checks |
-| Blockers | Q5 approved; setup may proceed. This machine has R 4.3.2 and no runnable tectonic on PATH; required prerequisites need user action or approval before installation. Q2 blocks P4c. Q1 blocks P9 |
+| Next action | Create the project-local environment and run independent inventory agents; resolve R/tectonic prerequisites before dependent checks |
+| Blockers | Q5 approved; setup may proceed. This machine has R 4.3.2 and no runnable tectonic on PATH; R/tectonic system installation is now separately approved if needed; other outside-folder installs remain unapproved. Q2 blocks P4c. Q1 blocks P9 |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -25,7 +25,8 @@ Add a row whenever work moves to a different machine or app.
 - This preflight update cannot yet be committed: the plan places local Git initialization after Q5. Include it in the first P1 commit after approval.
 
 ## Decisions (answered by the user)
-- 2026-10-29: Q5 approved: R/PyPI/npm packages, Playwright Chromium and a Protomaps extract may download/install inside this project only. No approval for system-wide installs, push, deployment or deletion.
+- 2026-10-29: User separately approved installing/upgrading R ≥4.5 and tectonic outside the project if a project-local setup is unavailable. This does not authorize other outside-folder installations (for example libomp).
+- 2026-10-29: Q5 approved: R/PyPI/npm packages, Playwright Chromium and a Protomaps extract may download/install inside this project only. No approval for push, deployment or deletion; R/tectonic system installation was authorized separately below.
 - 2026-10-29: the JSC370 reference is `feat/eda-visual-refresh` @ 4af4309. The stale root `visual.html` is ignored.
 - 2026-10-29: the JSC370 parity reference is a fresh R re-run in a pinned environment, with tier-based ranking. Published numbers are recorded alongside.
 - 2026-10-29: original captions the data contradicts are kept in the port and flagged in PARITY.md, then corrected in P5 and logged in CHANGES.md.
@@ -60,7 +61,7 @@ Add a row whenever work moves to a different machine or app.
 ### P1 Setup and inventory
 - [x] Q5 answered: user approved project-local downloads and installations, 2026-10-29
 - [x] `git init` (local `main`), `.editorconfig`, first commit (`.gitignore` already exists)
-- [ ] Clone both repos into `_reference/` at the agreed SHAs (Robbery `feat/eda-visual-refresh` @ 4af4309; Explorer @ dd5d689), then `chmod -R a-w _reference`
+- [x] Pinned references cloned and checked out detached: Robbery `4af4309b904f853fefe5ca84cce6d53d2820a588`; Explorer `dd5d689e6a9e83e09f64de0b12d77d30793c6356`; STA303 copy matches root. `_reference/` made read-only; provenance in `parity/references.json`.
 - [ ] `make env`: `.venv` (locked deps), `.r-lib`, `web/` scaffold, caches in `./.cache`
 - [ ] `data/manifest.json` + `make data` with checksum verification
 - [ ] `DATA_LICENSE.md` (TPS + City of Toronto terms verified)

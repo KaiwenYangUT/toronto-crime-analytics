@@ -1,0 +1,16 @@
+{
+  "robbery": {
+    "path": "_reference/robbery",
+    "remote": "https://github.com/KaiwenYangUT/Robbery_Crime_Classification.git",
+    "commit": "4af4309b904f853fefe5ca84cce6d53d2820a588"
+  },
+  "explorer": {
+    "path": "_reference/explorer",
+    "remote": "https://github.com/KaiwenYangUT/toronto-crime-explorer.git",
+    "commit": "dd5d689e6a9e83e09f64de0b12d77d30793c6356"
+  },
+  "sta303": {
+    "path": "_reference/STA303_Final_Report.Rmd",
+    "sha256": "0981541bc5a439de9f71371dddde4ce39d11a4963a48508fec8c020fba0c2b6a"
+  }
+}
