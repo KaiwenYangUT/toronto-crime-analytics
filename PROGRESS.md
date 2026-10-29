@@ -4,11 +4,11 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P4 Faithful ports (started; 4a first, 4c waits for Q2) |
+| Current phase | P4 Faithful ports: 4a, 4b, 4d done; chart checklist and 4c outstanding; parity gate waits for the user's decision on deviations D1-D3 |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
-| Next action | 4b remainder: tier-rule bootstrap (same indices for R and Python predictions), then 4d design tokens/Vega theme/palette validation, chart-aggregate checklist, PARITY.md fill; 4c waits for Q2; ask the user to accept the two 4b deviations |
-| Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
+| Next action | (1) Ask the user to accept or reject deviations D1-D3 (PARITY.md section 5) and answer Q2. (2) R-side export of chart aggregates (JSC370 EDA widgets by neighbourhood, Explorer charts), then `compare_charts.py`. (3) Python CV-selected hyperparameter row (4b). (4) 4c Explore engine after Q2. (5) Tag `parity-pass` only after (1)-(4) |
+| Blockers | Q2 blocks 4c; D1-D3 need the user's written acceptance before the `parity-pass` tag; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -101,7 +101,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] 4a Explain port (numeric outputs), `pipeline/src/tca/explain/{sta303_port,lasso}.py`, report `parity/reports/sta303_port.json`, tests `pipeline/tests/test_sta303_port.py`. Observed vs R: full-model coefficients/SE/z 7e-14, deviance/AIC/BIC 1e-15, GVIF 3e-15, AIC 6/6 and BIC 4 terms equal, LRT chi2 2e-10, DFBETAS max 5e-10 and DFFITS/Cook 6e-8 (float32 export), all top-20 index lists equal, ROC and AUC 1e-12 (label 0.60 equal), lrm stats 1e-12, Gaussian table 1e-12, apparent calibration 7e-12, bias-corrected curve 0.0044 (tolerance 0.02), printed calibration stats 5.7e-5 (tolerance 1e-3), LASSO: same 44-value path, lambda.min equal, coefficients 2.4e-5, linear predictor 2.6e-5, Covid contrast 2.5e-6, zero pattern equal, cvm 3.7e-5. Chart aggregates (Vega-Lite specs) deferred to the figure phase. Deviations: own R-faithful IRLS instead of statsmodels GLM (R's epsilon-1e-8 stop and last-iteration weights drive SE/influence); own proximal-Newton coordinate descent for glmnet; glmnet early-stop rule matched empirically (absolute 1e-5 gain).
 - [~] 4b Predict port (point metrics), `pipeline/src/tca/predict/jsc370_port.py`, report `parity/reports/jsc370_port.json`, tests `pipeline/tests/test_jsc370_port.py`. GLM: confusion matrix identical, coefficients 1e-11, aliased term the same. GBM: matrix identical. Bagging TP 408/407 FP 187/190, RF TP 383/380 FP 111/112 (within tolerance). XGBoost: judged on the mean of 10 pre-declared seeds (SEED..SEED+9): TP 215 vs 199, FP 123 vs 133, F1 .363 vs .337 (within); the single SEED fit (TP 232) is outside, seed luck. DEVIATIONS needing the user's acceptance: (1) tree test TP 83 vs R 71 (tolerance 10; FP and F1 within), 12 leaves vs 8, pruned at R's cp on a scikit-learn tree with response-rate-ordered factors; other encodings tried (alphabetical codes: TP 76 FP 38; 8-leaf best-first; one-hot) all differ somewhere; (2) RF top-3 importance has Hour where R has Premises_Type (0.115 vs 0.113, near tie); bagging top-3 equal; with response-rate factor ordering RF's top 3 match but RF FP is 135 (R 112). Tier rule (paired bootstrap, 1,000 reps, shared indices): identical partition for R and Python, {RF, Bagging} > {XGBoost} > {Tree} > {GBM, GLM}. Still open for 4b: Python's own CV-selected hyperparameter row (planned as a separate labelled row) and chart aggregates (varImp, ROC, tree plots).
 - [ ] 4c Explore engine (TS) + legacy bundle; 100% of fixtures exact (needs Q2)
-- [ ] 4d Design tokens + Vega theme + palette validation report
+- [x] 4d Design tokens + Vega theme + palette validation: `design/tokens.json`, generated `web/src/styles/tokens.css`, `design/vega-theme.json`, `paper/generated/colors.tex` (`python tools/gen_tokens.py [--check]`), `tools/check_palette.py` (port of the dataviz validator, tested against it) -> `design/palette-validation.md`. All pairs compared: no FAIL in either mode, dark has no warnings, light has one CVD floor-band warning (B&E vs Theft over, 7.6) covered by markers/labels. Bicycle theft is now deep magenta (ochre failed 1.8 vs Robbery); logged as restyle D4 in PARITY.md. `design/search_slot.py` documents the candidate search. DESIGN.md prose still to write in P6.
 - [ ] Chart checklist (`compare_charts.py`) green; mismatched messages flagged
 - [ ] PARITY.md all green or deviations accepted → commit + local tag `parity-pass`
 
@@ -143,6 +143,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | P1 | Q5 and R/tectonic approvals recorded; local Git/checkpoints; pinned read-only references; locked env and Chromium; verified raw inputs; publisher licences; 3 inventories; 4 spikes passed | P2 pinned R dependencies and cached reference reruns |
 | 2026-10-29 | P2 | Pinned R library (shiny 1.14.0, xgboost 1.7.8.1); Explorer 28/28, RDS byte-identical, 2,565 fixtures; STA303 n = 174,976, identical double knit, foldid verified; JSC370 reproduces the published table exactly, identical double knit; PATCHES.md, PARITY.md | Q8, then P3 |
 | 2026-10-29 | P3 | io/schema/definitions/features; explore_legacy, sta303_legacy, jsc370_legacy exact vs R (bit-equal coordinates, R row order reproduced); unified table with ledger and cross-category rule; 24 tests; code review fixed | P4 |
+| 2026-10-29 | P4 | 4a Explain port (all numeric outputs vs R), 4b Predict port (5 of 6 models within tolerance or documented, tier partition identical), 4d tokens + palette validation; PARITY.md sections 1.5, 2.1, 3.1, 5-7 | user decisions on D1-D3 and Q2, then chart aggregates and 4c |
 
 ## P1 verification notes
 
