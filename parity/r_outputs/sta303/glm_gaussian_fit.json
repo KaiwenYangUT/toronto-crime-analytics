@@ -1,0 +1,17 @@
+{
+  "family": "gaussian",
+  "link": "identity",
+  "n": 174976,
+  "df_residual": 174967,
+  "df_null": 174975,
+  "deviance": 26815.7631410945,
+  "null_deviance": 27343.8207697062,
+  "aic": 168385.080610755,
+  "bic": 168485.804651761,
+  "loglik": -84182.5403053773,
+  "iterations": 2,
+  "converged": true,
+  "dispersion": 0.153261833037627,
+  "formula": ["Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + ", "    Month + Season"],
+  "aliased": []
+}

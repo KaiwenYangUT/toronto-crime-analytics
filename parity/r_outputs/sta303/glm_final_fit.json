@@ -1,0 +1,17 @@
+{
+  "family": "binomial",
+  "link": "logit",
+  "n": 174976,
+  "df_residual": 174967,
+  "df_null": 174975,
+  "deviance": 168646.200899072,
+  "null_deviance": 172091.275291858,
+  "aic": 168664.200899072,
+  "bic": 168754.852535978,
+  "loglik": -84323.1004495361,
+  "iterations": 4,
+  "converged": true,
+  "dispersion": 1,
+  "formula": ["Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + ", "    Month + Season"],
+  "aliased": []
+}

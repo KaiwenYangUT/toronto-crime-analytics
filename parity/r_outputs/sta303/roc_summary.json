@@ -1,0 +1,7 @@
+{
+  "levels": ["0", "1"],
+  "direction": "<",
+  "auc": 0.597875118719281,
+  "n_thresholds": 4033,
+  "pROC_version": "1.19.0.1"
+}

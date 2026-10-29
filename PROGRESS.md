@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P2 R reference re-runs (started) |
-| In progress | P2 PATCHES.md and reference runner copies \| started 2026-10-29 \| files: parity/r/PATCHES.md, parity/r/*.R, build/r-work/{explorer,sta303,jsc370}/ \| machine: Kevins-iMac.local \| plan: copy refs to build/r-work, apply minimal patches (local data, no download.file, export hooks), run Explorer first |
+| In progress | P2 remaining: Explorer fixtures (`parity/r/explorer_fixtures.R`, batches cached in build/r-work/explorer_fixtures, resumable) and JSC370 full knit (`bash parity/r/run_jsc370.sh full en_CA`, log .cache/logs/jsc370_full.log), then PARITY.md JSC370 table and PATCHES.md \| started 2026-10-29 \| files: parity/r/, parity/r_outputs/{explorer,jsc370}/, PARITY.md \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local; resumed P2, machine check done) |
 | Next action | Write PATCHES.md and the three patched copies under build/r-work/, then run Explorer (28/28, shinytest, RDS rebuild, fixtures), STA303, JSC370 per PLAN.md section 4 |
 | Blockers | None for P2. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
@@ -84,7 +84,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `parity/r/install_r_lib.R` (shiny 1.14.0, testthat 3.3.2, shinytest2 0.5.1, xgboost 1.7.8.1 compiled from the CRAN archive without extra flags) + `sessionInfo` saved to `parity/r_outputs/session_install.txt`; pins in `parity/r/r_packages.lock.csv`. xgboost smoke test passes. R 4.5.3 on this machine.
 - [ ] `PATCHES.md` (local paths, no `download.file`, export hooks only)
 - [ ] Explorer: 28/28 tests, shinytest, byte-identical RDS rebuild, `fixtures.json`
-- [ ] STA303: knit twice (identical), n = 174,976, foldid reconstruction, exports
+- [x] STA303: knit twice with 11 export hooks; all exports and the HTML are byte-identical across the two knits; n = 174,976 (33,919 robbery); AIC keeps 6/6 terms, BIC keeps 4; AUC 0.597875; `foldid` rebuilt with `set.seed(123); sample(rep(1:10, length = n))` and matches `cv.glmnet` to 2e-16. Exports in `parity/r_outputs/sta303/` (3.8 MB, large files xz); run: `bash parity/r/run_sta303.sh`, then `collect_exports.sh`, `sta303_foldid.R`.
 - [ ] JSC370: knit with xgboost; collation experiment; train/test frames + predictions + hyperparameters exported
 - [ ] PARITY.md: published vs re-run table for JSC370
 

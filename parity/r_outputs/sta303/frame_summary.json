@@ -1,0 +1,14 @@
+{
+  "n": 174976,
+  "robbery": 33919,
+  "other": 141057,
+  "by_category": {
+    "Auto Theft": 58434,
+    "Break and Enter": 70143,
+    "Robbery": 33919,
+    "Theft Over": 12480
+  },
+  "tz": "America/Toronto",
+  "locale": "en_CA.UTF-8/en_CA.UTF-8/en_CA.UTF-8/C/en_CA.UTF-8/en_CA.UTF-8",
+  "covid_levels": ["0", "1"]
+}

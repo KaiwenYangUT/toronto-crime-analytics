@@ -1,0 +1,6 @@
+{
+  "method": "crossvalidation",
+  "B": 10,
+  "dim": [50, 11],
+  "seed_note": "set.seed(123) at the LASSO chunk is the last RNG use before calibrate()"
+}

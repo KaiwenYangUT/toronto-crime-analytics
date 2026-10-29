@@ -1,0 +1,11 @@
+{
+  "contrasts": {
+    "Covid_Outbreak": "contr.treatment",
+    "Season": "contr.treatment"
+  },
+  "xlevels": {
+    "Covid_Outbreak": ["0", "1"],
+    "Season": ["Fall", "Spring", "Summer", "Winter"]
+  },
+  "matrix_cols": ["(Intercept)", "Presence_of_Sunset", "Hour", "Day_Of_Week_Numeric", "Covid_Outbreak1", "Month", "SeasonSpring", "SeasonSummer", "SeasonWinter"]
+}

@@ -1,0 +1,23 @@
+{
+  "dfbetas": {
+    "rows": 174976,
+    "cols": 9,
+    "layout": "row-major float32 little-endian, gzip"
+  },
+  "dffits": {
+    "rows": 174976,
+    "cols": 1,
+    "layout": "row-major float32 little-endian, gzip"
+  },
+  "cooks": {
+    "rows": 174976,
+    "cols": 1,
+    "layout": "row-major float32 little-endian, gzip"
+  },
+  "resid": {
+    "rows": 174976,
+    "cols": 1,
+    "layout": "row-major float32 little-endian, gzip"
+  },
+  "dfbetas_cols": ["(Intercept)", "Presence_of_Sunset", "Hour", "Day_Of_Week_Numeric", "Covid_Outbreak1", "Month", "SeasonSpring", "SeasonSummer", "SeasonWinter"]
+}

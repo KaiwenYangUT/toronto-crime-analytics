@@ -1,0 +1,10 @@
+{
+  "lambda_min": 0.000788496363138781,
+  "lambda_1se": 0.0117089207416416,
+  "x_dim": [174976, 9],
+  "x_cols": ["Presence_of_Sunset", "Hour", "Day_Of_Week_Numeric", "Covid_Outbreak0", "Covid_Outbreak1", "Month", "SeasonSpring", "SeasonSummer", "SeasonWinter"],
+  "glmnet_version": "5.2",
+  "lasso_final_lambda": 0.000788496363138781,
+  "df": 8,
+  "dev_ratio": 0.0199461696892727
+}

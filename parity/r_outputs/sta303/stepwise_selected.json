@@ -1,0 +1,6 @@
+{
+  "aic_terms": ["Presence_of_Sunset", "Hour", "Day_Of_Week_Numeric", "Covid_Outbreak", "Month", "Season"],
+  "bic_terms": ["Presence_of_Sunset", "Hour", "Covid_Outbreak", "Month"],
+  "aic_k": 2,
+  "bic_k": 12.0724041006436
+}

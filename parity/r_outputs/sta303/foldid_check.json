@@ -1,0 +1,9 @@
+{
+  "n": 174976,
+  "lambda_equal": true,
+  "cvm_max_abs_diff": 2.22044604925031e-16,
+  "cvsd_max_abs_diff": 4.33680868994202e-19,
+  "lambda_min_equal": true,
+  "fold_sizes": [17498, 17498, 17498, 17498, 17498, 17498, 17497, 17497, 17497, 17497],
+  "foldid_sha256": "4f58155612a147723577f71ef5eecdcd7654803b9842ea3636e1e9a21e5bad18"
+}
