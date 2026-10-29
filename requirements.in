@@ -1,0 +1,12 @@
+pandas
+pyarrow
+pandera
+statsmodels
+scikit-learn
+xgboost
+scipy
+altair
+vl-convert-python
+pytest
+ruff
+openpyxl

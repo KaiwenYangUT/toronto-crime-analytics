@@ -5,6 +5,8 @@ _reference/
 .venv/
 .r-lib/
 .cache/
+.cache-env-bootstrap.log
+.claude/settings.local.json
 node_modules/
 build/
 
@@ -14,6 +16,11 @@ data/interim/
 
 # build outputs
 web/dist/
+web/build/
+web/.react-router/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
 paper/build/
 
 # OS / editor
