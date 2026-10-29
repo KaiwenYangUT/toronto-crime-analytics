@@ -1,0 +1,131 @@
+# PROGRESS
+
+The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 to checkpoint.
+
+| Field | Value |
+|---|---|
+| Current phase | P1 Setup and inventory (started) |
+| In progress | — |
+| Last sitting | 2026-10-29 (Codex P1 setup) |
+| Next action | Clone pinned references and create the project-local environment; resolve R/tectonic prerequisites before dependent checks |
+| Blockers | Q5 approved; setup may proceed. This machine has R 4.3.2 and no runnable tectonic on PATH; required prerequisites need user action or approval before installation. Q2 blocks P4c. Q1 blocks P9 |
+
+## Machine log
+Add a row whenever work moves to a different machine or app.
+
+| Date | Hostname | App | Phases worked | Produced `results/`? |
+|---|---|---|---|---|
+| 2026-10-29 | (planning laptop) | Claude Code desktop | P0 | no |
+| 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 setup; environment recreation underway | no |
+
+### Resume preflight (Codex, 2026-10-29)
+- `git status` and `git log --oneline -15` both report that this folder is not a Git repository. No interrupted item or existing Git history to reconcile; P1 Git initialization remains unchecked.
+- Machine prerequisites checked: R 4.3.2 (below required 4.5), Python 3.14.6 (Python 3.12 also available), Node 24.13.0, Git present. `tectonic` is not found by `type -a` or at the standard Homebrew paths; invocation failed.
+- `.venv`, `.r-lib`, `.cache`, and `web/` are absent; `_reference/` exists. No downloads or installs attempted because Q5 has no default and remains unanswered.
+- This preflight update cannot yet be committed: the plan places local Git initialization after Q5. Include it in the first P1 commit after approval.
+
+## Decisions (answered by the user)
+- 2026-10-29: Q5 approved: R/PyPI/npm packages, Playwright Chromium and a Protomaps extract may download/install inside this project only. No approval for system-wide installs, push, deployment or deletion.
+- 2026-10-29: the JSC370 reference is `feat/eda-visual-refresh` @ 4af4309. The stale root `visual.html` is ignored.
+- 2026-10-29: the JSC370 parity reference is a fresh R re-run in a pinned environment, with tier-based ranking. Published numbers are recorded alongside.
+- 2026-10-29: original captions the data contradicts are kept in the port and flagged in PARITY.md, then corrected in P5 and logged in CHANGES.md.
+- 2026-10-29: Explore gets exact parity on its 3 categories first, then adds auto theft and B&E.
+
+## Open questions (PLAN.md §13)
+- [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
+- [ ] Q2 STA313 team credit and consent to port
+- [ ] Q3 Licence (MIT default)
+- [ ] Q4 JSC370 Fig 1: 3D scatter becomes a 2D scatter with colour and size
+- [x] Q5 Project-local installs approved 2026-10-29 (system-wide installations remain unapproved)
+- [ ] Q6 Author line; STA303 term and year
+- [ ] Q7 Pointer READMEs in the old repos (outside this folder)
+- [ ] Q8 Outside-folder fallbacks (libomp, Python 3.12), asked only if needed
+
+## Facts from planning (verified read-only, 2026-10-29)
+- **Explorer:** local `~/Desktop/toronto-crime-explorer` equals origin/main @ dd5d689, with no unpushed work.
+- **Raw data:** the Explorer's 3 CSVs are byte-identical (same MD5) to those in the Robbery repo's `data/`.
+- **Coverage:** MCI data covers 2014–2023 (REPORT_YEAR). Auto theft rose from 5,793 (2020) to 12,088 (2023).
+- **Toolchain:**
+  - R 4.5.3 lacks shiny, testthat and shinytest2. caret 7.0.1 + xgboost 3.2.0.1 fails for `xgbTree`.
+  - Python 3.14.3 has none of the analysis packages. There is no uv or conda.
+  - Node 25.6.1 and npm 11.9.0 are present. tectonic 0.17 and pandoc 3.9 are present. gh and Playwright are not installed.
+  - 22 GB of disk is free.
+
+## Checklist
+
+### P0 Plan
+- [x] PLAN.md, PROGRESS.md, AGENTS.md, CLAUDE.md, CHANGES.md, RESULTS.md, RESUME.md, .gitignore
+- [x] Planning notes copied to `_reference/notes/`; STA303 Rmd copied to `_reference/`
+
+### P1 Setup and inventory
+- [x] Q5 answered: user approved project-local downloads and installations, 2026-10-29
+- [x] `git init` (local `main`), `.editorconfig`, first commit (`.gitignore` already exists)
+- [ ] Clone both repos into `_reference/` at the agreed SHAs (Robbery `feat/eda-visual-refresh` @ 4af4309; Explorer @ dd5d689), then `chmod -R a-w _reference`
+- [ ] `make env`: `.venv` (locked deps), `.r-lib`, `web/` scaffold, caches in `./.cache`
+- [ ] `data/manifest.json` + `make data` with checksum verification
+- [ ] `DATA_LICENSE.md` (TPS + City of Toronto terms verified)
+- [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
+- [ ] `parity/inventory/{jsc370,sta303,explorer}.md` (3 inventory agents)
+- [ ] Tool versions recorded here
+
+### P2 R reference re-runs
+- [ ] `parity/r/install_r_lib.R` (shiny, testthat, shinytest2, xgboost 1.7.8.1) + `sessionInfo` saved
+- [ ] `PATCHES.md` (local paths, no `download.file`, export hooks only)
+- [ ] Explorer: 28/28 tests, shinytest, byte-identical RDS rebuild, `fixtures.json`
+- [ ] STA303: knit twice (identical), n = 174,976, foldid reconstruction, exports
+- [ ] JSC370: knit with xgboost; collation experiment; train/test frames + predictions + hyperparameters exported
+- [ ] PARITY.md: published vs re-run table for JSC370
+
+### P3 Shared Python pipeline
+- [ ] `io`, `schema`, `definitions`, `features`
+- [ ] `explore_legacy` == `crime.rds` (exact, float64 bit-equal)
+- [ ] `sta303_legacy` == R model frame (exact)
+- [ ] `jsc370_legacy` == R `final_data` (multiset exact)
+- [ ] `unified` table + cross-category duplicate count + rule
+- [ ] pytest green; code review
+
+### P4 Faithful ports
+- [ ] 4a Explain port: all items in PLAN.md §5 P4 within tolerance
+- [ ] 4b Predict port: GLM confusion matrix exact; others within tolerance; tier partition identical
+- [ ] 4c Explore engine (TS) + legacy bundle; 100% of fixtures exact (needs Q2)
+- [ ] 4d Design tokens + Vega theme + palette validation report
+- [ ] Chart checklist (`compare_charts.py`) green; mismatched messages flagged
+- [ ] PARITY.md all green or deviations accepted → commit + local tag `parity-pass`
+
+### P5 Improvements
+- [ ] STA303 v2 (items 1–9 in PLAN.md §5.1)
+- [ ] Compute-budget measurement on a 10% sample
+- [ ] Ablation ladder L0–L5 + no-premises, grouped CV + temporal holdout, CIs, leakage tests
+- [ ] XGBoost grid fix, seeds, caption corrections
+- [ ] Inference vs prediction comparison
+- [ ] CHANGES.md complete; RESULTS.md complete; hashes identical across two runs
+
+### P6 Website
+- [ ] Shell, design-system components, theme toggle
+- [ ] Pages: Explore → Predict → Explain → Overview → Methods → Paper → About
+- [ ] Explore v2 categories, URL state, parity suite in CI
+- [ ] Budgets, axe, Lighthouse, 10-second test; design review after each page
+
+### P7 Paper
+- [ ] `\res{}` macros, generated tables, Vega-Lite PDF figures
+- [ ] ≤ 7 pages (draft ≤ 6.3), fonts embedded, no literal numerals
+
+### P8 Review loop
+- [ ] Honesty audit: 0 unmatched
+- [ ] Design review pass 2 resolved
+- [ ] Code and security review
+- [ ] Fresh-checkout `make all` in `build/fresh/` gives identical hashes
+
+### P9 Release (ask before each step)
+- [ ] README, LICENSE, DATA_LICENSE
+- [ ] Ask → git push
+- [ ] Ask → enable and deploy GitHub Pages
+- [ ] List suggested old-repo pointer READMEs for the user
+
+## Sitting log
+| Date | Phase | Done | Next |
+|---|---|---|---|
+| 2026-10-29 | P0 | Inventoried all 3 originals (read-only); 4 decisions answered; plan stress-tested and revised; plan files written | Q5, then P1 |
+| 2026-10-29 | Resume preflight | Read rules and resume state; checked Git, hostname and prerequisites; recorded fresh-machine blockers | Q5 approval and R/tectonic prerequisite decision, then P1 |
+
+- P1 checkpoint: Q5 recorded, local `main` initialized, `.editorconfig` added; initial commit includes the existing planning files and the resume preflight. No remote configured.

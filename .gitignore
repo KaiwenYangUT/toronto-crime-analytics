@@ -1,0 +1,25 @@
+# read-only originals and notes (never committed)
+_reference/
+
+# machine-specific environments and caches
+.venv/
+.r-lib/
+.cache/
+node_modules/
+build/
+
+# data (fetched and verified by `make data`)
+data/raw/
+data/interim/
+
+# build outputs
+web/dist/
+paper/build/
+
+# OS / editor
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+__pycache__/
+*.pyc

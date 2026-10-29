@@ -1,0 +1,367 @@
+---
+title: "STA303 Final Project Code"
+output: html_document
+author: Kaiwen Yang
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+- Read Data
+```{r echo = FALSE, message=FALSE}
+# Load required libraries
+library(dplyr)
+
+# Use the repository's local data. Override CRIME_DATA_DIR if the repo moves.
+data_dir <- Sys.getenv(
+  "CRIME_DATA_DIR",
+  unset = path.expand("~/Desktop/Projects/Robbery_Crime_Classification/data")
+)
+files <- c(
+  "Auto_Theft_Open_Data.csv",
+  "Bicycle_Thefts_Open_Data.csv",
+  "Break_and_Enter_Open_Data.csv",
+  "Homicides_Open_Data_(ASR-RC-TBL-002).csv",
+  "Robbery_Open_Data.csv",
+  "Shooting_and_Firearm_Discharges_Open_Data.csv",
+  "Theft_Over_Open_Data.csv"
+)
+data_paths <- file.path(data_dir, files)
+missing_files <- data_paths[!file.exists(data_paths)]
+if (length(missing_files)) {
+  stop("Missing crime data. Set CRIME_DATA_DIR to the repository's data folder. Missing: ",
+       paste(missing_files, collapse = ", "))
+}
+datasets <- lapply(data_paths, read.csv)
+
+# Combine datasets into one
+crime <- bind_rows(datasets, .id = "Dataset")
+```
+
+- Create Variables, turn them into efficient form.
+```{r echo=FALSE}
+# - Create a indicator variable Robbery
+crime <- crime %>%
+  mutate(Robbery = MCI_CATEGORY == "Robbery")
+
+# - Transform OCC_MONTH into int
+# Create new column OCC_Month_Numeric that transform chr OCC_MONTH into int.
+crime$OCC_Month_Numeric <- match(crime$OCC_MONTH, month.name)
+
+# - Create a new column Occurence_Time with the transformation of OCC_YEAR, OCC_MONTH, OCC_DAY and OCC_HOUR.
+
+crime$Occurrence_Time <- as.POSIXct(paste(crime$OCC_YEAR, crime$OCC_Month_Numeric, crime$OCC_DAY, crime$OCC_HOUR, sep="-"), format="%Y-%m-%d-%H")
+
+#- Convert Day of the Week to numeric representation
+crime$Day_Of_Week_Numeric <- match(weekdays(crime$Occurrence_Time), c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+# - Keep only necessary columns and rename them
+crime <- crime[, c("MCI_CATEGORY", "Robbery", "Occurrence_Time","OCC_YEAR", "OCC_Month_Numeric", "Day_Of_Week_Numeric", "OCC_HOUR", "NEIGHBOURHOOD_158", "LOCATION_TYPE", "PREMISES_TYPE", "LONG_WGS84", "LAT_WGS84")]
+colnames(crime) <- c("Crime_Category","Robbery", "Occurrence_Time", "Year", "Month", "Day_Of_Week_Numeric", "Hour", "Neighbourhood", "Location_Type", "Premises_Type", "Longitude", "Latitude")
+
+# - Create a new variable Season by grouping the month
+# Create Variable Season and Summary
+get_season <- function(month) {
+  if (month %in% c(3, 4, 5)) {
+    return("Spring")
+  } else if (month %in% c(6, 7, 8)) {
+    return("Summer")
+  } else if (month %in% c(9, 10, 11)) {
+    return("Fall")
+  } else {
+    return("Winter")
+  }
+}
+
+# Add a new column for season based on Month
+crime$Season <- sapply(crime$Month, get_season)
+
+# - Create a new column Darkness, indicating whether the time is after sunset but before sunrise
+
+# Define average sunset and sunrise times in Toronto (example times)
+average_sunset_time <- 18
+average_sunrise_time <- 6
+
+# Create the indicator variable
+crime$Presence_of_Sunset <- ifelse(crime$Hour >= average_sunset_time | crime$Hour < average_sunrise_time, 1, 0)
+
+# - Create new dataset crime_2020 by filtering crime happened in the year of 2020
+
+# Keep only year = 2020
+crime_2020 <- subset(crime, Year == 2020)
+# Define the breaks for creating categories
+breaks <- c(0, 2019, Inf)  # Adjust breaks as needed
+
+# Create categorical variable 'Year_Category' based on 'Year'
+crime$Covid_Outbreak <- cut(crime$Year, breaks = breaks, labels = c(0, 1))
+
+```
+
+```{r echo=FALSE}
+# - Cleaning the dataset first by removing crime with non-recorded neighbourhood
+crime_2020 <- subset(crime_2020, Neighbourhood != "NSA")
+crime <- crime[complete.cases(crime), ]
+crime$Robbery <- ifelse(crime$Robbery == "FALSE", 0, 1)
+```
+
+```{r}
+head(crime)
+```
+
+
+# Method
+- Full Model
+```{r}
+model <- glm(Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season, family = binomial(link = logit), data = crime)
+
+# View the summary of the model to see the coefficients and statistics.
+summary(model)
+```
+- VIF: Before selecting the model stepwisely, I applied VIF to check for multicollinearity within the predictors. For Presence_of_Sunset, Hour, Day_Of_Week_Numeric and Year, both GVIF and VIF^(1/(2*Df)) are really close to 1 indicating no significant multicollinearity issues. While for predictor Month and Season, GVIF is higher compared to other variables, at around 1.84, suggesting some level of multicollinearity, while this phenomenon is reasonable since we created the variable Season merely based on Month, and thus exsits a moderate issue in multicollinearity.
+```{r}
+library(car)
+
+
+vif_values <- vif(model)
+
+# Convert to data frame for nicer printing
+vif_dataframe <- data.frame(VIF = vif_values)
+
+# Load the knitr package
+library(knitr)
+
+# Create a nicely formatted table with kable
+kable(vif_dataframe, caption = "Table of Variance Inflation Factors", col.names = c("GVIF", "Df", "GVIF^(1/(2*Df))"))
+```
+```{r}
+vif(model)
+```
+
+- Stepwise elimination based on AIC: "Presence_of_Sunset", "Hour", "Day_Of_Week_Numeric", "Covid_Outbreak", "Month", "Season", which keeps all predictors.
+```{r, eval=TRUE, echo = T}
+## Stepwise elimination based on AIC ##
+sel.var.aic <- step(model, trace = 0, k = 2, direction = "both") 
+select_var_aic <- attr(terms(sel.var.aic), "term.labels")   
+select_var_aic
+```
+- Stepwise elimination based on BIC, wich eliminate "Day_Of_Week_Numeric" and "Season" 
+```{r, eval=TRUE, echo = T}
+## Stepwise elimination based on BIC ##
+sel.var.bic <- step(model, trace = 0, k = log(nrow(crime)), direction = "both") 
+select_var_bic<-attr(terms(sel.var.bic), "term.labels")   
+select_var_bic
+```
+
+
+```{r}
+# install.packages("glmnet")
+```
+- LASSO Regularization
+```{r}
+# Load the necessary library
+library(glmnet)
+
+# Preparing the data
+# Assuming 'crime' is your dataset and 'Robbery' is your response variable
+x <- model.matrix(~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season - 1, data = crime) # -1 to exclude intercept
+y <- crime$Robbery
+
+# Since 'Season' is a categorical variable, make sure it's properly handled
+# This is done inside model.matrix()
+
+# Fit the LASSO model using cross-validation to find optimal lambda
+set.seed(123) # For reproducibility
+cv_out <- cv.glmnet(x, y, family = "binomial", alpha = 1)
+
+# Plot the cross-validation result to see the lambda value performance
+plot(cv_out)
+
+# Extract the best lambda value
+best_lambda <- cv_out$lambda.min
+
+# Fit the final model using the selected lambda
+lasso_final <- glmnet(x, y, family = "binomial", alpha = 1, lambda = best_lambda)
+
+# Display the coefficients of the final model
+print(coef(lasso_final))
+
+# You might want to interpret the results, noting which variables have been retained (non-zero coefficients) and which have been shrunk towards zero (and thus excluded by the LASSO).
+
+
+```
+- Likelihood Ratio Test
+```{r}
+library(lmtest)
+
+## Likelihood ratio test
+
+### Model with AIC model ###
+logit.aic <- glm(Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season, family = binomial, data = crime)
+
+### Model with BIC model ###
+logit.bic <- glm(Robbery ~ Presence_of_Sunset + Hour + Covid_Outbreak + Month, family = binomial, data = crime)
+
+### The LRT ###
+lrtest(logit.bic, logit.aic)
+```
+- Final Model (AIC selected)
+```{r}
+model <- glm(Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season, family = binomial(link = logit), data = crime)
+```
+
+# Model Diagnostic
+
+```{r diagnostic-style, include=FALSE}
+# A restrained, consistent style for the diagnostic figures only.
+diagnostic_style <- function() {
+  par(mar = c(4.2, 4.6, 3, 1), las = 1, bty = "l",
+      col.axis = "#59636E", col.lab = "#374151", col.main = "#253344",
+      cex.axis = 0.85, cex.lab = 0.95, cex.main = 1.05,
+      mgp = c(2.8, 0.7, 0), tcl = -0.25)
+}
+diagnostic_blue <- adjustcolor("#437C9B", alpha.f = 0.35)
+```
+
+### Coefficient influence (DFBETAS)
+```{r diagnostic-dfbetas, echo=FALSE, fig.width=9, fig.height=7, dpi=140, out.width="100%"}
+dfbetas <- dfbetas(model)
+local({
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  diagnostic_style()
+  par(mfrow = c(3, 3), mar = c(3.1, 3.6, 2.2, 0.7),
+      mgp = c(2.1, 0.6, 0), cex = 0.85)
+  coefficient_labels <- c("Intercept", "Nighttime indicator", "Hour",
+                          "Day of week", "Post-2019 indicator", "Month",
+                          "Spring", "Summer", "Winter")
+  for (j in seq_len(ncol(dfbetas))) {
+    plot(dfbetas[, j], pch = 16, cex = 0.3, col = diagnostic_blue,
+         xlab = "Observation", ylab = "DFBETAS",
+         main = coefficient_labels[j])
+    abline(h = 0, col = "#9CA3AF", lty = 2)
+  }
+})
+```
+
+### Influence on fitted values (DFFITS)
+```{r diagnostic-dffits, fig.width=8, fig.height=4.5, dpi=140, out.width="100%"}
+dffits <- dffits(model)
+local({
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  diagnostic_style()
+  plot(dffits, pch = 16, cex = 0.35, col = diagnostic_blue,
+       xlab = "Observation", ylab = "DFFITS",
+       main = "Influence on fitted values")
+  abline(h = 0, col = "#9CA3AF", lty = 2)
+})
+```
+
+### Cook’s distance
+```{r diagnostic-cooks, fig.width=8, fig.height=4.5, dpi=140, out.width="100%"}
+cooksd <- cooks.distance(model)
+local({
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  diagnostic_style()
+  plot(cooksd, type = "h", lwd = 0.6, col = diagnostic_blue,
+       xlab = "Observation", ylab = "Cook's distance",
+       main = "Overall observation influence")
+})
+```
+
+### Normal Q–Q plot
+For this binomial model, the Q–Q plot is descriptive; normally distributed residuals are not a model assumption.
+
+```{r diagnostic-qq, fig.width=8, fig.height=4.5, dpi=140, out.width="100%"}
+local({
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  diagnostic_style()
+  qqnorm(model$residuals, pch = 16, cex = 0.4, col = diagnostic_blue,
+         main = "Residual Q–Q plot", xlab = "Theoretical normal quantiles",
+         ylab = "Working residuals")
+  qqline(model$residuals, col = "#B7784C", lwd = 1.5, lty = 2)
+})
+```
+
+```{r}
+library(dplyr)
+crime$Season <- factor(crime$Season)
+crime <- crime %>% mutate(Robbery = as.integer(Robbery))
+```
+
+
+
+# Model validation
+- Calibration
+```{r}
+# install.packages("rms")
+library(rms)
+
+## Fit the model with lrm from rms package ##
+model <- lrm(Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season, data = crime, x =TRUE, y = TRUE, model= T)
+
+```
+
+```{r}
+cross.calib <- calibrate(model, method="crossvalidation", B=10) # model calibration
+# Plot calibration curve
+plot(cross.calib, las = 1, xlab = "Predicted Probability", 
+     main = "Calibration Plot",
+     ylab = "Observed Proportion of Events")
+```
+
+- AUC Curve
+```{r}
+library(pROC)
+p <- predict(model, type = "fitted")
+
+roc_logit <- roc(crime$Robbery ~ p)
+
+# The True Positive Rate
+TPR <- roc_logit$sensitivities
+# The False Positive Rate
+FPR <- 1 - roc_logit$specificities
+
+# Plotting the ROC curve
+plot(FPR, TPR, 
+     xlim = c(0,1), ylim = c(0,1), 
+     type = 'l', lty = 1, lwd = 2, col = 'red',
+     xlab = "False Positive Rate (1 - Specificity)", 
+     ylab = "True Positive Rate (Sensitivity)", 
+     main = "Receiver Operating Characteristic (ROC) Curve")
+
+# Diagonal reference line
+abline(a = 0, b = 1, lty = 2, col = 'blue')
+
+# Adding AUC value as text
+text(0.7, 0.4, label = paste("AUC = ", round(auc(roc_logit), 2)))
+
+```
+```{r}
+# Assuming you have already fitted the model
+model <- glm(Robbery ~ Presence_of_Sunset + Hour + Day_Of_Week_Numeric + Covid_Outbreak + Month + Season, 
+             data = crime)
+
+# Get the summary statistics of the model
+summary_stats <- summary(model)
+
+# Extract coefficients, standard errors, t-values, and p-values
+coefficients <- summary_stats$coefficients[, "Estimate"]
+std_errors <- summary_stats$coefficients[, "Std. Error"]
+t_values <- summary_stats$coefficients[, "t value"]
+p_values <- summary_stats$coefficients[, "Pr(>|t|)"]
+
+# Combine the extracted information into a data frame
+model_summary_df <- data.frame(Coefficient = coefficients,
+                               `Std. Error` = std_errors,
+                               `t value` = t_values,
+                               `Pr(>|t|)` = p_values)
+
+# Load the knitr package
+library(knitr)
+
+# Print the table using kable
+kable(model_summary_df, caption = "Summary of Final Logistic Regression Model",
+      col.names = c("Coeff.", "StdE.", "T.val", "P-val."))
+
+```
