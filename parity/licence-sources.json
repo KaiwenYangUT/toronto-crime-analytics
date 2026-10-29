@@ -1,0 +1,18 @@
+{
+  "verified": "2026-10-29",
+  "tps": {
+    "portal": "https://data.tps.ca/",
+    "licence": "https://data.tps.ca/pages/licence",
+    "page_data": "https://torontops.maps.arcgis.com/sharing/rest/content/items/c4ce7f12e64543888a1c251b730a924b/data?f=json",
+    "page_data_sha256": "6deee788459aab8c56e07362bece871d087b2604e1c7cee324192854f09786f9",
+    "title": "Open Government Licence – Ontario",
+    "version": "1.1",
+    "caveat": "TPS-specific conditions apply; generic Ontario licence alone is insufficient."
+  },
+  "city": {
+    "catalogue": "https://open.toronto.ca/dataset/neighbourhood-profiles/",
+    "licence": "https://open.toronto.ca/open-data-licence/",
+    "title": "Open Government Licence – Toronto",
+    "version": "1.0"
+  }
+}
