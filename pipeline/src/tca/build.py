@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from tca.definitions import (
+    CLASSES,
     EXPLORE_SPEC,
     EXPLORE_START,
     JSC370_YEAR,
@@ -18,7 +19,10 @@ from tca.definitions import (
     LEGACY_ORDER,
     LON_RANGE,
     NSA,
+    POSITIVE,
     RAW_FILES,
+    YEAR_MAX,
+    YEAR_MIN,
 )
 from tca.features import (
     calendar_date,
@@ -399,3 +403,134 @@ def jsc370_legacy(
     out = merged[cols].copy()
     out["Robbery"] = out["Robbery"].astype(bool)
     return out
+
+
+# --- unified table ---------------------------------------------------------------------------
+
+UNIFIED_FILES = {
+    "auto_theft": "Auto Theft",
+    "break_enter": "Break and Enter",
+    "robbery": "Robbery",
+    "theft_over": "Theft Over",
+}
+UNIFIED_COLUMNS = [
+    "event_id",
+    "category",
+    "robbery",
+    "date",
+    "year",
+    "month",
+    "weekday",
+    "hour",
+    "neighbourhood",
+    "neighbourhood_known",
+    "location_type",
+    "premises_type",
+    "longitude",
+    "latitude",
+]
+# Fields that define an exact duplicate row (within a category).
+_RETAINED = [
+    c for c in UNIFIED_COLUMNS if c not in ("year", "month", "weekday", "neighbourhood_known")
+]
+CROSS_CATEGORY_RULES = ("drop_label_conflicts", "keep_all", "drop_all_multi")
+
+
+def unified(
+    raw_dir: Path = RAW_DIR, cross_category: str = "drop_label_conflicts"
+) -> tuple[pd.DataFrame, dict]:
+    """The clean shared table: robbery vs Auto Theft / Break and Enter / Theft Over, occurrence
+    years 2014-2023 (PLAN.md section 2). Returns the table and an exclusion ledger.
+
+    Cross-category rule (an EVENT_UNIQUE_ID can appear in more than one MCI file):
+    ``drop_label_conflicts`` (default) drops every row of an event that has both a Robbery row
+    and a non-Robbery row, because one incident would otherwise be labelled positive and
+    negative. Events spread over several negative categories keep their rows (the binary label
+    is unambiguous) and are counted in the ledger. ``keep_all`` and ``drop_all_multi`` exist
+    to show the effect of the choice."""
+    if cross_category not in CROSS_CATEGORY_RULES:
+        raise ValueError(f"cross_category must be one of {CROSS_CATEGORY_RULES}")
+    ledger: dict = {"steps": [], "cross_category_rule": cross_category}
+
+    def log(step: str, frame: pd.DataFrame) -> None:
+        ledger["steps"].append(
+            {
+                "step": step,
+                "rows": len(frame),
+                "by_category": frame["category"].value_counts().to_dict(),
+            }
+        )
+
+    parts = []
+    for key, label in UNIFIED_FILES.items():
+        raw = read_text_csv(raw_dir / RAW_FILES[key])
+        if set(raw["MCI_CATEGORY"]) != {label}:
+            raise ValueError(f"{RAW_FILES[key]} holds unexpected MCI_CATEGORY values")
+        hour = as_num(raw["OCC_HOUR"], "OCC_HOUR")
+        premises = as_char(raw["PREMISES_TYPE"])
+        parts.append(
+            pd.DataFrame(
+                {
+                    "event_id": as_char(raw["EVENT_UNIQUE_ID"]),
+                    "category": label,
+                    "_year": as_num(raw["OCC_YEAR"], "OCC_YEAR"),
+                    "_month": month_from_name(as_char(raw["OCC_MONTH"])),
+                    "_day": as_num(raw["OCC_DAY"], "OCC_DAY"),
+                    "hour": hour,
+                    "neighbourhood": as_char(raw["NEIGHBOURHOOD_158"]),
+                    "location_type": as_char(raw["LOCATION_TYPE"]),
+                    "premises_type": premises,
+                    "longitude": as_num(raw["LONG_WGS84"], "LONG_WGS84"),
+                    "latitude": as_num(raw["LAT_WGS84"], "LAT_WGS84"),
+                }
+            )
+        )
+    df = pd.concat(parts, ignore_index=True)
+    log("source rows", df)
+
+    df["date"] = calendar_date(df["_year"], df["_month"], df["_day"])
+    df = df[df["date"].notna() & df["_year"].between(YEAR_MIN, YEAR_MAX)].copy()
+    log(f"valid calendar date, occurrence year {YEAR_MIN}-{YEAR_MAX}", df)
+    df = df[df["hour"].isin(range(24)) & df["event_id"].notna() & (df["event_id"] != "")].copy()
+    log("hour 0-23 and event id present", df)
+    present = df["premises_type"].notna() & (df["premises_type"].str.strip() != "")
+    df = df[present].copy()
+    log("premises present", df)
+    inside = df["longitude"].between(*LON_RANGE, inclusive="neither") & df["latitude"].between(
+        *LAT_RANGE, inclusive="neither"
+    )
+    df = df[inside].copy()
+    log("coordinates inside the Toronto box", df)
+
+    df["year"] = df["date"].dt.year.astype("int64")
+    df["month"] = df["date"].dt.month.astype("int64")
+    df["weekday"] = df["date"].dt.isocalendar().day.astype("int64")
+    df["hour"] = df["hour"].astype("int64")
+    df["neighbourhood"] = df["neighbourhood"].fillna(NSA)
+    df["location_type"] = df["location_type"].fillna("Unknown")
+    df["neighbourhood_known"] = df["neighbourhood"] != NSA
+    df["robbery"] = (df["category"] == POSITIVE).astype("int8")
+
+    df = df.drop_duplicates(subset=["category", *_RETAINED]).copy()
+    log("exact duplicates within category removed", df)
+
+    cats = df.groupby("event_id")["category"].agg(["nunique", lambda s: (s == POSITIVE).any()])
+    cats.columns = ["n_categories", "has_robbery"]
+    multi = cats[cats["n_categories"] > 1]
+    has_negative = df.groupby("event_id")["robbery"].min() == 0
+    conflicts = multi.index[multi["has_robbery"] & has_negative.reindex(multi.index)]
+    ledger["cross_category"] = {
+        "events_in_more_than_one_category": len(multi),
+        "events_with_robbery_and_other": len(conflicts),
+        "events_only_among_negative_categories": int(len(multi) - len(conflicts)),
+    }
+    if cross_category == "drop_label_conflicts":
+        df = df[~df["event_id"].isin(conflicts)]
+    elif cross_category == "drop_all_multi":
+        df = df[~df["event_id"].isin(multi.index)]
+    log(f"cross-category rule: {cross_category}", df)
+
+    ledger["events_with_repeated_rows"] = int((df.groupby("event_id").size() > 1).sum())
+    ledger["classes"] = list(CLASSES)
+    df = df.sort_values(["date", "hour", "event_id", "category"], kind="stable", ignore_index=True)
+    return df[UNIFIED_COLUMNS], ledger

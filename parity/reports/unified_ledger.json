@@ -1,0 +1,269 @@
+{
+ "drop_label_conflicts": {
+  "steps": [
+   {
+    "step": "source rows",
+    "rows": 174993,
+    "by_category": {
+     "Break and Enter": 70148,
+     "Auto Theft": 58441,
+     "Robbery": 33921,
+     "Theft Over": 12483
+    }
+   },
+   {
+    "step": "valid calendar date, occurrence year 2014-2023",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "hour 0-23 and event id present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "premises present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "coordinates inside the Toronto box",
+    "rows": 172252,
+    "by_category": {
+     "Break and Enter": 69547,
+     "Auto Theft": 57712,
+     "Robbery": 32864,
+     "Theft Over": 12129
+    }
+   },
+   {
+    "step": "exact duplicates within category removed",
+    "rows": 159780,
+    "by_category": {
+     "Break and Enter": 69265,
+     "Auto Theft": 52401,
+     "Robbery": 26011,
+     "Theft Over": 12103
+    }
+   },
+   {
+    "step": "cross-category rule: drop_label_conflicts",
+    "rows": 159072,
+    "by_category": {
+     "Break and Enter": 69111,
+     "Auto Theft": 52227,
+     "Robbery": 25661,
+     "Theft Over": 12073
+    }
+   }
+  ],
+  "cross_category_rule": "drop_label_conflicts",
+  "cross_category": {
+   "events_in_more_than_one_category": 1580,
+   "events_with_robbery_and_other": 350,
+   "events_only_among_negative_categories": 1230
+  },
+  "events_with_repeated_rows": 1230,
+  "classes": [
+   "Robbery",
+   "Auto Theft",
+   "Break and Enter",
+   "Theft Over"
+  ],
+  "final_rows": 159072,
+  "final_robbery": 25661
+ },
+ "keep_all": {
+  "steps": [
+   {
+    "step": "source rows",
+    "rows": 174993,
+    "by_category": {
+     "Break and Enter": 70148,
+     "Auto Theft": 58441,
+     "Robbery": 33921,
+     "Theft Over": 12483
+    }
+   },
+   {
+    "step": "valid calendar date, occurrence year 2014-2023",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "hour 0-23 and event id present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "premises present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "coordinates inside the Toronto box",
+    "rows": 172252,
+    "by_category": {
+     "Break and Enter": 69547,
+     "Auto Theft": 57712,
+     "Robbery": 32864,
+     "Theft Over": 12129
+    }
+   },
+   {
+    "step": "exact duplicates within category removed",
+    "rows": 159780,
+    "by_category": {
+     "Break and Enter": 69265,
+     "Auto Theft": 52401,
+     "Robbery": 26011,
+     "Theft Over": 12103
+    }
+   },
+   {
+    "step": "cross-category rule: keep_all",
+    "rows": 159780,
+    "by_category": {
+     "Break and Enter": 69265,
+     "Auto Theft": 52401,
+     "Robbery": 26011,
+     "Theft Over": 12103
+    }
+   }
+  ],
+  "cross_category_rule": "keep_all",
+  "cross_category": {
+   "events_in_more_than_one_category": 1580,
+   "events_with_robbery_and_other": 350,
+   "events_only_among_negative_categories": 1230
+  },
+  "events_with_repeated_rows": 1580,
+  "classes": [
+   "Robbery",
+   "Auto Theft",
+   "Break and Enter",
+   "Theft Over"
+  ],
+  "final_rows": 159780,
+  "final_robbery": 26011
+ },
+ "drop_all_multi": {
+  "steps": [
+   {
+    "step": "source rows",
+    "rows": 174993,
+    "by_category": {
+     "Break and Enter": 70148,
+     "Auto Theft": 58441,
+     "Robbery": 33921,
+     "Theft Over": 12483
+    }
+   },
+   {
+    "step": "valid calendar date, occurrence year 2014-2023",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "hour 0-23 and event id present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "premises present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "coordinates inside the Toronto box",
+    "rows": 172252,
+    "by_category": {
+     "Break and Enter": 69547,
+     "Auto Theft": 57712,
+     "Robbery": 32864,
+     "Theft Over": 12129
+    }
+   },
+   {
+    "step": "exact duplicates within category removed",
+    "rows": 159780,
+    "by_category": {
+     "Break and Enter": 69265,
+     "Auto Theft": 52401,
+     "Robbery": 26011,
+     "Theft Over": 12103
+    }
+   },
+   {
+    "step": "cross-category rule: drop_all_multi",
+    "rows": 156603,
+    "by_category": {
+     "Break and Enter": 67953,
+     "Auto Theft": 51519,
+     "Robbery": 25661,
+     "Theft Over": 11470
+    }
+   }
+  ],
+  "cross_category_rule": "drop_all_multi",
+  "cross_category": {
+   "events_in_more_than_one_category": 1580,
+   "events_with_robbery_and_other": 350,
+   "events_only_among_negative_categories": 1230
+  },
+  "events_with_repeated_rows": 0,
+  "classes": [
+   "Robbery",
+   "Auto Theft",
+   "Break and Enter",
+   "Theft Over"
+  ],
+  "final_rows": 156603,
+  "final_robbery": 25661
+ }
+}
