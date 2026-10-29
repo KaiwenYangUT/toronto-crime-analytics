@@ -68,7 +68,7 @@ Add a row whenever work moves to a different machine or app.
 - [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
 - [ ] `parity/inventory/{jsc370,sta303,explorer}.md` (3 inventory agents)
   - [x] STA303 source inventory: all charts and printed outputs, model formulas, preprocessing and caveats; original final summary is Gaussian. Static inspection only, not parity evidence.
-  - [ ] Explorer source inventory
+  - [x] Explorer source inventory: all UI outputs, filters, counts, maps and tests; missing raw/RDS assets and incomplete coordinate provenance recorded. Static inspection only.
   - [ ] JSC370 source inventory
 - [ ] Tool versions recorded here
 
