@@ -68,7 +68,7 @@ Add a row whenever work moves to a different machine or app.
 - [ ] Spikes: PMTiles range requests, vl-convert PDF text + fonts, tectonic + static fonts, RR7 prerender with base path
   - [x] PMTiles HTTP ranges: 20,000,136-byte Toronto z14 extract verified; local preview 206/content ranges and tile decode pass (119,442 bytes requested). Existing GitHub Pages sample also returns 206. Evidence: `parity/spikes/map-ranges.json`, `parity/spikes/README.md`; no deployment performed.
   - [x] vl-convert PDF text and static Inter: title/axis/category text extractable, static Inter embedded, no variable-font table; actual PDF rendered with Poppler and visually checked. Evidence: `parity/spikes/pdf-fonts.json`, `assets.json`, `README.md`.
-  - [ ] tectonic/fontspec and static Source Serif 4
+  - [x] tectonic/fontspec and static Source Serif 4: compiled one-page synthetic document with chart; both fonts embedded, all text searchable, Poppler render visually checked, no overfull boxes. Font-path/PDF-version warnings documented for P7.
   - [ ] React Router 7 prerender and base path
 - [x] `parity/inventory/{jsc370,sta303,explorer}.md` completed by 3 independent read-only inventory agents
   - [x] STA303 source inventory: all charts and printed outputs, model formulas, preprocessing and caveats; original final summary is Gaussian. Static inspection only, not parity evidence.
