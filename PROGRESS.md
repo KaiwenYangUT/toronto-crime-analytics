@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P1 Setup and inventory complete; P2 R reference re-runs next (not started) |
-| In progress | — |
-| Last sitting | 2026-10-29 (Codex P1 complete; evidence and checkpoints committed locally) |
-| Next action | Read only PLAN.md P2 and its referenced R rerun requirements; write-ahead and implement project-local pinned R package installation/sessionInfo, then rerun each original on copies under build/r-work/ with cached exports |
+| Current phase | P2 R reference re-runs (started) |
+| In progress | P2 pinned R library and independent reference runner preparation \| started 2026-10-29 \| files: parity/r/, parity/r_outputs/, build/r-work/{explorer,sta303,jsc370}/, Makefile, PROGRESS.md \| machine: Kevins-iMac.local \| nothing from the earlier attempt survived on disk (parity/r empty, no build/), redone from scratch \| commands: source tools/env.sh; Rscript --vanilla parity/r/install_r_lib.R |
+| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local; resumed P2, machine check done) |
+| Next action | Install/check pinned project-local R library; prepare 3 independent rerun copies and export hooks, then run cached reference jobs per PLAN.md P2 |
 | Blockers | None for P2. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -16,13 +16,17 @@ Add a row whenever work moves to a different machine or app.
 | Date | Hostname | App | Phases worked | Produced `results/`? |
 |---|---|---|---|---|
 | 2026-10-29 | (planning laptop) | Claude Code desktop | P0 | no |
-| 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 setup completed | no |
+| 2026-10-29 | Kevins-MacBook-Pro-128.local | Codex desktop | P1 complete; P2 started, no files kept | no |
+| 2026-10-29 | Kevins-iMac.local | Claude Code desktop | P2 R reference re-runs | no |
 
 ### Initial resume preflight (historical; resolved during P1)
 - `git status` and `git log --oneline -15` both report that this folder is not a Git repository. There was no interrupted item or existing Git history to reconcile; Git initialization was still pending at that point.
 - Machine prerequisites checked: R 4.3.2 (below required 4.5), Python 3.14.6 (Python 3.12 also available), Node 24.13.0, Git present. `tectonic` is not found by `type -a` or at the standard Homebrew paths; invocation failed.
 - `.venv`, `.r-lib`, `.cache`, and `web/` are absent; `_reference/` exists. No downloads or installs attempted because Q5 has no default and remains unanswered.
 - Preflight was included in the first P1 commit after Q5 approval and local Git initialization (`de5cbb6`).
+
+### Machine check, Kevins-iMac.local (2026-10-29)
+- R 4.5.3 (the MacBook had 4.6.2; P2 produced nothing there, so the reference is run here), Node 25.6.1, npm 11.9, tectonic and Git 2.50.1 present. Python 3.12 absent. `.venv`, `.cache`, `build/`, `web/node_modules` absent; `.r-lib` empty. `data/raw/` holds 5 files; `make data` not yet run here. libomp present under /opt/homebrew. Google Chrome.app present (for shinytest2/chromote).
 
 ## Decisions (answered by the user)
 - 2026-10-29: User separately approved installing/upgrading R ≥4.5 and tectonic outside the project if a project-local setup is unavailable. This does not authorize other outside-folder installations (for example libomp).
@@ -40,7 +44,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Q5 Project-local installs approved 2026-10-29 (R/tectonic system setup separately approved; other system installations need approval)
 - [ ] Q6 Author line; STA303 term and year
 - [ ] Q7 Pointer READMEs in the old repos (outside this folder)
-- [ ] Q8 Outside-folder fallbacks (libomp, Python 3.12), asked only if needed
+- [ ] Q8 Outside-folder fallbacks: Python 3.12 is missing on Kevins-iMac.local (only 3.14.3), so `.venv` (locked on 3.12) cannot be built here; blocks `make env`/`make data`/P3, not P2. libomp is already present, no install needed
 
 ## Facts from planning (verified read-only, 2026-10-29)
 - **Explorer:** local `~/Desktop/toronto-crime-explorer` equals origin/main @ dd5d689, with no unpushed work.
