@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P2 R reference re-runs (started) |
-| In progress | P2 pinned R library and independent reference runner preparation \| started 2026-10-29 \| files: parity/r/, parity/r_outputs/, build/r-work/{explorer,sta303,jsc370}/, Makefile, PROGRESS.md \| machine: Kevins-iMac.local \| nothing from the earlier attempt survived on disk (parity/r empty, no build/), redone from scratch \| commands: source tools/env.sh; Rscript --vanilla parity/r/install_r_lib.R |
+| In progress | P2 PATCHES.md and reference runner copies \| started 2026-10-29 \| files: parity/r/PATCHES.md, parity/r/*.R, build/r-work/{explorer,sta303,jsc370}/ \| machine: Kevins-iMac.local \| plan: copy refs to build/r-work, apply minimal patches (local data, no download.file, export hooks), run Explorer first |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local; resumed P2, machine check done) |
-| Next action | Install/check pinned project-local R library; prepare 3 independent rerun copies and export hooks, then run cached reference jobs per PLAN.md P2 |
+| Next action | Write PATCHES.md and the three patched copies under build/r-work/, then run Explorer (28/28, shinytest, RDS rebuild, fixtures), STA303, JSC370 per PLAN.md section 4 |
 | Blockers | None for P2. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -81,7 +81,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Tool versions recorded: R 4.6.2, Python 3.12.2 (venv), Node 24.13.0, npm 11.10.0, tectonic 0.17.0, Git 2.39.2. Python package pins: `requirements.lock`; web pins: `web/package-lock.json`; full local report: `build/tool-versions.json`. R package pins remain P2.
 
 ### P2 R reference re-runs
-- [ ] `parity/r/install_r_lib.R` (shiny, testthat, shinytest2, xgboost 1.7.8.1) + `sessionInfo` saved
+- [x] `parity/r/install_r_lib.R` (shiny 1.14.0, testthat 3.3.2, shinytest2 0.5.1, xgboost 1.7.8.1 compiled from the CRAN archive without extra flags) + `sessionInfo` saved to `parity/r_outputs/session_install.txt`; pins in `parity/r/r_packages.lock.csv`. xgboost smoke test passes. R 4.5.3 on this machine.
 - [ ] `PATCHES.md` (local paths, no `download.file`, export hooks only)
 - [ ] Explorer: 28/28 tests, shinytest, byte-identical RDS rebuild, `fixtures.json`
 - [ ] STA303: knit twice (identical), n = 174,976, foldid reconstruction, exports
