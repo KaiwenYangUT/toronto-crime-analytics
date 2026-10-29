@@ -1,0 +1,29 @@
+PASS: Midterm means February and October only 
+PASS: Final means April and December only 
+PASS: Peak and off-peak partition all 168 weekly hours 
+PASS: 19:00 is never peak 
+PASS: Holiday boundaries are inclusive and precise 
+PASS: Coincident locations have zero distance 
+PASS: One equatorial degree is approximately 111.2 km 
+PASS: Spatial selection removes distant records 
+PASS: Empty categories produce no records 
+PASS: Empty weekdays produce no records 
+PASS: Date endpoints are included 
+PASS: Weekday/hour/category filters compose 
+PASS: Daily series fills zero days and conserves record count 
+PASS: Excluded days are gaps rather than false zero counts 
+PASS: No categories returns an empty daily table 
+PASS: Incompatible hour and preset filters create no eligible days 
+PASS: Nearest listed station is calculated from coordinates 
+PASS: Reversed dates are rejected 
+PASS: Prepared data has no exact duplicate analysis rows 
+PASS: All three categories are represented 
+PASS: Recovered bicycle records remain in historical counts 
+PASS: Coverage reflects the actual supplied snapshots 
+PASS: Unrestricted filters preserve every prepared record 
+PASS: Weekly bins start Monday and conserve counts 
+PASS: Monthly bins conserve counts and count eligible days 
+PASS: Excluded periods remain gaps in aggregated trends 
+PASS: Daily trend retains the original values 
+PASS: Empty trends remain empty 
+28 checks passed.

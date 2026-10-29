@@ -1,0 +1,88 @@
+Built 25242 analysis records (25068 distinct event IDs), 2020-01-01 through 2023-12-31.
+$Bicycle_Thefts_Open_Data.csv
+$Bicycle_Thefts_Open_Data.csv$file
+[1] "Bicycle_Thefts_Open_Data.csv"
+
+$Bicycle_Thefts_Open_Data.csv$md5
+[1] "6c4aa1de1ef2cb88120d28a3148e274e"
+
+$Bicycle_Thefts_Open_Data.csv$source_rows
+[1] 34985
+
+$Bicycle_Thefts_Open_Data.csv$invalid_rows
+[1] 325
+
+$Bicycle_Thefts_Open_Data.csv$valid_rows_before_2020
+[1] 21732
+
+$Bicycle_Thefts_Open_Data.csv$exact_duplicate_rows_removed
+[1] 1444
+
+$Bicycle_Thefts_Open_Data.csv$retained_rows
+[1] 11484
+
+$Bicycle_Thefts_Open_Data.csv$first_date
+[1] "2020-01-01"
+
+$Bicycle_Thefts_Open_Data.csv$last_date
+[1] "2023-12-31"
+
+
+$Robbery_Open_Data.csv
+$Robbery_Open_Data.csv$file
+[1] "Robbery_Open_Data.csv"
+
+$Robbery_Open_Data.csv$md5
+[1] "ee4b4dd20704d984950fe85f5760d73b"
+
+$Robbery_Open_Data.csv$source_rows
+[1] 33921
+
+$Robbery_Open_Data.csv$invalid_rows
+[1] 1014
+
+$Robbery_Open_Data.csv$valid_rows_before_2020
+[1] 21949
+
+$Robbery_Open_Data.csv$exact_duplicate_rows_removed
+[1] 2503
+
+$Robbery_Open_Data.csv$retained_rows
+[1] 8455
+
+$Robbery_Open_Data.csv$first_date
+[1] "2020-01-01"
+
+$Robbery_Open_Data.csv$last_date
+[1] "2023-12-31"
+
+
+$Theft_Over_Open_Data.csv
+$Theft_Over_Open_Data.csv$file
+[1] "Theft_Over_Open_Data.csv"
+
+$Theft_Over_Open_Data.csv$md5
+[1] "0184455f71aa8f64543ab94c242e064f"
+
+$Theft_Over_Open_Data.csv$source_rows
+[1] 12483
+
+$Theft_Over_Open_Data.csv$invalid_rows
+[1] 228
+
+$Theft_Over_Open_Data.csv$valid_rows_before_2020
+[1] 6943
+
+$Theft_Over_Open_Data.csv$exact_duplicate_rows_removed
+[1] 9
+
+$Theft_Over_Open_Data.csv$retained_rows
+[1] 5303
+
+$Theft_Over_Open_Data.csv$first_date
+[1] "2020-01-01"
+
+$Theft_Over_Open_Data.csv$last_date
+[1] "2023-12-31"
+
+
