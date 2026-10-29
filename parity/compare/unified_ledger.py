@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "pipeline" / "src"))
-from tca.build import CROSS_CATEGORY_RULES, unified  # noqa: E402
+from tca.build import CROSS_CATEGORY_RULES, unified
 
 out = {}
 for rule in CROSS_CATEGORY_RULES:

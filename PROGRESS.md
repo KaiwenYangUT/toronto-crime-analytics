@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P3 Shared Python pipeline (started) |
-| In progress | P3 item 4: `unified` table (2014-2023, 4 classes, validity rules, dedup), cross-category duplicate count + rule, `schema` (pandera) \| started 2026-10-29 \| files: pipeline/src/tca/build.py, schema.py, pipeline/tests/ \| machine: Kevins-iMac.local |
+| In progress | P3 final item: pytest green (23 pass), then code review (/code-review) and fixes \| started 2026-10-29 \| files: pipeline/, parity/compare/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | `unified` + duplicate count + rule, `schema`, tests, then code review (end of P3) |
+| Next action | Run the code review on the P3 diff, fix findings, tick the last P3 item, then P4 (read only PLAN.md P4; 4c needs Q2) |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -35,6 +35,7 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29: the JSC370 parity reference is a fresh R re-run in a pinned environment, with tier-based ranking. Published numbers are recorded alongside.
 - 2026-10-29: original captions the data contradicts are kept in the port and flagged in PARITY.md, then corrected in P5 and logged in CHANGES.md.
 - 2026-10-29: Explore gets exact parity on its 3 categories first, then adds auto theft and B&E.
+- 2026-10-29 (P3, agent decision, reversible): the unified table drops events labelled both Robbery and another category (350 events, 708 rows), per PLAN.md P3 "choose a rule"; logged, with alternatives selectable by flag. Revisit if the user prefers keep-all.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
@@ -89,11 +90,11 @@ Add a row whenever work moves to a different machine or app.
 - [x] `parity/PARITY.md`: JSC370 published vs re-run: all 30 metrics equal at 7 dp (max diff 0.0), 4 printed matrices equal. Sections for STA303, Explorer and determinism added.
 
 ### P3 Shared Python pipeline
-- [ ] `io`, `definitions`, `features` done (`schema` pending with the other tables)
+- [x] `io`, `schema` (pandera, 4 tables), `definitions`, `features`
 - [x] `explore_legacy` == R events: 25,242 rows, all 10 columns equal, R's row order reproduced, coordinates bit-equal (0 ulp), per-file manifest equal; robbery 8,455 (VALIDATION.md). `parity/compare/compare_explore.py`, `pipeline/tests/test_explore_legacy.py`
 - [x] `sta303_legacy` == R model frame: 174,976 rows, all 15 columns equal, coordinates bit-equal, class counts 33,919 / 58,434 / 70,143 / 12,480; the DST gap removes 6 rows (flag `drop_dst_gap_rows`), `dow_sunday_first` reproduces the Rmd's weekday coding. `parity/compare/compare_sta303.py`, `pipeline/tests/test_sta303_legacy.py`
 - [x] `jsc370_legacy` == R `final_data`: 16,611 rows, 2,779 robberies, 158/158 neighbourhoods, census features bit-identical (0 relative difference); full-row multiset equal AND R's row order reproduced exactly (R's merge() Shell-sort tie order ported, `r_left_merge_order`). `parity/compare/compare_jsc370.py`, `pipeline/tests/test_jsc370_legacy.py`
-- [ ] `unified` table + cross-category duplicate count + rule
+- [x] `unified` table: 159,072 rows (Robbery 25,661; B&E 69,111; Auto Theft 52,227; Theft Over 12,073), 2014-2023, step-by-step ledger in `parity/reports/unified_ledger.json`. Cross-category: 1,580 event IDs appear in more than one category file; 350 have a Robbery row and another category. Rule (default `drop_label_conflicts`): drop all rows of those 350 so no incident is both positive and negative; the other 1,230 (negative categories only) stay. `keep_all` and `drop_all_multi` exist as named options. After exact dedup `event_id` is unique within a category.
 - [ ] pytest green; code review
 
 ### P4 Faithful ports
