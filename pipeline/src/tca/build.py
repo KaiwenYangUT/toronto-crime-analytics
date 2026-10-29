@@ -99,8 +99,8 @@ def explore_legacy(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, dict]:
             "valid_rows_before_2020": int((valid & (dates < start)).sum()),
             "exact_duplicate_rows_removed": before - len(x),
             "retained_rows": len(x),
-            "first_date": x["date"].min().strftime("%Y-%m-%d"),
-            "last_date": x["date"].max().strftime("%Y-%m-%d"),
+            "first_date": x["date"].min().strftime("%Y-%m-%d") if len(x) else None,
+            "last_date": x["date"].max().strftime("%Y-%m-%d") if len(x) else None,
         }
         tables.append(x)
     events = pd.concat(tables, ignore_index=True)
@@ -303,13 +303,36 @@ def jsc370_census(path: Path | None = None) -> pd.DataFrame:
     return inc
 
 
-def _r_collation_key():
-    """Sort key matching R's ``order()`` on strings under the process locale (same C library)."""
+R_COLLATION_LOCALE = "en_CA.UTF-8"
+
+
+def r_collation_available() -> bool:
+    """True if the process C library offers the locale R's order() used for the reference run."""
+    previous = locale.setlocale(locale.LC_COLLATE)
     try:
-        locale.setlocale(locale.LC_COLLATE, "en_CA.UTF-8")
-        return locale.strxfrm
+        locale.setlocale(locale.LC_COLLATE, R_COLLATION_LOCALE)
     except locale.Error:
-        return str
+        return False
+    finally:
+        locale.setlocale(locale.LC_COLLATE, previous)
+    return True
+
+
+def _r_sorted(order: list[int], names: list[str]) -> list[int]:
+    """Stable sort of row positions by name under R's collation. The locale is switched only for
+    the duration of the sort; a missing locale is an error, not a silent byte-order fallback."""
+    previous = locale.setlocale(locale.LC_COLLATE)
+    try:
+        locale.setlocale(locale.LC_COLLATE, R_COLLATION_LOCALE)
+    except locale.Error as err:
+        raise RuntimeError(
+            f"locale {R_COLLATION_LOCALE} is needed to reproduce R's row order; "
+            "install it or sort by key yourself"
+        ) from err
+    try:
+        return sorted(order, key=lambda i: locale.strxfrm(names[i]))
+    finally:
+        locale.setlocale(locale.LC_COLLATE, previous)
 
 
 def _isort_with_index(codes: list[int], index: list[int]) -> None:
@@ -332,6 +355,10 @@ def _isort_with_index(codes: list[int], index: list[int]) -> None:
 def r_left_merge_order(x_keys: list[str], y_keys: list[str]) -> list[int]:
     """Row order of R's ``merge(x, y, by = key, all.x = TRUE)`` for unique ``y_keys``: x rows
     ordered by the internal merge, then stably by key under R's collation (``sort = TRUE``)."""
+    if len(set(y_keys)) != len(y_keys):
+        raise ValueError(
+            "r_left_merge_order needs unique y keys (one census row per neighbourhood)"
+        )
     in_y = set(y_keys)
     matched = [k for k in x_keys if k in in_y]
     first_pos: dict[str, int] = {}
@@ -342,8 +369,7 @@ def r_left_merge_order(x_keys: list[str], y_keys: list[str]) -> list[int]:
     _isort_with_index(codes, index)
     lone = sum(1 for c in codes if c == 0)  # x rows without a census match, appended last
     order = index[lone:] + index[:lone]
-    key = _r_collation_key()
-    return sorted(order, key=lambda i: key(x_keys[i]))  # sorted() is stable
+    return _r_sorted(order, x_keys)
 
 
 def jsc370_legacy(
@@ -496,6 +522,8 @@ def unified(
     present = df["premises_type"].notna() & (df["premises_type"].str.strip() != "")
     df = df[present].copy()
     log("premises present", df)
+    df = df[df["neighbourhood"].notna()].copy()
+    log("neighbourhood recorded (NSA kept and flagged)", df)
     inside = df["longitude"].between(*LON_RANGE, inclusive="neither") & df["latitude"].between(
         *LAT_RANGE, inclusive="neither"
     )
@@ -506,12 +534,11 @@ def unified(
     df["month"] = df["date"].dt.month.astype("int64")
     df["weekday"] = df["date"].dt.isocalendar().day.astype("int64")
     df["hour"] = df["hour"].astype("int64")
-    df["neighbourhood"] = df["neighbourhood"].fillna(NSA)
     df["location_type"] = df["location_type"].fillna("Unknown")
     df["neighbourhood_known"] = df["neighbourhood"] != NSA
     df["robbery"] = (df["category"] == POSITIVE).astype("int8")
 
-    df = df.drop_duplicates(subset=["category", *_RETAINED]).copy()
+    df = df.drop_duplicates(subset=_RETAINED).copy()
     log("exact duplicates within category removed", df)
 
     cats = df.groupby("event_id")["category"].agg(["nunique", lambda s: (s == POSITIVE).any()])

@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P3 Shared Python pipeline (started) |
-| In progress | P3 final item: pytest green (23 pass), then code review (/code-review) and fixes \| started 2026-10-29 \| files: pipeline/, parity/compare/ \| machine: Kevins-iMac.local |
-| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | Run the code review on the P3 diff, fix findings, tick the last P3 item, then P4 (read only PLAN.md P4; 4c needs Q2) |
+| Current phase | P3 complete; P4 Faithful ports next (4c needs Q2) |
+| In progress | — |
+| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
+| Next action | Read only PLAN.md P4. Start 4a (Explain port) and 4b (Predict port); 4d tokens/palette; 4c waits for Q2 (STA313 team credit and consent) |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -95,7 +95,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `sta303_legacy` == R model frame: 174,976 rows, all 15 columns equal, coordinates bit-equal, class counts 33,919 / 58,434 / 70,143 / 12,480; the DST gap removes 6 rows (flag `drop_dst_gap_rows`), `dow_sunday_first` reproduces the Rmd's weekday coding. `parity/compare/compare_sta303.py`, `pipeline/tests/test_sta303_legacy.py`
 - [x] `jsc370_legacy` == R `final_data`: 16,611 rows, 2,779 robberies, 158/158 neighbourhoods, census features bit-identical (0 relative difference); full-row multiset equal AND R's row order reproduced exactly (R's merge() Shell-sort tie order ported, `r_left_merge_order`). `parity/compare/compare_jsc370.py`, `pipeline/tests/test_jsc370_legacy.py`
 - [x] `unified` table: 159,072 rows (Robbery 25,661; B&E 69,111; Auto Theft 52,227; Theft Over 12,073), 2014-2023, step-by-step ledger in `parity/reports/unified_ledger.json`. Cross-category: 1,580 event IDs appear in more than one category file; 350 have a Robbery row and another category. Rule (default `drop_label_conflicts`): drop all rows of those 350 so no incident is both positive and negative; the other 1,230 (negative categories only) stay. `keep_all` and `drop_all_multi` exist as named options. After exact dedup `event_id` is unique within a category.
-- [ ] pytest green; code review
+- [x] pytest green (24 tests, ruff clean); code review (/code-review high, 9 findings): fixed R-collation fallback and global setlocale, unique-key check in the merge-order port, spelling-fix test, missing-neighbourhood handling, empty-file manifest, duplicate subset label, dead code; skipped the shared legacy-wrangling refactor and rebuild caching as low-value. All three parity comparisons PASS.
 
 ### P4 Faithful ports
 - [ ] 4a Explain port: all items in PLAN.md §5 P4 within tolerance
@@ -142,6 +142,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | Resume preflight | Read rules and resume state; checked Git, hostname and prerequisites; recorded fresh-machine blockers | Q5 approval and R/tectonic prerequisite decision, then P1 |
 | 2026-10-29 | P1 | Q5 and R/tectonic approvals recorded; local Git/checkpoints; pinned read-only references; locked env and Chromium; verified raw inputs; publisher licences; 3 inventories; 4 spikes passed | P2 pinned R dependencies and cached reference reruns |
 | 2026-10-29 | P2 | Pinned R library (shiny 1.14.0, xgboost 1.7.8.1); Explorer 28/28, RDS byte-identical, 2,565 fixtures; STA303 n = 174,976, identical double knit, foldid verified; JSC370 reproduces the published table exactly, identical double knit; PATCHES.md, PARITY.md | Q8, then P3 |
+| 2026-10-29 | P3 | io/schema/definitions/features; explore_legacy, sta303_legacy, jsc370_legacy exact vs R (bit-equal coordinates, R row order reproduced); unified table with ledger and cross-category rule; 24 tests; code review fixed | P4 |
 
 ## P1 verification notes
 

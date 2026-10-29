@@ -1,10 +1,18 @@
 """jsc370_legacy must equal R's final_data from the pinned re-run (exported in P2)."""
 
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
-from tca.build import NEIGHBOURHOOD_FIXES, jsc370_census, jsc370_legacy, r_left_merge_order
+from tca.build import (
+    NEIGHBOURHOOD_FIXES,
+    jsc370_census,
+    jsc370_legacy,
+    r_collation_available,
+    r_left_merge_order,
+)
+from tca.io import read_census
 
 ROOT = Path(__file__).resolve().parents[2]
 pytestmark = pytest.mark.skipif(
@@ -27,6 +35,7 @@ def test_matches_r_final_data(report):
     assert report["neighbourhoods_matched"] == 158
 
 
+@pytest.mark.skipif(not r_collation_available(), reason="needs the en_CA.UTF-8 locale")
 def test_row_order_matches_r(report):
     assert report["row_order_equal"]
 
@@ -40,11 +49,19 @@ def test_census_table_has_158_unique_neighbourhoods():
     assert len(census) == 158 and census["Neighbourhood"].is_unique
 
 
-def test_all_seven_spelling_fixes_are_needed():
-    names = set(jsc370_legacy(keep_neighbourhood=True)["Neighbourhood"])
-    census_names = set(jsc370_census()["Neighbourhood"])
-    assert names <= census_names
-    assert len(NEIGHBOURHOOD_FIXES) == 7
+def test_every_spelling_fix_matches_a_census_name_and_changes_it():
+    raw_names = set(read_census()["Neighbourhood Name"])
+    fixed_names = set(jsc370_census()["Neighbourhood"])
+    for old, new in NEIGHBOURHOOD_FIXES:
+        assert any(re.search(old, n) for n in raw_names), old
+        assert any(re.search(old, n) is None and new in n for n in fixed_names), new
+    crime_names = set(jsc370_legacy(keep_neighbourhood=True)["Neighbourhood"])
+    assert crime_names <= fixed_names and len(crime_names) == 158
+
+
+def test_merge_order_rejects_duplicate_census_keys():
+    with pytest.raises(ValueError):
+        r_left_merge_order(["a"], ["a", "a"])
 
 
 def test_merge_order_is_stable_by_key_for_unique_codes():

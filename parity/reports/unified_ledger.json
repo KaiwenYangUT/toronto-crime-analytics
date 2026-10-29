@@ -42,6 +42,16 @@
     }
    },
    {
+    "step": "neighbourhood recorded (NSA kept and flagged)",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
     "step": "coordinates inside the Toronto box",
     "rows": 172252,
     "by_category": {
@@ -131,6 +141,16 @@
     }
    },
    {
+    "step": "neighbourhood recorded (NSA kept and flagged)",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
     "step": "coordinates inside the Toronto box",
     "rows": 172252,
     "by_category": {
@@ -211,6 +231,16 @@
    },
    {
     "step": "premises present",
+    "rows": 174661,
+    "by_category": {
+     "Break and Enter": 70051,
+     "Auto Theft": 58384,
+     "Robbery": 33874,
+     "Theft Over": 12352
+    }
+   },
+   {
+    "step": "neighbourhood recorded (NSA kept and flagged)",
     "rows": 174661,
     "by_category": {
      "Break and Enter": 70051,

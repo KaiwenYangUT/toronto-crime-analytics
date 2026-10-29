@@ -7,7 +7,6 @@ column treats ``NA`` and blank as missing, and anything else is an error.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -59,7 +58,3 @@ def census_column(census: pd.DataFrame, name: str) -> pd.Series:
     if hits.shape[1] != 1:
         raise KeyError(f"census header {name!r} matched {hits.shape[1]} columns")
     return hits.iloc[:, 0]
-
-
-def manifest(root: Path = ROOT) -> dict:
-    return json.loads((root / "data" / "manifest.json").read_text())
