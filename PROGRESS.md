@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P3 Shared Python pipeline (started) |
-| In progress | P3 item 2: `sta303_legacy` vs R model frame (`parity/r_outputs/sta303/model_frame.csv.xz`) \| started 2026-10-29 \| files: pipeline/src/tca/build.py, pipeline/tests/, parity/compare/ \| machine: Kevins-iMac.local |
+| In progress | P3 item 3: `jsc370_legacy` vs R `final_data` (`parity/r_outputs/jsc370/final_data.csv.xz`): census join, 7 name fixes, merge, multiset match \| started 2026-10-29 \| files: pipeline/src/tca/build.py, io.py, pipeline/tests/, parity/compare/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | `sta303_legacy` (DST-gap NA rows, Sunday-first weekday, complete.cases), then `jsc370_legacy`, `unified`, `schema`, tests, code review |
+| Next action | `jsc370_legacy`, then `unified` + cross-category duplicate count, `schema`, tests, code review |
 | Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -91,7 +91,7 @@ Add a row whenever work moves to a different machine or app.
 ### P3 Shared Python pipeline
 - [ ] `io`, `definitions`, `features` done (`schema` pending with the other tables)
 - [x] `explore_legacy` == R events: 25,242 rows, all 10 columns equal, R's row order reproduced, coordinates bit-equal (0 ulp), per-file manifest equal; robbery 8,455 (VALIDATION.md). `parity/compare/compare_explore.py`, `pipeline/tests/test_explore_legacy.py`
-- [ ] `sta303_legacy` == R model frame (exact)
+- [x] `sta303_legacy` == R model frame: 174,976 rows, all 15 columns equal, coordinates bit-equal, class counts 33,919 / 58,434 / 70,143 / 12,480; the DST gap removes 6 rows (flag `drop_dst_gap_rows`), `dow_sunday_first` reproduces the Rmd's weekday coding. `parity/compare/compare_sta303.py`, `pipeline/tests/test_sta303_legacy.py`
 - [ ] `jsc370_legacy` == R `final_data` (multiset exact)
 - [ ] `unified` table + cross-category duplicate count + rule
 - [ ] pytest green; code review
