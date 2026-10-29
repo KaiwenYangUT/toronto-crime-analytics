@@ -4,11 +4,11 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P2 R reference re-runs complete (acceptance below); P3 Shared Python pipeline next, blocked on Q8 (Python 3.12) |
-| In progress | P3 prerequisite: project-local Python 3.12 via uv in .cache/ (user chose venv/project-local route for Q8, 2026-10-29), then `make env` \| started 2026-10-29 \| files: tools/bootstrap_python.sh, Makefile, .cache/tools/bin/python3.12, .venv, PROGRESS.md \| machine: Kevins-iMac.local |
+| Current phase | P2 complete; P3 Shared Python pipeline next (environment ready on Kevins-iMac.local) |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
-| Next action | Ask the user about Q8 (install Python 3.12 outside the folder, or another route) so `make env` can build `.venv`; then start P3 (`io`, `schema`, `definitions`, `features`, legacy frames compared with `parity/r_outputs/`). Read only PLAN.md P3 first |
-| Blockers | Q8 blocks P3 (Python 3.12 missing on Kevins-iMac.local; asked, not installed). Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
+| Next action | Start P3: read only PLAN.md P3, then `io`, `schema`, `definitions`, `features` and the legacy frames, compared with `parity/r_outputs/` |
+| Blockers | None for P3. Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -26,7 +26,7 @@ Add a row whenever work moves to a different machine or app.
 - Preflight was included in the first P1 commit after Q5 approval and local Git initialization (`de5cbb6`).
 
 ### Machine check, Kevins-iMac.local (2026-10-29)
-- R 4.5.3 (the MacBook had 4.6.2; P2 produced nothing there, so the reference is run here), Node 25.6.1, npm 11.9, tectonic and Git 2.50.1 present. Python 3.12 absent. `.venv`, `.cache`, `build/`, `web/node_modules` absent; `.r-lib` empty. `data/raw/` holds 5 files; `make data` not yet run here. libomp present under /opt/homebrew. Google Chrome.app present (for shinytest2/chromote).
+- Python 3.12.16 (project-local, via `make python`); `make env` and `make data` pass here (`pip check` clean, 5 data tests pass). R 4.5.3 (the MacBook had 4.6.2; P2 produced nothing there, so the reference is run here), Node 25.6.1, npm 11.9, tectonic and Git 2.50.1 present. Python 3.12 absent. `.venv`, `.cache`, `build/`, `web/node_modules` absent; `.r-lib` empty. `data/raw/` holds 5 files; `make data` not yet run here. libomp present under /opt/homebrew. Google Chrome.app present (for shinytest2/chromote).
 
 ## Decisions (answered by the user)
 - 2026-10-29: User separately approved installing/upgrading R ≥4.5 and tectonic outside the project if a project-local setup is unavailable. This does not authorize other outside-folder installations (for example libomp).
@@ -44,7 +44,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Q5 Project-local installs approved 2026-10-29 (R/tectonic system setup separately approved; other system installations need approval)
 - [ ] Q6 Author line; STA303 term and year
 - [ ] Q7 Pointer READMEs in the old repos (outside this folder)
-- [ ] Q8 Outside-folder fallbacks: Python 3.12 is missing on Kevins-iMac.local (only 3.14.3), so `.venv` (locked on 3.12) cannot be built here; blocks `make env`/`make data`/P3, not P2. libomp is already present, no install needed
+- [x] Q8 resolved 2026-10-29: user chose a project-local route. On a machine without python3.12 run `make python` (uv in `.cache/bootstrap-venv` downloads CPython 3.12 into `.cache/python-install`, symlinked at `.cache/tools/bin/python3.12`), then `make env`. Nothing installed outside the folder; libomp was already present.
 
 ## Facts from planning (verified read-only, 2026-10-29)
 - **Explorer:** local `~/Desktop/toronto-crime-explorer` equals origin/main @ dd5d689, with no unpushed work.
