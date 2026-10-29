@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P2 R reference re-runs complete (acceptance below); P3 Shared Python pipeline next, blocked on Q8 (Python 3.12) |
-| In progress | — |
+| In progress | P3 prerequisite: project-local Python 3.12 via uv in .cache/ (user chose venv/project-local route for Q8, 2026-10-29), then `make env` \| started 2026-10-29 \| files: tools/bootstrap_python.sh, Makefile, .cache/tools/bin/python3.12, .venv, PROGRESS.md \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 complete, all items committed locally) |
 | Next action | Ask the user about Q8 (install Python 3.12 outside the folder, or another route) so `make env` can build `.venv`; then start P3 (`io`, `schema`, `definitions`, `features`, legacy frames compared with `parity/r_outputs/`). Read only PLAN.md P3 first |
 | Blockers | Q8 blocks P3 (Python 3.12 missing on Kevins-iMac.local; asked, not installed). Q2 blocks P4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
