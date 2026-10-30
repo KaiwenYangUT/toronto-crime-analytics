@@ -339,3 +339,6 @@ Helpers: `parity/r/hooks/jsc370_hooks.R`. Builder: `parity/r/make_jsc370_copy.R`
  # First Plot:
  ```{r}
 ```
+
+## Chart widgets (`_reference/robbery/scripts/build_visual_widgets.R`, `variable.Rmd` → `build/r-work/charts`)
+No patch. Both run unmodified on a work copy whose `data/` is a symlink to the pinned raw snapshot (`parity/r/run_charts.sh`). The plotted arrays are read from the widget JSON by `parity/r/extract_chart_data.py`; nothing in the originals is changed or hooked.

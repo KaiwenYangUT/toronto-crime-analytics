@@ -187,4 +187,24 @@ Changes from the planned starting palette, each forced by the validator: Bicycle
 Ordinal ramp (ablation rungs) and the cividis-like density ramp are in the tokens; the ordinal ramp passes the monotone, step-gap, contrast and single-hue checks in both modes.
 
 ## 7. Chart checklist
-Not started. Each original chart's underlying aggregate must equal R's exactly (`compare_charts.py`). The P2 re-runs exported the model and frame outputs; the JSC370 EDA widget aggregates (needs neighbourhood-level data) and the Explorer chart aggregates were not exported yet, so this needs a small additional R export before the comparison can run.
+The JSC370 refreshed-branch widgets (`scripts/build_visual_widgets.R`) and `variable.Rmd` were run unmodified in R (`parity/r/run_charts.sh`, two runs give identical data) and their plotted arrays extracted (`parity/r_outputs/charts/chart_data.json.xz`). `parity/compare/compare_charts.py` rebuilds each from the Python tables (`tca.figures.aggregates`) and compares exactly; test: `pipeline/tests/test_charts.py`.
+
+| Original chart | Underlying data | Result |
+|---|---|---|
+| F1 3D scatter (158 neighbourhoods) | ratio, income, robbery count, hover text | equal, same order |
+| F2 boxplots by darkness and premises | (darkness, neighbourhood robbery total) pairs per premises, 16,611 values | equal as multisets |
+| F3 a-d lines by season, month, day, hour | sum of robberies per premises and bin (Transit has 23 hour points, not zero-filled) | equal |
+| F4 a-d total vs robbery bars | totals, robbery counts, rounded percentage labels | equal |
+| F5 map | 2,779 robbery markers: positions, popup texts | equal, same order |
+| Variable page: continuous-variable table | 9 variables x 6 statistics as DT strings (R's common-width padding included) | equal |
+| Variable page: season, month, day, hour counts | counts per bin | equal |
+| Home page stat cards | 16,611 incidents; 16.7% robbery; Moss Park highest (135); 9 variables; 24 hourly bins | equal |
+| STA303 plots (DFBETAS, DFFITS, Cook, Q-Q, ROC, calibration, LASSO CV) | the arrays, compared in section 2.1 | equal within the stated tolerances |
+| Explorer charts (daily, category, weekday, hour) | the fixture arrays, section 3.2 | exact |
+| Model charts (tree, ROC, importance) | cptable, probabilities, importance, section 1.5 | within the tolerances there |
+
+Row order note: the widget builder drops incomplete rows after the census merge while `Final_Project.Rmd` drops them before; the set of rows is the same, but R's merge() orders rows inside a neighbourhood differently, so `jsc370_legacy` has a flag (`na_omit_before_merge`) for each original and both are checked.
+
+**Original captions that the data contradicts** (flagged here, kept as original until P5 corrects them, as decided): the weekend claim (Saturday is not highest in total counts; Wednesday 2,609 and Friday 2,587 exceed Saturday 2,233), the summer-rise claim (summer 564 robberies is below winter 872), and the hourly-shape claims (non-monotonic counts). See `parity/inventory/jsc370.md` for the full list.
+
+Charts are compared as data, not as rendered pictures: the Vega-Lite re-draws are P5/P6 work, and the 3D scatter becomes a 2D scatter with colour and size (Q4 default).

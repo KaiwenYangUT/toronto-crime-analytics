@@ -41,5 +41,10 @@ Helpers: `parity/r/hooks/jsc370_hooks.R`. Builder: `parity/r/make_jsc370_copy.R`
 MID
 d robbery/Final_Project.Rmd Final_Project.Rmd "$root/_reference/robbery/Final_Project.Rmd" "$root/build/r-work/jsc370/Final_Project.Rmd"
 echo '```'
+cat <<'TAIL'
+
+## Chart widgets (`_reference/robbery/scripts/build_visual_widgets.R`, `variable.Rmd` → `build/r-work/charts`)
+No patch. Both run unmodified on a work copy whose `data/` is a symlink to the pinned raw snapshot (`parity/r/run_charts.sh`). The plotted arrays are read from the widget JSON by `parity/r/extract_chart_data.py`; nothing in the originals is changed or hooked.
+TAIL
 } > "$out"
 echo "wrote $out ($(wc -l < "$out") lines)"

@@ -377,10 +377,17 @@ def jsc370_legacy(
     drop_dst_gap_rows: bool = True,
     dow_sunday_first: bool = True,
     keep_neighbourhood: bool = False,
+    na_omit_before_merge: bool = True,
 ) -> pd.DataFrame:
     """R's ``final_data`` (or ``merged_data`` with ``keep_neighbourhood``): 2020 incidents with
     a known neighbourhood, left-joined to the census features, sorted by neighbourhood.
-    Quirk kept: the join uses the census table before ``na.omit``, so census gaps stay as NA."""
+    Quirk kept: the join uses the census table before ``na.omit``, so census gaps stay as NA.
+
+    ``na_omit_before_merge`` selects which original is reproduced: True is ``Final_Project.Rmd``
+    (incomplete rows are dropped before the merge); False is the refreshed branch's widget
+    builder (they are dropped after it). The set of rows is the same, but R's merge() orders
+    rows inside a neighbourhood by a Shell sort that depends on how many rows it saw, so the
+    row order differs."""
     crime = _legacy_stack(raw_dir)
     month = month_from_name(crime["OCC_MONTH"])
     when = _occurrence_time(crime, month, drop_dst_gap_rows)
@@ -405,26 +412,20 @@ def jsc370_legacy(
     )
     # subset(Year == 2020), subset(Neighbourhood != "NSA"), then na.omit; NA conditions drop rows.
     frame = frame[(frame["Year"] == JSC370_YEAR) & (frame["Neighbourhood"] != NSA)]
-    frame = frame.dropna(
-        subset=[
-            "Robbery",
-            "Occurrence_Time",
-            "Month",
-            "Day_Of_Week_Numeric",
-            "Hour",
-            "Neighbourhood",
-            "Location_Type",
-            "Premises_Type",
-            "Longitude",
-            "Latitude",
-            "Season",
-            "Darkness",
-        ]
-    )
+    required = [
+        "Robbery", "Occurrence_Time", "Month", "Day_Of_Week_Numeric", "Hour", "Neighbourhood",
+        "Location_Type", "Premises_Type", "Longitude", "Latitude", "Season", "Darkness",
+    ]  # fmt: skip
+    if na_omit_before_merge:
+        frame = frame.dropna(subset=required)
     census = jsc370_census()
     merged = frame.merge(census, on="Neighbourhood", how="left", sort=False)  # keeps frame order
     order = r_left_merge_order(merged["Neighbourhood"].tolist(), census["Neighbourhood"].tolist())
     merged = merged.iloc[order].reset_index(drop=True)
+    if not na_omit_before_merge:
+        merged = merged.dropna(
+            subset=[*required, *census.columns.drop("Neighbourhood")]
+        ).reset_index(drop=True)
     cols = (["Neighbourhood"] if keep_neighbourhood else []) + JSC370_COLUMNS
     out = merged[cols].copy()
     out["Robbery"] = out["Robbery"].astype(bool)

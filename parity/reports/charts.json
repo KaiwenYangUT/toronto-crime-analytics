@@ -1,0 +1,111 @@
+{
+ "figure1": {
+  "x": true,
+  "y": true,
+  "z": true,
+  "text": true
+ },
+ "figure2": {
+  "Apartment": true,
+  "Commercial": true,
+  "Educational": true,
+  "House": true,
+  "Other": true,
+  "Outside": true,
+  "Transit": true,
+  "premises_equal": true
+ },
+ "figure3_season": {
+  "Apartment": true,
+  "Commercial": true,
+  "Educational": true,
+  "House": true,
+  "Other": true,
+  "Outside": true,
+  "Transit": true,
+  "premises_equal": true
+ },
+ "figure4_season": {
+  "x": true,
+  "total": true,
+  "robbery": true,
+  "labels": true
+ },
+ "figure3_month": {
+  "Apartment": true,
+  "Commercial": true,
+  "Educational": true,
+  "House": true,
+  "Other": true,
+  "Outside": true,
+  "Transit": true,
+  "premises_equal": true
+ },
+ "figure4_month": {
+  "x": true,
+  "total": true,
+  "robbery": true,
+  "labels": true
+ },
+ "figure3_day": {
+  "Apartment": true,
+  "Commercial": true,
+  "Educational": true,
+  "House": true,
+  "Other": true,
+  "Outside": true,
+  "Transit": true,
+  "premises_equal": true
+ },
+ "figure4_day": {
+  "x": true,
+  "total": true,
+  "robbery": true,
+  "labels": true
+ },
+ "figure3_hour": {
+  "Apartment": true,
+  "Commercial": true,
+  "Educational": true,
+  "House": true,
+  "Other": true,
+  "Outside": true,
+  "Transit": true,
+  "premises_equal": true
+ },
+ "figure4_hour": {
+  "x": true,
+  "total": true,
+  "robbery": true,
+  "labels": true
+ },
+ "figure5": {
+  "n_markers": true,
+  "lat": true,
+  "lng": true,
+  "popup_sorted": true,
+  "popup_in_order": true,
+  "view": true
+ },
+ "variable_table": {
+  "Min": true,
+  "Q1": true,
+  "Median": true,
+  "Mean": true,
+  "Q3": true,
+  "Max": true
+ },
+ "variable_bars": {
+  "season": true,
+  "month": true,
+  "day": true,
+  "hour": true
+ },
+ "stat_cards": {
+  "incidents_16611": true,
+  "robbery_share_16_7": true,
+  "top_neighbourhood_moss_park": true,
+  "continuous_variables_9": true,
+  "hourly_bins_24": true
+ }
+}
