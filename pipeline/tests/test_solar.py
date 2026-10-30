@@ -48,3 +48,10 @@ def test_dst_gap_and_repeated_hour_are_counted():
     _, counts = solar_darkness(dates, pd.Series([2, 1, 12]))
     assert counts["spring_forward_hour_rows"] == 1 and counts["fall_back_hour_rows"] == 1
     assert counts["distinct_date_hours"] == 3
+
+
+def test_missing_spring_forward_hour_is_read_on_the_standard_time_clock():
+    from tca.features import hour_midpoint_utc
+
+    utc = hour_midpoint_utc(pd.Series([pd.Timestamp("2023-03-12")]), pd.Series([2]))
+    assert utc.iloc[0] == pd.Timestamp("2023-03-12 07:30")  # 02:30 EST

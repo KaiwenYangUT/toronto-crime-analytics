@@ -43,29 +43,31 @@ def draw_weights(groups: np.ndarray, n_boot: int, seed: int = SEED) -> np.ndarra
     return np.stack([np.bincount(rng.integers(0, g, g), minlength=g) for _ in range(n_boot)])
 
 
+def _one(
+    counts: np.ndarray, groups: np.ndarray, arrays: dict[str, tuple[np.ndarray, ...]]
+) -> dict[str, np.ndarray]:
+    w = counts[groups].astype(float)
+    keep = w > 0
+    return {
+        name: weighted_metrics(y[keep], p[keep], thr[keep], w[keep])
+        for name, (y, p, thr) in arrays.items()
+    }
+
+
 def bootstrap_variants(
     variants: dict[str, pd.DataFrame], groups: np.ndarray, n_boot: int = 1000, n_jobs: int = 4
 ) -> dict[str, np.ndarray]:
     """Metric draws, shape (n_boot, len(METRICS)), for every variant on the same replicates.
 
     ``variants`` hold ``y``, ``p`` and ``threshold`` aligned to ``groups`` (integer neighbourhood codes
-    per row)."""
+    per row). The prediction arrays are passed as arguments, which joblib memory-maps once, rather
+    than captured in a closure that would be pickled with every task."""
     draws = draw_weights(groups, n_boot)
-
-    def one(counts: np.ndarray) -> dict[str, np.ndarray]:
-        w = counts[groups].astype(float)
-        keep = w > 0
-        return {
-            name: weighted_metrics(
-                v["y"].to_numpy()[keep],
-                v["p"].to_numpy()[keep],
-                v["threshold"].to_numpy()[keep],
-                w[keep],
-            )
-            for name, v in variants.items()
-        }
-
-    results = Parallel(n_jobs=n_jobs)(delayed(one)(c) for c in draws)
+    arrays = {
+        name: (v["y"].to_numpy(), v["p"].to_numpy(), v["threshold"].to_numpy())
+        for name, v in variants.items()
+    }
+    results = Parallel(n_jobs=n_jobs)(delayed(_one)(c, groups, arrays) for c in draws)
     return {name: np.stack([r[name] for r in results]) for name in variants}
 
 

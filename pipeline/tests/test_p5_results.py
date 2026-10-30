@@ -124,3 +124,37 @@ def test_inference_vs_prediction_counts_match_the_sources():
     assert iv["time_terms"] == 23 + 11 + 6 + 1
     assert iv["post2019_or"] == inf["post2019"]["or"]
     assert 0 < iv["time_terms_clear"] < iv["time_terms"]
+
+
+def test_provenance_records_whether_the_code_was_dirty(tmp_path, monkeypatch):
+    monkeypatch.setattr(results, "RESULTS_DIR", tmp_path / "results")
+    monkeypatch.setattr(results, "INDEX", tmp_path / "results" / "index.json")
+    monkeypatch.setattr(results, "code_dirty", lambda: True)
+    path = results.write_result("dirty.key", "demo", {"a": 1}, producer="t", description="d")
+    assert json.loads(path.read_text())["_provenance"]["code_dirty"] is True
+    clean = {
+        "_provenance": {"created": "x", "git_sha": "y", "code_dirty": False, "seed": 1},
+        "values": {},
+    }
+    dirty = {
+        "_provenance": {"created": "x", "git_sha": "y", "code_dirty": True, "seed": 1},
+        "values": {},
+    }
+    assert results.canonical(clean) == results.canonical(dirty)  # not part of the value hash
+
+
+@needs_results
+def test_weekend_verdict_requires_both_parts_and_hour_verdict_either():
+    c = _values("predict.eda_corrections")["claims"]
+    parts = c["weekend_peak"]["claim_parts"]
+    assert c["weekend_peak"]["contradicted"] == (not all(parts.values()))
+    assert c["hourly_shape"]["contradicted"] == (
+        c["hourly_shape"]["rises_between_1am_and_11am"] > 0
+        or c["hourly_shape"]["rises_between_1pm_and_11pm"] > 0
+    )
+
+
+@needs_results
+def test_the_headline_message_is_issued_only_when_its_criteria_hold():
+    iv = _values("predict.inference_vs_prediction")
+    assert all(iv["message_criteria"].values()) == iv["message"].startswith("Many time terms")

@@ -1,6 +1,8 @@
 """Leakage guards for the ablation ladder (PLAN.md 5.2): nothing about a held-out part may reach
 fitting, tuning or the threshold."""
 
+import json
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -112,3 +114,26 @@ def test_fitting_is_deterministic(table, variant):
     assert np.array_equal(a["p"].to_numpy(), b["p"].to_numpy())
     assert np.array_equal(a["threshold"].to_numpy(), b["threshold"].to_numpy())
     assert [f["threshold"] for f in ia["folds"]] == [f["threshold"] for f in ib["folds"]]
+
+
+def test_cache_signature_changes_with_rows_design_and_variant(table):
+    base = ab.signature("A", "L3", table)
+    assert base == ab.signature("A", "L3", table)
+    assert base != ab.signature("B", "L3", table) and base != ab.signature("A", "L4", table)
+    assert base != ab.signature("A", "L3", table.iloc[:-1])
+    changed = table.copy()
+    changed.loc[changed.index[0], "hour"] = (changed["hour"].iloc[0] + 1) % 24
+    assert base != ab.signature("A", "L3", changed)
+
+
+def test_stale_cache_is_recomputed_not_reused(table, tmp_path, monkeypatch):
+    monkeypatch.setattr(ab, "CACHE", tmp_path)
+    small = table.iloc[:600]
+    first, info = ab.cached("A", "L1", small, tag="t", outer_folds=2)
+    assert info["signature"] == ab.signature("A", "L1", small)
+    info_path = tmp_path / "t_A_L1.json"
+    stored = json.loads(info_path.read_text())
+    stored["signature"] = "stale"
+    info_path.write_text(json.dumps(stored))
+    _, info2 = ab.cached("A", "L1", small, tag="t", outer_folds=2)
+    assert info2["signature"] == ab.signature("A", "L1", small)

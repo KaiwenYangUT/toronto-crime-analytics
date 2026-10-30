@@ -61,8 +61,18 @@ def run(write: bool = True) -> dict:
                 "block_permutation_importance_pr_auc_drop"
             ),
         }
+    # the message is only issued when the numbers meet its stated criteria
+    criteria = {"most_time_terms_clear": time_clear / time_terms > 0.5,
+                "time_alone_ci_upper_below_0.65_both_designs": all(
+                    d["time_only_L1"]["roc_auc"]["hi"] < 0.65 for d in designs.values())}  # fmt: skip
+    message = (
+        "Many time terms are statistically clear, yet time alone predicts little beyond the base rate"
+        if all(criteria.values())
+        else "Criteria not met: do not use the 'clear but not predictive' message"
+    )
     values = {
-        "message": "Many time terms are statistically clear, yet time alone predicts little beyond the base rate",
+        "message": message,
+        "message_criteria": criteria,
         "inference": inference,
         "time_terms": time_terms,
         "time_terms_clear": time_clear,

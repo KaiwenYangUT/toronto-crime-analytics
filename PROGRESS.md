@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P5 Analytical improvements (started) |
-| In progress | P5 code review and fixes | started 2026-10-29 \| machine: Kevins-iMac.local |
+| Current phase | P5 complete; P6 Design system and website next |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | `/code-review` on the P5 diff and fix; then P6 (read only PLAN.md P6; start with the shell, design-system components and Explore page) |
+| Next action | Read only PLAN.md P6 (design system and website). Start with the shell, design-system components, theme toggle and the Explore page, using web/src/styles/tokens.css, design/vega-theme.json and the Explore engine and bundle already in web/ |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -40,6 +40,7 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29: Q2 answered by the user: do not credit the STA313 team; reimplement rather than copy.
 - 2026-10-29: the global seed stays 303313 (PLAN.md proposed 20240415 but 303313 was set in P3 and deviation D3 names it); PLAN.md section 3.2 updated to say so.
 - 2026-10-29: compute budget for the ablation ladder, measured on a 10% sample of neighbourhoods (11,134 rows, 15 neighbourhoods; `.cache/logs/ablation_timing.json`): design A takes 2.8 s (L1), 9.7 s (L3), 32.2 s (L4), 16.9 s (L5); design B about a fifth of A. Nine variants x 14.3 (row ratio) projects about 30 minutes for A and 7 for B, so about 40 minutes of fitting plus about 30 for 1,000-replicate bootstraps; target was 3 hours. Run locally only; predictions cached as parquet in data/interim/ablation.
+- 2026-10-29 (P5 review): the 18 cached ablation prediction sets were stamped with the new cache signature after checking that the model table is bit-identical (the DST fix changed 4 instants and flipped no darkness value) and that the fitting code for those rungs had not changed since they were verified current; all reported numbers were regenerated and are unchanged.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
@@ -149,6 +150,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | P3 | io/schema/definitions/features; explore_legacy, sta303_legacy, jsc370_legacy exact vs R (bit-equal coordinates, R row order reproduced); unified table with ledger and cross-category rule; 24 tests; code review fixed | P4 |
 | 2026-10-29 | P4 | 4a Explain port (all numeric outputs vs R), 4b Predict port (5 of 6 models within tolerance or documented, tier partition identical), 4d tokens + palette validation; PARITY.md sections 1.5, 2.1, 3.1, 5-7 | user decisions on D1-D3 and Q2, then chart aggregates and 4c |
 | 2026-10-29 | P4 (close) | chart checklist 81/81 from unmodified R widgets, Python-tuned row, TypeScript Explore engine + bundle, code review fixed, `parity-pass` tagged locally | P5 |
+| 2026-10-29 | P5 | STA303 v2; ablation ladder (18 variants, 1,000-replicate cluster bootstrap); XGBoost grid fix; caption evidence; inference vs prediction; CHANGES/RESULTS; determinism checks; code review (9 findings fixed: cache signature, verdict logic, dirty flag, DST reading, message criteria, bootstrap memory) | P6 |
 
 ## P1 verification notes
 

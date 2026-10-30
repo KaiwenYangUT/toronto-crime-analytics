@@ -55,6 +55,8 @@ def claims(df: pd.DataFrame) -> dict:
     day = shares(df, "Day_Of_Week_Numeric", DAYS, lambda v: DAYS[int(v) - 1])
     hour = shares(df, "Hour", [str(h) for h in range(24)], lambda v: str(int(v)))
     dark = df.groupby(df["Darkness"].astype(bool))["Robbery"].agg(["sum", "size"])
+    weekend_mean = float(day.loc[["Sat", "Sun"], "robbery"].mean())
+    weekday_mean = float(day.loc[["Mon", "Tue", "Wed", "Thu", "Fri"], "robbery"].mean())
     top_months = month["robbery"].sort_values(ascending=False).head(3)
     hour_steps = np.diff(hour["total"].to_numpy())
     return {
@@ -81,7 +83,14 @@ def claims(df: pd.DataFrame) -> dict:
             ],
             "fewest_robberies_day": str(day["robbery"].idxmin()),
             "highest_robbery_share_day": str(day["share"].idxmax()),
-            "contradicted": bool(day["total"].idxmax() != "Sat"),
+            "weekend_mean_robberies": weekend_mean,
+            "weekday_mean_robberies": weekday_mean,
+            "claim_parts": {
+                "saturday_has_most_incidents": bool(day["total"].idxmax() == "Sat"),
+                "weekend_days_have_more_robberies_than_weekdays": bool(weekend_mean > weekday_mean),
+            },
+            # the original makes both statements, so the caption fails if either part does
+            "contradicted": not (day["total"].idxmax() == "Sat" and weekend_mean > weekday_mean),
         },
         "darkness": {
             "original": "Robberies are more likely after dark",
@@ -105,7 +114,8 @@ def claims(df: pd.DataFrame) -> dict:
             },
             "rises_between_1am_and_11am": int((hour_steps[1:11] > 0).sum()),
             "rises_between_1pm_and_11pm": int((hour_steps[13:23] > 0).sum()),
-            "contradicted": bool((hour_steps[1:11] > 0).any() and (hour_steps[13:23] > 0).any()),
+            # the claim is a decline in both blocks, so a rise in either block contradicts it
+            "contradicted": bool((hour_steps[1:11] > 0).any() or (hour_steps[13:23] > 0).any()),
         },
     }
 

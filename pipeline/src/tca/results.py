@@ -19,7 +19,7 @@ from tca.io import ROOT
 RESULTS_DIR = ROOT / "results"
 INDEX = RESULTS_DIR / "index.json"
 # Provenance fields that describe the run, not the values; excluded when hashing for identity.
-VOLATILE = ("created", "git_sha")
+VOLATILE = ("created", "git_sha", "code_dirty")
 
 
 def git_sha() -> str:
@@ -33,6 +33,19 @@ def git_sha() -> str:
         return out.stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return "unknown"
+
+
+def code_dirty() -> bool:
+    """True if tracked source files (anything outside results/) differ from HEAD, so the recorded
+    git_sha does not fully describe the code that produced a file."""
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no"],
+            capture_output=True, text=True, check=True,
+        )  # fmt: skip
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return True
+    return any(not line[3:].startswith("results/") for line in out.stdout.splitlines())
 
 
 def sha256_file(path: Path) -> str:

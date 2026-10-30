@@ -11,6 +11,9 @@ decision threshold) is fitted inside the training part of a fold only.
 
 from __future__ import annotations
 
+import hashlib
+import inspect
+import json
 import time
 from dataclasses import dataclass
 from itertools import product
@@ -37,7 +40,6 @@ CENSUS = [
     "Transportation_Service_Worker_and_Population_Ratio", "HealthCare_Service_Worker_and_Population_Ratio",
     "Difference_in_Individual_Median_Average_Income",
 ]  # fmt: skip
-BLOCKS = ("time", "geo", "premises", "census")
 RUNGS = {  # rung -> (model kind, blocks)
     "L1": ("logistic", ("time",)),
     "L2": ("logistic", ("time", "geo", "premises")),
@@ -323,31 +325,67 @@ def permutation_importance(model, fb: FeatureBuilder, test: pd.DataFrame, repeat
     blocks = np.array(fb.blocks_of_columns_)
     rng = np.random.default_rng(SEED)
     out = {}
+    Xp = X.copy()
     for block in sorted(set(blocks)):
         cols = np.flatnonzero(blocks == block)
         drops = []
         for _ in range(repeats):
-            Xp = X.copy()
-            Xp[:, cols] = X[rng.permutation(len(X))][:, cols]
+            Xp[:, cols] = X[np.ix_(rng.permutation(len(X)), cols)]  # only the block's columns move
             drops.append(base - ap(y, model.predict_proba(Xp)[:, 1]))
+        Xp[:, cols] = X[:, cols]
         out[block] = float(np.mean(drops))
     return out
+
+
+def signature(design: str, variant: str, table: pd.DataFrame) -> str:
+    """Fingerprint of everything a cached prediction depends on: the rows, the design, the grids
+    and settings, the library versions and the source of the fitting code."""
+    import sklearn
+    import xgboost
+
+    parts = {
+        "design": design,
+        "variant": variant,
+        "seed": SEED,
+        "test_years": TEST_YEARS,
+        "grids": GRIDS,
+        "rungs": RUNGS,
+        "census": CENSUS,
+        "sklearn": sklearn.__version__,
+        "xgboost": xgboost.__version__,
+        "table": int(pd.util.hash_pandas_object(table, index=True).sum()),
+        "code": [
+            inspect.getsource(o)
+            for o in (
+                FeatureBuilder,
+                make_model,
+                fit_predict,
+                tune_and_fit,
+                best_f1_threshold,
+                inner_splits,
+                outer_splits,
+                run_design,
+            )
+        ],
+    }
+    return hashlib.sha256(json.dumps(parts, sort_keys=True, default=str).encode()).hexdigest()
 
 
 def cached(
     design: str, variant: str, table: pd.DataFrame, tag: str = "full", force: bool = False, **kw
 ):
-    """Run or load one (design, variant); predictions live in data/interim/ablation as parquet."""
+    """Run or load one (design, variant); predictions live in data/interim/ablation as parquet.
+    A cache made by different rows, settings, library versions or fitting code is recomputed."""
     CACHE.mkdir(parents=True, exist_ok=True)
     path: Path = CACHE / f"{tag}_{design}_{variant}.parquet"
     info_path = path.with_suffix(".json")
+    sig = signature(design, variant, table)
     if path.exists() and info_path.exists() and not force:
-        import json
-
-        return pd.read_parquet(path), json.loads(info_path.read_text())
+        info = json.loads(info_path.read_text())
+        if info.get("signature") == sig:
+            return pd.read_parquet(path), info
     preds, info = run_design(design, variant, table, **kw)
+    info["signature"] = sig
     preds.to_parquet(path)
-    import json
-
     info_path.write_text(json.dumps(info, indent=1))
     return preds, info

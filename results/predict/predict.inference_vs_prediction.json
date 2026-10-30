@@ -1,7 +1,7 @@
 {
  "_provenance": {
-  "created": "2026-10-30T02:11:15+00:00",
-  "git_sha": "61c4624a40cb9b54d41ad55f2fca6f8e9be29ebe",
+  "created": "2026-10-30T03:01:06+00:00",
+  "git_sha": "53bc34223c20eb626ccde82d23757984cf23d022",
   "inputs": {},
   "key": "predict.inference_vs_prediction",
   "producer": "tca.predict.inference_vs_prediction",
@@ -261,6 +261,10 @@
    }
   },
   "message": "Many time terms are statistically clear, yet time alone predicts little beyond the base rate",
+  "message_criteria": {
+   "most_time_terms_clear": true,
+   "time_alone_ci_upper_below_0.65_both_designs": true
+  },
   "post2019_or": 0.546502202288958,
   "sta303_v2_cv_auc": 0.6312039979276773,
   "time_terms": 41,

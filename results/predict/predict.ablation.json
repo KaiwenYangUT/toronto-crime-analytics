@@ -1,7 +1,7 @@
 {
  "_provenance": {
-  "created": "2026-10-30T02:51:25+00:00",
-  "git_sha": "61c4624a40cb9b54d41ad55f2fca6f8e9be29ebe",
+  "created": "2026-10-30T03:01:02+00:00",
+  "git_sha": "53bc34223c20eb626ccde82d23757984cf23d022",
   "inputs": {
    "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
    "Break_and_Enter_Open_Data.csv": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b",
@@ -6019,7 +6019,7 @@
   "evaluation": {
    "confidence_intervals": "95% cluster bootstrap over neighbourhoods, 1000 replicates, seeded; differences use the same resamples (paired)",
    "inner_tuning": "3-fold grouped CV by neighbourhood inside each training part; PR-AUC picks the grid point",
-   "threshold": "maximises F1 on the inner out-of-fold predictions, then applied to the held-out rows"
+   "threshold": "maximises F1 on the inner out-of-fold predictions, then applied to the held-out rows. Those predictions come from models trained on two thirds of the training part (XGBoost also early-stopped on the scored fold), so the F1 at this threshold is slightly optimistic"
   },
   "table": {
    "model_rows": 159056,

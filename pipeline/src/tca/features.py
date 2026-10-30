@@ -102,10 +102,13 @@ def dst_flags(date: pd.Series, hour: pd.Series) -> tuple[pd.Series, pd.Series]:
 
 def hour_midpoint_utc(date: pd.Series, hour: pd.Series) -> pd.Series:
     """UTC instant of the middle (HH:30) of the local hour in America/Toronto. The missing
-    spring-forward hour is read on the standard-time clock (shifted to the first valid instant
-    after the gap, the same moment); the repeated autumn hour is taken at its first occurrence."""
+    spring-forward hour is read on the standard-time clock (02:30 EST, which is 07:30 UTC); the
+    repeated autumn hour is taken at its first occurrence."""
     local = _local_midpoint(date, hour)
-    aware = local.dt.tz_localize("America/Toronto", nonexistent="shift_forward", ambiguous=True)
+    # a missing 02:30 read on the standard-time clock is 03:30 daylight time: shift the local time by +1 h
+    aware = local.dt.tz_localize(
+        "America/Toronto", nonexistent=pd.Timedelta(hours=1), ambiguous=True
+    )
     return aware.dt.tz_convert("UTC").dt.tz_localize(None)
 
 

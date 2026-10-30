@@ -110,7 +110,9 @@ def run(n_boot: int = 1000, tag: str = "full", write: bool = True) -> dict:
         },
         "evaluation": {
             "inner_tuning": "3-fold grouped CV by neighbourhood inside each training part; PR-AUC picks the grid point",
-            "threshold": "maximises F1 on the inner out-of-fold predictions, then applied to the held-out rows",
+            "threshold": "maximises F1 on the inner out-of-fold predictions, then applied to the held-out rows. Those "
+            "predictions come from models trained on two thirds of the training part (XGBoost also early-stopped on the "
+            "scored fold), so the F1 at this threshold is slightly optimistic",
             "confidence_intervals": f"95% cluster bootstrap over neighbourhoods, {n_boot} replicates, seeded; "
             "differences use the same resamples (paired)",
         },
