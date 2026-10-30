@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline" / "src"))
-from tca.results import RESULTS_DIR, identity_hash  # noqa: E402
+from tca.results import RESULTS_DIR, identity_hash
 
 
 def main() -> None:

@@ -23,7 +23,9 @@ def main() -> None:
     rows = []
     for key, e in sorted(index.items()):
         formats = ", ".join(f"`{path}`: {fmt}" for path, fmt in e["formats"].items()) or "none"
-        rows.append(f"| `{key}` | `{e['file']}` | `{e['producer']}` | {e['description']} | {formats} |")
+        rows.append(
+            f"| `{key}` | `{e['file']}` | `{e['producer']}` | {e['description']} | {formats} |"
+        )
     (ROOT / "RESULTS.md").write_text(HEADER + "\n".join(rows) + "\n")
     print(f"RESULTS.md: {len(rows)} entries")
 
