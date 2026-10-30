@@ -148,3 +148,53 @@ def tuned_rows(train: pd.DataFrame, test: pd.DataFrame) -> dict:
         **j.scores(cm),
     }
     return out
+
+
+# The grid the original wrote down but never passed to train(): depth 1/3/5/7, 50-500 rounds in
+# steps of 50, eta 0.5, gamma 0, subsample 1, min_child_weight 1, colsample 0.6 (40 combinations).
+INTENDED_GRID = {
+    "nrounds": list(range(50, 501, 50)),
+    "max_depth": [1, 3, 5, 7],
+    "eta": [0.5],
+    "colsample_bytree": [0.6],
+    "subsample": [1.0],
+}
+
+
+def seed_mean_metrics(
+    params: dict, train: pd.DataFrame, test: pd.DataFrame, n_seeds: int = 10
+) -> dict:
+    """Test metrics of the XGBoost setting, averaged over the fixed seeds SEED..SEED+9."""
+    spread = j.xgb_seed_spread(train, test, params, n_seeds)
+    return {
+        "tp_mean": float(spread["tp"].mean()),
+        "fp_mean": float(spread["fp"].mean()),
+        "f1_mean": float(spread["f1"].mean()),
+        "accuracy_mean": float(spread["accuracy"].mean()),
+        "f1_min": float(spread["f1"].min()),
+        "f1_max": float(spread["f1"].max()),
+    }
+
+
+def grid_fix(train: pd.DataFrame, test: pd.DataFrame) -> dict:
+    """The original ran caret's default grid ("as-run"); its own tune_grid ("as-intended") was
+    never used. Both are tuned by 10-fold CV accuracy on the training frame and then scored on the
+    same test frame at the decision threshold of 0.5 the original used."""
+    as_run = j.r_json("xgb_summary.json")["best_tune"]
+    table, intended = tune_xgb(train, test, grid=INTENDED_GRID)
+    return {
+        "as_run_caret_default": {
+            "best": as_run,
+            "grid_size": 108,
+            "test": seed_mean_metrics(as_run, train, test),
+        },
+        "as_intended": {
+            "best": {k: float(v) for k, v in intended.items()},
+            "grid_size": len(table),
+            "cv_accuracy": float(table.loc[0, "accuracy"]),
+            "cv_table": table.round(6).to_dict("records"),
+            "test": seed_mean_metrics(intended, train, test),
+        },
+        "threshold": 0.5,
+        "seeds": "SEED..SEED+9",
+    }

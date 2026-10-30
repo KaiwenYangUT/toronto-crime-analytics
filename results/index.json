@@ -33,5 +33,20 @@
    }
   },
   "producer": "tca.explain.sta303_v2"
+ },
+ "predict.eda_corrections": {
+  "description": "Evidence behind corrected JSC370 chart captions (summer, weekend, darkness, hourly) and neighbourhood-level Figure 2 statistics",
+  "file": "results/predict/predict.eda_corrections.json",
+  "formats": {
+   "claims.darkness.dark_share": {
+    "decimals": 1,
+    "percent": true
+   },
+   "claims.summer_rise.winter_share": {
+    "decimals": 1,
+    "percent": true
+   }
+  },
+  "producer": "tca.predict.eda_corrections"
  }
 }

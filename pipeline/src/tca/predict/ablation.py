@@ -207,6 +207,29 @@ def fit_predict(kind: str, params: dict, Xtr, ytr, Xte, n_estimators=None, Xval=
     return model, model.predict_proba(Xte)[:, 1], None
 
 
+def inner_splits(train: pd.DataFrame, folds: int = 3) -> list[tuple[np.ndarray, np.ndarray]]:
+    """Grouped (by neighbourhood) stratified folds inside a training part, for tuning."""
+    return list(
+        StratifiedGroupKFold(folds, shuffle=True, random_state=SEED).split(
+            train, train["robbery"].to_numpy(), train["neighbourhood"].to_numpy()
+        )
+    )
+
+
+def outer_splits(
+    design: str, table: pd.DataFrame, outer_folds: int = 5
+) -> list[tuple[np.ndarray, np.ndarray]]:
+    """Train/test row positions: "A" neighbourhood-grouped k-fold, "B" train <= 2021, test 2022-2023."""
+    if design == "A":
+        return list(
+            StratifiedGroupKFold(outer_folds, shuffle=True, random_state=SEED).split(
+                table, table["robbery"].to_numpy(), table["neighbourhood"].to_numpy()
+            )
+        )
+    in_test = table["year"].isin(TEST_YEARS).to_numpy()
+    return [(np.flatnonzero(~in_test), np.flatnonzero(in_test))]
+
+
 def tune_and_fit(
     kind: str,
     blocks: tuple[str, ...],
@@ -266,15 +289,7 @@ def run_design(
     if variant.endswith("-nopremises"):
         blocks = tuple(b for b in blocks if b != "premises")
     y = table["robbery"].to_numpy()
-    if design == "A":
-        splits = list(
-            StratifiedGroupKFold(outer_folds, shuffle=True, random_state=SEED).split(
-                table, y, table["neighbourhood"].to_numpy()
-            )
-        )
-    else:
-        in_test = table["year"].isin(TEST_YEARS).to_numpy()
-        splits = [(np.flatnonzero(~in_test), np.flatnonzero(in_test))]
+    splits = outer_splits(design, table, outer_folds)
     out, info, imp = [], [], []
     started = time.time()
     for fold, (tr, te) in enumerate(splits):
