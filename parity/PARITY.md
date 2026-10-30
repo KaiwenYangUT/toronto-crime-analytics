@@ -153,12 +153,16 @@ All four tables are built by `tca.build` and compared with the R re-run exports;
 | `jsc370_legacy` vs R `final_data` | 16,611 rows, 2,779 robberies, 158 of 158 neighbourhoods; full-row multiset equal and R's row order reproduced; census features relative difference 0 |
 | `unified` | no R counterpart; 159,072 rows (2014 to 2023); ledger in `parity/reports/unified_ledger.json` |
 
+### 3.2 TypeScript engine vs R (P4c)
+`web/src/explore-engine` re-implements the original filter, period, haversine, daily and trend functions and the CSV export as pure functions over typed arrays (a clean reimplementation; no original code is copied). Tolerance: exact. Result: all 2,565 fixture cases are exact, on the R-CSV table and on the shipped binary bundle, including identical CSV bytes and identical NA positions. Bundle: 25,242 records, 681,534 bytes raw and 316,147 gzipped (budget 600 KB), float64 coordinates bit-equal to R's.
+
 ## 4. Determinism checks
 
 | Run | Result |
 |---|---|
 | STA303, two knits | all 55 exported files and the HTML are byte-identical |
 | Explorer RDS, two builds | byte-identical |
+| Explore bundle, two Python builds | identical SHA-256 (tested) |
 | JSC370, two full knits (including the xgboost grid) | all 23 exported files identical (MD5 of uncompressed content) |
 
 ## 5. Deviations and open flags

@@ -1,0 +1,129 @@
+{
+ "n": 25242,
+ "endianness": "little",
+ "columns": [
+  {
+   "name": "lon",
+   "dtype": "f8",
+   "offset": 0
+  },
+  {
+   "name": "lat",
+   "dtype": "f8",
+   "offset": 201936
+  },
+  {
+   "name": "event_class",
+   "dtype": "u4",
+   "offset": 403872
+  },
+  {
+   "name": "day",
+   "dtype": "u2",
+   "offset": 504840
+  },
+  {
+   "name": "hour",
+   "dtype": "u1",
+   "offset": 555324
+  },
+  {
+   "name": "category",
+   "dtype": "u1",
+   "offset": 580566
+  },
+  {
+   "name": "status",
+   "dtype": "u1",
+   "offset": 605808
+  },
+  {
+   "name": "premises",
+   "dtype": "u1",
+   "offset": 631050
+  },
+  {
+   "name": "location",
+   "dtype": "u1",
+   "offset": 656292
+  }
+ ],
+ "dictionaries": {
+  "category": [
+   "Bicycle theft",
+   "Robbery",
+   "Theft over"
+  ],
+  "status": [
+   "Not applicable",
+   "RECOVERED",
+   "STOLEN",
+   "UNKNOWN"
+  ],
+  "premises": [
+   "Apartment",
+   "Commercial",
+   "Educational",
+   "House",
+   "Other",
+   "Outside",
+   "Transit"
+  ],
+  "location": [
+   "Apartment (Rooming House, Condo)",
+   "Bank And Other Financial Institutions (Money Mart, Tsx)",
+   "Bar / Restaurant",
+   "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)",
+   "Community Group Home",
+   "Construction Site (Warehouse, Trailer, Shed)",
+   "Convenience Stores",
+   "Dealership (Car, Motorcycle, Marine, Trailer, Etc.)",
+   "Gas Station (Self, Full, Attached Convenience)",
+   "Go Bus",
+   "Go Station",
+   "Go Train",
+   "Group Homes (Non-Profit, Halfway House,",
+   "Group Homes (Non-Profit, Halfway House, Social Agency)",
+   "Homeless Shelter / Mission",
+   "Hospital / Institutions / Medical Facilities (Clinic, Dentist, Morgue)",
+   "Jails / Detention Centres",
+   "Nursing Home",
+   "Open Areas (Lakes, Parks, Rivers)",
+   "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",
+   "Other Non Commercial / Corporate Places (Non-Profit, Gov'T, Firehall)",
+   "Other Passenger Train",
+   "Other Passenger Train Station",
+   "Other Regional Transit System Vehicle",
+   "Other Train Admin Or Support Facility",
+   "Other Train Yard",
+   "Parking Lots (Apt., Commercial Or Non-Commercial)",
+   "Pharmacy",
+   "Police / Courts (Parole Board, Probation Office)",
+   "Private Property Structure (Pool, Shed, Detached Garage)",
+   "Religious Facilities (Synagogue, Church, Convent, Mosque)",
+   "Retirement Home",
+   "Schools During Supervised Activity",
+   "Schools During Un-Supervised Activity",
+   "Single Home, House (Attach Garage, Cottage, Mobile)",
+   "Streets, Roads, Highways (Bicycle Path, Private Road)",
+   "Ttc Admin Or Support Facility",
+   "Ttc Bus",
+   "Ttc Bus Stop / Shelter / Loop",
+   "Ttc Light Rail Transit Station",
+   "Ttc Light Rail Vehicle",
+   "Ttc Street Car",
+   "Ttc Subway Station",
+   "Ttc Subway Train",
+   "Ttc Subway Tunnel / Outdoor Tracks",
+   "Universities / Colleges",
+   "Unknown"
+  ]
+ },
+ "first_day": 18262,
+ "last_day": 19722,
+ "bytes": 681534,
+ "gzip_bytes": 316147,
+ "sha256": "d6c6b2352b6717b96641c8575aee2a245092a2b8c5ab3e45cb6ad60048377b92",
+ "source": "tca.build.explore_legacy (equal to the R Explorer rebuild, see parity/PARITY.md)",
+ "n_event_classes": 25068
+}
