@@ -1,0 +1,384 @@
+{
+ "_provenance": {
+  "created": "2026-10-30T02:14:08+00:00",
+  "git_sha": "61c4624a40cb9b54d41ad55f2fca6f8e9be29ebe",
+  "inputs": {
+   "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
+   "Bicycle_Thefts_Open_Data.csv": "ada41ff1eefc5ce5866a490e33790c79bb42904dabe87ff1132b03df61796f69",
+   "Break_and_Enter_Open_Data.csv": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b",
+   "Homicides_Open_Data_(ASR-RC-TBL-002).csv": "9e23c93cdeaf93a123d2d7e9ff65700810c38a49e2532d3d1a35033d6170590a",
+   "Income_Dataset.xlsx": "d9c60864972635e1a37fdbce55899ce02da4a4aff500301546ae9562205c3f2b",
+   "Robbery_Open_Data.csv": "214aaf0e5f3a34511c37e31d326659780285e6f00cac1a58cfe08acbe934086b",
+   "Shooting_and_Firearm_Discharges_Open_Data.csv": "c67b58896652198db970bf14a29a9d99cb523decb83040bbbb8544831b9a9b52",
+   "Theft_Over_Open_Data.csv": "cec58ac7aaa1def1a32827818a43c214ce0a52f8cfa5f4cc1772f30585aba5f5"
+  },
+  "key": "predict.xgb_grid_fix",
+  "producer": "parity/compare/xgb_grid_fix.py",
+  "seed": 303313
+ },
+ "values": {
+  "as_intended": {
+   "best": {
+    "colsample_bytree": 0.6,
+    "eta": 0.5,
+    "max_depth": 7.0,
+    "nrounds": 200.0,
+    "subsample": 1.0
+   },
+   "cv_accuracy": 0.8723653735442939,
+   "cv_table": [
+    {
+     "accuracy": 0.872365,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 200,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.870732,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 250,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.86987,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 100,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.869699,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 450,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.869527,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 150,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.869355,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 350,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.869012,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 400,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.868839,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 300,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.868839,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 500,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.867892,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 7,
+     "nrounds": 50,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.867549,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 250,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.866345,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 300,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.866258,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 200,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.866173,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 400,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.865829,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 350,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.865656,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 500,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.865226,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 450,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.864968,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 150,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.86299,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 450,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.862904,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 500,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.862646,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 400,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.861442,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 250,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.861355,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 350,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.861184,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 300,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.861184,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 100,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.860066,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 200,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.856454,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 150,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.855766,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 5,
+     "nrounds": 50,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.854905,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 100,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.850863,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 3,
+     "nrounds": 50,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.841919,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 500,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.841317,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 400,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.841317,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 450,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.841059,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 300,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.840887,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 350,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.840371,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 250,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.840113,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 200,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.839769,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 100,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.839769,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 50,
+     "subsample": 1.0
+    },
+    {
+     "accuracy": 0.839683,
+     "colsample_bytree": 0.6,
+     "eta": 0.5,
+     "max_depth": 1,
+     "nrounds": 150,
+     "subsample": 1.0
+    }
+   ],
+   "grid_size": 40,
+   "test": {
+    "accuracy_mean": 0.8717495987158909,
+    "f1_max": 0.5863874345549739,
+    "f1_mean": 0.5774301828770978,
+    "f1_min": 0.5647840531561461,
+    "fp_mean": 228.0,
+    "tp_mean": 436.8
+   }
+  },
+  "as_run_caret_default": {
+   "best": {
+    "colsample_bytree": 0.8,
+    "eta": 0.4,
+    "gamma": 0,
+    "max_depth": 3,
+    "min_child_weight": 1,
+    "nrounds": 150,
+    "subsample": 1
+   },
+   "grid_size": 108,
+   "test": {
+    "accuracy_mean": 0.8483948635634029,
+    "f1_max": 0.384742951907131,
+    "f1_mean": 0.3629337423951385,
+    "f1_min": 0.34790059982862037,
+    "fp_mean": 122.9,
+    "tp_mean": 215.3
+   }
+  },
+  "seeds": "SEED..SEED+9",
+  "threshold": 0.5
+ }
+}

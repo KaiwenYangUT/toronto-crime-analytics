@@ -41,6 +41,8 @@ def sha256_file(path: Path) -> str:
 
 def input_hashes(names: list[str]) -> dict[str, str]:
     """SHA-256 of raw inputs, taken from the verified manifest (``make data`` checks the files)."""
+    if not names:
+        return {}
     manifest = json.loads((ROOT / "data" / "manifest.json").read_text())
     files = {f["file"]: f["sha256"] for f in manifest["files"]}
     return {n: files[n] for n in names}

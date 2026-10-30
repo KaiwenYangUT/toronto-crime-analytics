@@ -34,6 +34,26 @@
   },
   "producer": "tca.explain.sta303_v2"
  },
+ "predict.ablation": {
+  "description": "Ablation ladder L0-L5 (+ no-premises) under neighbourhood-grouped CV and a temporal holdout: ROC-AUC, PR-AUC, F1 with cluster-bootstrap intervals and paired rung differences",
+  "file": "results/predict/predict.ablation.json",
+  "formats": {
+   "designs.*.prevalence": {
+    "decimals": 1,
+    "percent": true
+   },
+   "designs.*.variants.*.f1.estimate": {
+    "decimals": 3
+   },
+   "designs.*.variants.*.pr_auc.estimate": {
+    "decimals": 3
+   },
+   "designs.*.variants.*.roc_auc.estimate": {
+    "decimals": 3
+   }
+  },
+  "producer": "tca.predict.ablation_report"
+ },
  "predict.eda_corrections": {
   "description": "Evidence behind corrected JSC370 chart captions (summer, weekend, darkness, hourly) and neighbourhood-level Figure 2 statistics",
   "file": "results/predict/predict.eda_corrections.json",
@@ -48,5 +68,31 @@
    }
   },
   "producer": "tca.predict.eda_corrections"
+ },
+ "predict.inference_vs_prediction": {
+  "description": "Side-by-side: statistically clear time terms vs the predictive lift of time, location/premises and census blocks",
+  "file": "results/predict/predict.inference_vs_prediction.json",
+  "formats": {
+   "post2019_or": {
+    "decimals": 2
+   },
+   "sta303_v2_cv_auc": {
+    "decimals": 3
+   }
+  },
+  "producer": "tca.predict.inference_vs_prediction"
+ },
+ "predict.xgb_grid_fix": {
+  "description": "JSC370 XGBoost: caret default grid (as run) vs the original's intended tune_grid, on the original 2020 train/test split; 10-seed means",
+  "file": "results/predict/predict.xgb_grid_fix.json",
+  "formats": {
+   "as_intended.test.f1_mean": {
+    "decimals": 3
+   },
+   "as_run_caret_default.test.f1_mean": {
+    "decimals": 3
+   }
+  },
+  "producer": "parity/compare/xgb_grid_fix.py"
  }
 }

@@ -204,6 +204,10 @@ def fit_predict(kind: str, params: dict, Xtr, ytr, Xte, n_estimators=None, Xval=
         model.fit(Xtr, ytr, eval_set=[(Xval, yval)], verbose=False)
         return model, model.predict_proba(Xte)[:, 1], int(model.best_iteration) + 1
     model.fit(Xtr, ytr)
+    if kind == "forest":
+        # trees are built in parallel (each has its own seed), but summing their votes across
+        # threads is order-dependent in the last digits; predict on one thread to stay reproducible
+        model.set_params(n_jobs=1)
     return model, model.predict_proba(Xte)[:, 1], None
 
 
@@ -330,12 +334,14 @@ def permutation_importance(model, fb: FeatureBuilder, test: pd.DataFrame, repeat
     return out
 
 
-def cached(design: str, variant: str, table: pd.DataFrame, tag: str = "full", **kw):
+def cached(
+    design: str, variant: str, table: pd.DataFrame, tag: str = "full", force: bool = False, **kw
+):
     """Run or load one (design, variant); predictions live in data/interim/ablation as parquet."""
     CACHE.mkdir(parents=True, exist_ok=True)
     path: Path = CACHE / f"{tag}_{design}_{variant}.parquet"
     info_path = path.with_suffix(".json")
-    if path.exists() and info_path.exists():
+    if path.exists() and info_path.exists() and not force:
         import json
 
         return pd.read_parquet(path), json.loads(info_path.read_text())

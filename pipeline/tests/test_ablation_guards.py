@@ -101,3 +101,14 @@ def test_cluster_bootstrap_draws_are_seeded_and_cover_all_clusters():
     }
     out = bs.bootstrap_variants(v, groups, n_boot=30, n_jobs=1)
     assert out["x"].shape == (30, 5) and np.nanmean(out["x"][:, 0]) > np.nanmean(out["z"][:, 0])
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("variant", ["L3", "L4", "L5"])
+def test_fitting_is_deterministic(table, variant):
+    """Two independent fits (with n_jobs > 1) give the same predictions and thresholds."""
+    a, ia = ab.run_design("A", variant, table)
+    b, ib = ab.run_design("A", variant, table)
+    assert np.array_equal(a["p"].to_numpy(), b["p"].to_numpy())
+    assert np.array_equal(a["threshold"].to_numpy(), b["threshold"].to_numpy())
+    assert [f["threshold"] for f in ia["folds"]] == [f["threshold"] for f in ib["folds"]]

@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P5 Analytical improvements (started) |
-| In progress | P5.2 ablation ladder: step 1 compute-budget measurement on a 10% sample, then `pipeline/src/tca/predict/ablation.py` \| started 2026-10-29 \| files: pipeline/src/tca/predict/ablation.py, pipeline/tests/, results/predict/ \| machine: Kevins-iMac.local |
+| In progress | P5 code review and fixes | started 2026-10-29 \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Build the ablation feature table (unified rows + census join, NSA dropped), time one rung of each model on a 10% sample, record the projection here, then run the full ladder with cached out-of-fold predictions |
+| Next action | `/code-review` on the P5 diff and fix; then P6 (read only PLAN.md P6; start with the shell, design-system components and Explore page) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -111,11 +111,11 @@ Add a row whenever work moves to a different machine or app.
 
 ### P5 Improvements
 - [x] STA303 v2 (items 1-9 in PLAN.md 5.1 plus weekday as a factor): `pipeline/src/tca/explain/sta303_v2.py`, solar darkness in `features.py` (astronomy tests), results `results/explain/explain.sta303_v2.json` (identical identity hash across two runs), CHANGES.md rows S1-S10, RESULTS.md generated. Headline: 159,056 rows; post-2019 OR 0.55 (0.53-0.56; cluster-robust 0.52-0.58); composition: auto theft 0.34, break and enter 0.81, theft over 0.61; CV AUC 0.631 (sd 0.003); harmonic model worse (AIC +517). Cluster covariance checked against statsmodels. Infrastructure: `tca/results.py`, `tools/hash_outputs.py`, `tools/gen_results_md.py`.
-- [ ] Compute-budget measurement on a 10% sample
-- [ ] Ablation ladder L0–L5 + no-premises, grouped CV + temporal holdout, CIs, leakage tests
-- [ ] XGBoost grid fix, seeds, caption corrections
-- [ ] Inference vs prediction comparison
-- [ ] CHANGES.md complete; RESULTS.md complete; hashes identical across two runs
+- [x] Compute-budget measurement on a 10% sample (projection recorded under Decisions; actual full fit about 1 h 10 min, bootstrap 3 min)
+- [x] Ablation ladder L0-L5 + no-premises, grouped CV + temporal holdout, 1,000-replicate neighbourhood-cluster bootstrap with paired differences: `pipeline/src/tca/predict/{ablation,ablation_run,bootstrap,ablation_report}.py`, results `predict.ablation`. Grouped CV ROC-AUC (95% CI): L1 time only 0.588 (0.579-0.597); L2 +location/premises 0.836; L3 +census 0.839; L4 forest 0.858; L5 XGBoost 0.860 (0.851-0.869); L2 without premises/location 0.599. Temporal holdout: L5 0.841. Leakage guards (9 fast + 3 slow determinism tests) in `pipeline/tests/test_ablation_guards.py`. Found and fixed: forest predictions were thread-order dependent (now single-thread predict), L4 caches regenerated, numbers unchanged.
+- [x] XGBoost grid fix (as-intended grid: depth 7, 200 rounds, 10-seed mean test F1 0.577 vs 0.363 as run; `predict.xgb_grid_fix`), seeds everywhere, caption corrections (`predict.eda_corrections`: summer, weekend, darkness, hourly all contradicted; Figure 2 at neighbourhood level)
+- [x] Inference vs prediction comparison (`predict.inference_vs_prediction`): 28 of 41 time terms statistically clear, yet time alone has ROC-AUC 0.588
+- [x] CHANGES.md (S1-S10, A1-A6, X1-X2, E1-E5, I1) and RESULTS.md (generated, 5 keys) complete; identity hashes identical across two runs (STA303 v2 twice, ablation report twice, model refits deterministic).
 
 ### P6 Website
 - [ ] Shell, design-system components, theme toggle
