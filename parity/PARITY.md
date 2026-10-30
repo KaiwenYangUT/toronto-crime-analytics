@@ -79,7 +79,18 @@ Alternatives tried and rejected (none within tolerance on every count): alphabet
 
 *Tier rule* (paired bootstrap, 1,000 repetitions, shared seeded indices): R and Python give the same partition, {random forest, bagging} > {XGBoost} > {tree} > {GBM, GLM}.
 
-Not yet done for 4b: Python's own CV-selected hyperparameters as a separate labelled row, and chart aggregates (importance bars, ROC, tree plots).
+Chart data for the model charts is in section 7.
+
+### 1.6 Python-tuned row (P4b)
+Labelled separately from the faithful ports above: hyperparameters chosen by Python on the **training frame only** (test frame never read; a test shows the choice is unchanged when test labels are scrambled). Code: `tca.predict.tuning`; report `parity/reports/jsc370_tuned.json`; run `parity/compare/jsc370_tuned.py` (about 2.5 minutes).
+
+| Model | Python's CV choice | R's choice | Test TP / FP / F1 (Python-tuned) | Faithful port (R's settings) |
+|---|---|---|---|---|
+| XGBoost | nrounds 150, depth 3, eta 0.4, colsample 0.8, subsample 1 (caret's 108-point grid, 10-fold accuracy 0.8559) | the same | 232 / 126 / .385 | 232 / 126 / .385 (same fit) |
+| Random forest | mtry 2 (OOB accuracy .8847; mtry 4 is .8842, a tie) | mtry 4 (default) | 360 / 87 / .556 | 383 / 111 / .571 |
+| GBM | 150 trees, depth 3 (5-fold accuracy .8482) | 100 trees, depth 1 | 106 / 65 / .208 | 29 / 9 / .065 |
+
+Reading: Python's search lands on R's XGBoost setting exactly, and R's forest default is within noise of the OOB optimum. R's GBM was untuned stumps; allowing depth 3 triples its F1, though it stays in the lower tier. These are single-seed fits, so differences of a few counts are noise.
 
 ## 2. STA303 (logistic-regression inference)
 
@@ -166,7 +177,7 @@ All four tables are built by `tca.build` and compared with the R re-run exports;
 | JSC370, two full knits (including the xgboost grid) | all 23 exported files identical (MD5 of uncompressed content) |
 
 ## 5. Deviations and open flags
-Parity has passed only when every deviation below is accepted in writing (AGENTS.md rule 2). **D1, D2 and D3 were accepted by the user in chat on 2026-10-29** (message "Accept D1–D3"), including judging XGBoost on the mean of the ten pre-declared seeds. D4 is a logged restyle. Remaining before the `parity-pass` tag: the chart checklist (section 7) and the Python CV-selected hyperparameter row.
+Parity has passed only when every deviation below is accepted in writing (AGENTS.md rule 2). **D1, D2 and D3 were accepted by the user in chat on 2026-10-29** (message "Accept D1–D3"), including judging XGBoost on the mean of the ten pre-declared seeds. D4 is a logged restyle. Remaining before the `parity-pass` tag: the P4 code review.
 
 | # | Deviation | Size | Why it exists | Status |
 |---|---|---|---|---|
