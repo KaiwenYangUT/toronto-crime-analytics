@@ -1,0 +1,13 @@
+.chart { position: relative; width: 100%; }
+.live { width: 100%; }
+.live :global(.vega-embed) { width: 100%; }
+.live :global(.vega-embed) summary { display: none; }
+.svgLight, .svgDark { width: 100%; overflow-x: auto; }
+.svgDark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .svgLight { display: none; }
+  :global(:root:not([data-theme='light'])) .svgDark { display: block; }
+}
+:global(:root[data-theme='dark']) .svgLight { display: none; }
+:global(:root[data-theme='dark']) .svgDark { display: block; }
+.svgLight svg, .svgDark svg { max-width: 100%; height: auto; }

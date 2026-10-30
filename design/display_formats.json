@@ -1,0 +1,297 @@
+{
+  "_note": "Display formats for published numbers the result producers did not format. Keys are results-key:path with * as a one-segment wildcard. tools/gen_web_data.py merges these with results/index.json.",
+  "explain.sta303_v2:n": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:robbery": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:classes.*": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:log.*": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:composition.*.n": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:composition.*.robbery_share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "explain.sta303_v2:composition.*.post2019.*": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:composition.*.dark.*": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:dark.or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:dark.or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:dark.robust_or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:dark.robust_or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:prevalence_by_year.*.share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "explain.sta303_v2:prevalence_by_year.*.n": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:fit.parameters": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:fit.harmonic.delta_aic": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:fit.harmonic.parameters": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:cv.folds": {
+    "decimals": 0
+  },
+  "explain.sta303_v2:cv.seed": {
+    "decimals": 0
+  },
+  "predict.ablation:designs.*.rows": {
+    "decimals": 0
+  },
+  "predict.ablation:designs.*.clusters": {
+    "decimals": 0
+  },
+  "predict.ablation:designs.*.bootstrap_replicates": {
+    "decimals": 0
+  },
+  "predict.ablation:designs.*.variants.*.roc_auc.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.roc_auc.hi": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.pr_auc.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.pr_auc.hi": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.f1.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.f1.hi": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.deltas.*.*.estimate": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.deltas.*.*.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.deltas.*.*.hi": {
+    "decimals": 3
+  },
+  "predict.ablation:table.*": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:rows": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:robberies": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:year": {
+    "decimals": 0,
+    "plain": true
+  },
+  "predict.inference_vs_prediction:time_terms": {
+    "decimals": 0
+  },
+  "predict.inference_vs_prediction:time_terms_clear": {
+    "decimals": 0
+  },
+  "predict.inference_vs_prediction:inference.*.clear": {
+    "decimals": 0
+  },
+  "predict.inference_vs_prediction:inference.*.terms": {
+    "decimals": 0
+  },
+  "predict.xgb_grid_fix:as_intended.test.f1_max": {
+    "decimals": 3
+  },
+  "predict.xgb_grid_fix:as_intended.test.f1_min": {
+    "decimals": 3
+  },
+  "predict.xgb_grid_fix:as_run_caret_default.test.f1_max": {
+    "decimals": 3
+  },
+  "predict.xgb_grid_fix:as_run_caret_default.test.f1_min": {
+    "decimals": 3
+  },
+  "predict.xgb_grid_fix:as_intended.grid_size": {
+    "decimals": 0
+  },
+  "predict.xgb_grid_fix:as_run_caret_default.grid_size": {
+    "decimals": 0
+  },
+  "predict.xgb_grid_fix:as_intended.test.accuracy_mean": {
+    "decimals": 3
+  },
+  "predict.xgb_grid_fix:as_run_caret_default.test.accuracy_mean": {
+    "decimals": 3
+  },
+  "explain.sta303_v2:hour_or_vs_12.*.or": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:hour_or_vs_12.*.or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:hour_or_vs_12.*.or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:hour_or_vs_12.*.robust_or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:hour_or_vs_12.*.robust_or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:month_or_vs_jan.*.or": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:month_or_vs_jan.*.or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:month_or_vs_jan.*.or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:month_or_vs_jan.*.robust_or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:month_or_vs_jan.*.robust_or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:weekday_or_vs_mon.*.or": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:weekday_or_vs_mon.*.or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:weekday_or_vs_mon.*.or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:weekday_or_vs_mon.*.robust_or_lo": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:weekday_or_vs_mon.*.robust_or_hi": {
+    "decimals": 2
+  },
+  "explain.sta303_v2:calibration_deciles.*.mean_predicted": {
+    "decimals": 3
+  },
+  "explain.sta303_v2:calibration_deciles.*.observed": {
+    "decimals": 3
+  },
+  "explain.sta303_v2:calibration_deciles.*.n": {
+    "decimals": 0
+  },
+  "predict.ablation:designs.*.variants.*.pr_curve.recall.*": {
+    "decimals": 2
+  },
+  "predict.ablation:designs.*.variants.*.pr_curve.precision.*": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.block_permutation_importance_pr_auc_drop.*": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.L0.roc_auc": {
+    "decimals": 2
+  },
+  "predict.ablation:designs.*.L0.pr_auc_baseline": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.eda_corrections:claims.hourly_shape.robbery_share_by_hour.*": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.inference_vs_prediction:designs.*.time_only_L1.*.*": {
+    "decimals": 3
+  },
+  "predict.inference_vs_prediction:designs.*.prevalence": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.inference_vs_prediction:designs.*.pr_auc_baseline": {
+    "decimals": 3
+  },
+  "predict.inference_vs_prediction:designs.*.added_by_block.*.*.*": {
+    "decimals": 3
+  },
+  "predict.inference_vs_prediction:designs.*.xgboost_block_permutation_importance_pr_auc_drop.*": {
+    "decimals": 3
+  },
+  "predict.eda_corrections:claims.summer_rise.summer_share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.eda_corrections:claims.summer_rise.winter_share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.eda_corrections:claims.darkness.dark_share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.eda_corrections:claims.darkness.light_share": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.eda_corrections:claims.summer_rise.summer_robberies": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.summer_rise.winter_robberies": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.summer_rise.spring_robberies": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.summer_rise.fall_robberies": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.darkness.dark_incidents": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.darkness.light_incidents": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.hourly_shape.rises_between_1am_and_11am": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.hourly_shape.rises_between_1pm_and_11pm": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.weekend_peak.robberies_by_day.*": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.weekend_peak.incidents_by_day.*": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.hourly_shape.incidents_by_hour.*": {
+    "decimals": 0
+  },
+  "predict.eda_corrections:claims.weekend_peak.robbery_share_by_day.*": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.ablation:designs.*.prevalence_by_year.*": {
+    "decimals": 1,
+    "percent": true
+  },
+  "predict.ablation:designs.*.variants.*.f1.estimate": {
+    "decimals": 3
+  }
+}

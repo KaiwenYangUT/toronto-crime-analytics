@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import { AppShell } from './components/AppShell.tsx'
 import './styles/tokens.css'
 import './styles/base.css'
@@ -31,6 +31,18 @@ export default function Root() {
   return (
     <AppShell>
       <Outlet />
+    </AppShell>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: unknown }) {
+  const message = isRouteErrorResponse(error) ? `${error.status} ${error.statusText}` : error instanceof Error ? error.message : 'Unknown error'
+  // Prerendering swallows render errors into HTML; print them so a missing result or format fails visibly.
+  console.error('Render error:', error)
+  return (
+    <AppShell>
+      <h1>Something went wrong</h1>
+      <p role="alert">{message}</p>
     </AppShell>
   )
 }

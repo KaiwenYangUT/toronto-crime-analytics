@@ -122,3 +122,17 @@ a.card:hover { border-color: var(--accent); }
 @media (min-width: 768px) { .strip { grid-template-columns: repeat(3, 1fr); } }
 .stripItem { border-top: 2px solid var(--accent); padding-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
 .stripItem h3 { font-size: var(--text-lg); }
+
+/* Methods layout */
+.withToc { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1024px) { .withToc { grid-template-columns: 220px minmax(0, 1fr); } }
+.toc { font-size: var(--text-sm); }
+@media (min-width: 1024px) { .toc { position: sticky; top: 80px; align-self: start; } }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+@media (min-width: 1024px) { .toc ol { flex-direction: column; gap: var(--space-1); } }
+.toc a { color: var(--text-muted); text-decoration: none; display: block; padding: var(--space-1) 0; }
+.toc a:hover { color: var(--text); text-decoration: underline; }
+.toc a[data-pinned='true'] { color: var(--text); font-weight: 600; }
+.dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; font-size: var(--text-sm); }
+.dl dt { color: var(--text-muted); }
+.dl dd { margin: 0; }

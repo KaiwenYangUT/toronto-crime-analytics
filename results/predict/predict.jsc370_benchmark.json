@@ -1,0 +1,164 @@
+{
+ "_provenance": {
+  "code_dirty": true,
+  "created": "2026-10-30T14:35:01+00:00",
+  "git_sha": "1c96ebf60f9165698432270eae4eec1520c50167",
+  "inputs": {},
+  "key": "predict.jsc370_benchmark",
+  "producer": "parity/compare/jsc370_benchmark_results.py",
+  "seed": 303313
+ },
+ "values": {
+  "models": {
+   "bagging": {
+    "f1_within": true,
+    "identical_matrix": false,
+    "label": "Bagging",
+    "python": {
+     "f1": 0.5654885654885655,
+     "fp": 187,
+     "test_accuracy": 0.8741974317817014,
+     "tp": 408
+    },
+    "r": {
+     "f1": 0.5633217993079584,
+     "fp": 190,
+     "test_accuracy": 0.8733948635634029,
+     "tp": 407
+    },
+    "tp_within": true
+   },
+   "gbm": {
+    "f1_within": true,
+    "identical_matrix": true,
+    "label": "Gradient boosting (gbm)",
+    "python": {
+     "f1": 0.0654627539503386,
+     "fp": 9,
+     "test_accuracy": 0.833868378812199,
+     "tp": 29
+    },
+    "r": {
+     "f1": 0.0654627539503386,
+     "fp": 9,
+     "test_accuracy": 0.833868378812199,
+     "tp": 29
+    },
+    "tp_within": true
+   },
+   "glm": {
+    "f1_within": true,
+    "identical_matrix": true,
+    "label": "Logistic regression",
+    "python": {
+     "f1": 0.056497175141242945,
+     "fp": 12,
+     "test_accuracy": 0.8324638844301766,
+     "tp": 25
+    },
+    "r": {
+     "f1": 0.056497175141242945,
+     "fp": 12,
+     "test_accuracy": 0.8324638844301766,
+     "tp": 25
+    },
+    "tp_within": true
+   },
+   "rf": {
+    "f1_within": true,
+    "identical_matrix": false,
+    "label": "Random forest",
+    "python": {
+     "f1": 0.5707898658718331,
+     "fp": 111,
+     "test_accuracy": 0.884430176565008,
+     "tp": 383
+    },
+    "r": {
+     "f1": 0.5671641791044777,
+     "fp": 112,
+     "test_accuracy": 0.8836276083467095,
+     "tp": 380
+    },
+    "tp_within": true
+   },
+   "tree": {
+    "f1_within": true,
+    "identical_matrix": false,
+    "label": "Decision tree",
+    "python": {
+     "f1": 0.1685279187817259,
+     "fp": 54,
+     "test_accuracy": 0.8356741573033708,
+     "tp": 83
+    },
+    "r": {
+     "f1": 0.14669421487603304,
+     "fp": 49,
+     "test_accuracy": 0.8342696629213483,
+     "tp": 71
+    },
+    "tp_within": false
+   },
+   "xgb": {
+    "f1_within": false,
+    "identical_matrix": false,
+    "label": "XGBoost",
+    "python": {
+     "f1": 0.384742951907131,
+     "fp": 126,
+     "test_accuracy": 0.851123595505618,
+     "tp": 232
+    },
+    "r": {
+     "f1": 0.33728813559322035,
+     "fp": 133,
+     "test_accuracy": 0.8430979133226324,
+     "tp": 199
+    },
+    "tp_within": false
+   }
+  },
+  "tiers": {
+   "identical": true,
+   "python": [
+    [
+     "rf",
+     "bagging"
+    ],
+    [
+     "xgb"
+    ],
+    [
+     "tree"
+    ],
+    [
+     "gbm",
+     "glm"
+    ]
+   ],
+   "r": [
+    [
+     "rf",
+     "bagging"
+    ],
+    [
+     "xgb"
+    ],
+    [
+     "tree"
+    ],
+    [
+     "gbm",
+     "glm"
+    ]
+   ],
+   "r_prediction_counts_match_matrices": true
+  },
+  "xgb_ten_seed_mean": {
+   "f1_mean": 0.3629337423951385,
+   "fp_mean": 122.9,
+   "tp_mean": 215.3
+  }
+ }
+}

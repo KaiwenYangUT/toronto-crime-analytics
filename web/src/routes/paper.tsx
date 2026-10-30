@@ -1,5 +1,10 @@
-import { PageHeader } from '../components/PageHeader.tsx'
+import { Paper } from '../content/Paper.tsx'
 
-export default function Page() {
-  return <PageHeader eyebrow="paper" title="paper placeholder" />
+
+export function meta() {
+  return [{ title: 'Paper · Toronto robbery vs property crime' }]
+}
+
+export default function PaperRoute() {
+  return <Paper />
 }

@@ -82,6 +82,43 @@
   },
   "producer": "tca.predict.inference_vs_prediction"
  },
+ "predict.jsc370_benchmark": {
+  "description": "JSC370 six-model benchmark on the original 2020 split: R re-run (equal to the published table at seven decimals) vs the Python port, with the tier ranking",
+  "file": "results/predict/predict.jsc370_benchmark.json",
+  "formats": {
+   "models.*.python.f1": {
+    "decimals": 3
+   },
+   "models.*.python.fp": {
+    "decimals": 0
+   },
+   "models.*.python.test_accuracy": {
+    "decimals": 3
+   },
+   "models.*.python.tp": {
+    "decimals": 0
+   },
+   "models.*.r.f1": {
+    "decimals": 3
+   },
+   "models.*.r.fp": {
+    "decimals": 0
+   },
+   "models.*.r.test_accuracy": {
+    "decimals": 3
+   },
+   "models.*.r.tp": {
+    "decimals": 0
+   },
+   "xgb_ten_seed_mean.f1_mean": {
+    "decimals": 3
+   },
+   "xgb_ten_seed_mean.tp_mean": {
+    "decimals": 1
+   }
+  },
+  "producer": "parity/compare/jsc370_benchmark_results.py"
+ },
  "predict.xgb_grid_fix": {
   "description": "JSC370 XGBoost: caret default grid (as run) vs the original's intended tune_grid, on the original 2020 train/test split; 10-seed means",
   "file": "results/predict/predict.xgb_grid_fix.json",

@@ -7,6 +7,8 @@ export interface DisplayFormat {
   decimals?: number
   percent?: boolean
   p?: boolean
+  /** no thousands separator (years) */
+  plain?: boolean
 }
 
 export interface ResultEntry {
@@ -80,6 +82,7 @@ export function formatNumber(v: number, f: DisplayFormat): string {
   const s = new Intl.NumberFormat('en-CA', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
+    useGrouping: !f.plain,
   }).format(scaled)
   return f.percent ? `${s}%` : s
 }

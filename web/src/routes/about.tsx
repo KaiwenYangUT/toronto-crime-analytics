@@ -1,5 +1,10 @@
-import { PageHeader } from '../components/PageHeader.tsx'
+import { About } from '../content/About.tsx'
 
-export default function Page() {
-  return <PageHeader eyebrow="about" title="about placeholder" />
+
+export function meta() {
+  return [{ title: 'About · Toronto robbery vs property crime' }]
+}
+
+export default function AboutRoute() {
+  return <About />
 }

@@ -17,5 +17,6 @@ export default [
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
-  { files: ['*.js', '*.ts'], languageOptions: { globals: globals.node } },
+  { files: ['*.js', '*.ts', 'scripts/**/*.mjs'], languageOptions: { globals: globals.node } },
+  { files: ['src/routes/**', 'src/root.tsx'], rules: { 'react-refresh/only-export-components': 'off' } },
 ]
