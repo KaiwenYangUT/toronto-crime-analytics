@@ -1,7 +1,18 @@
-import react from '@vitejs/plugin-react'
+import { execSync } from 'node:child_process'
+import { reactRouter } from '@react-router/dev/vite'
 import { defineConfig } from 'vite'
 
-// https://vite.dev/config/
+function buildSha(): string {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
+  } catch {
+    return 'unknown'
+  }
+}
+
 export default defineConfig({
-  plugins: [react()],
+  base: '/toronto-crime-analytics/',
+  define: { __BUILD_SHA__: JSON.stringify(buildSha()) },
+  server: { fs: { allow: ['..'] } },
+  plugins: [reactRouter()],
 })

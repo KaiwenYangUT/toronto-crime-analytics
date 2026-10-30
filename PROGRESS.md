@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P5 complete; P6 Design system and website next |
-| In progress | — |
+| Current phase | P6 Design system and website (in progress) |
+| In progress | P6 stage A: React Router 7 framework-mode prerender, shell, components, theme toggle (write-ahead 2026-10-30) |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | Read only PLAN.md P6 (design system and website). Start with the shell, design-system components, theme toggle and the Explore page, using web/src/styles/tokens.css, design/vega-theme.json and the Explore engine and bundle already in web/ |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
