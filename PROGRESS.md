@@ -7,7 +7,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P6 largely complete (see checklist for the open items); P7 paper next |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Finish the P6 gaps (JSC370 Key Variable Statistics table, census scatter Fig 1 after Q4, STA303 model-check panels exported to results/, regenerate results on a clean tree because `predict.jsc370_benchmark` was written on a dirty tree), then P7 (paper, `\\res{key}` macros, vl-convert figures from the same specs). Ask before deleting the unused Vite scaffold files and before any push or deploy |
+| Next action | Finish the P6 gaps (JSC370 Key Variable Statistics table, census scatter Fig 1 after Q4, STA303 model-check panels exported to results/), then P7 (paper, `\res{key}` macros, vl-convert figures from the same specs). Ask before deleting the unused Vite scaffold files and before any push or deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
