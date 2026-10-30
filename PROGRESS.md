@@ -5,10 +5,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P4 Faithful ports: 4a, 4b, 4d done; deviations D1-D3 accepted; chart checklist and 4c outstanding |
-| In progress | — |
+| In progress | P4c Explore engine (TypeScript port of R/analysis.R in web/src/explore-engine, vitest against parity/r_outputs/explorer fixtures) \| started 2026-10-29 \| files: web/src/explore-engine/, web/tests/, vite/vitest config \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
 | Next action | (1) R-side export of chart aggregates (JSC370 EDA widgets by neighbourhood, Explorer charts), then `compare_charts.py`. (2) Python CV-selected hyperparameter row (4b). (3) 4c Explore engine once Q2 is answered. (4) Code review of P4, then tag `parity-pass` locally (not pushed) |
-| Blockers | Q2 blocks 4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
+| Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -37,10 +37,11 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29: Explore gets exact parity on its 3 categories first, then adds auto theft and B&E.
 - 2026-10-29 (P3, agent decision, reversible): the unified table drops events labelled both Robbery and another category (350 events, 708 rows), per PLAN.md P3 "choose a rule"; logged, with alternatives selectable by flag. Revisit if the user prefers keep-all.
 - 2026-10-29: user accepted parity deviations D1 (JSC370 tree TP 83 vs 71), D2 (RF top-3 importance Hour vs Premises_Type) and D3 (XGBoost judged on the 10-seed mean) in chat, as written in PARITY.md section 5.
+- 2026-10-29: Q2 answered by the user: do not credit the STA313 team; reimplement rather than copy.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
-- [ ] Q2 STA313 team credit and consent to port
+- [x] Q2 answered 2026-10-29: no team credit on the site or paper; the project is presented as the user's own work. The Explore engine is a clean reimplementation of the logic (no original code, text or screenshots copied). At P9, re-check this: the Explorer repo has no licence and omitting credit does not transfer co-authors' rights.
 - [ ] Q3 Licence (MIT default)
 - [ ] Q4 JSC370 Fig 1: 3D scatter becomes a 2D scatter with colour and size
 - [x] Q5 Project-local installs approved 2026-10-29 (R/tectonic system setup separately approved; other system installations need approval)
