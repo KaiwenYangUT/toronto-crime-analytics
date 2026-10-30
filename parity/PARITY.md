@@ -162,13 +162,13 @@ All four tables are built by `tca.build` and compared with the R re-run exports;
 | JSC370, two full knits (including the xgboost grid) | all 23 exported files identical (MD5 of uncompressed content) |
 
 ## 5. Deviations and open flags
-Parity has passed only when every deviation below is accepted in writing (AGENTS.md rule 2). **None is accepted yet.**
+Parity has passed only when every deviation below is accepted in writing (AGENTS.md rule 2). **D1, D2 and D3 were accepted by the user in chat on 2026-10-29** (message "Accept D1–D3"), including judging XGBoost on the mean of the ten pre-declared seeds. D4 is a logged restyle. Remaining before the `parity-pass` tag: the chart checklist (section 7) and the Python CV-selected hyperparameter row.
 
-| # | Deviation | Size | Why it exists | Needs |
+| # | Deviation | Size | Why it exists | Status |
 |---|---|---|---|---|
-| D1 | JSC370 tree: test TP 83 vs R 71 | 12 over a tolerance of 10 | scikit-learn cannot split factors by level subsets and grew a different tree than rpart (section 1.5) | user acceptance |
-| D2 | JSC370 random forest: top-3 importance has Hour where R has Premises_Type | near tie, 0.115 vs 0.113 | factor handling in the forest (section 1.5) | user acceptance |
-| D3 | JSC370 XGBoost single fit with SEED: TP 232 vs 199 | outside; 10-seed mean is within | R's seed cannot be replayed; judged on a fixed seed set | user acceptance of the 10-seed rule |
+| D1 | JSC370 tree: test TP 83 vs R 71 | 12 over a tolerance of 10 | scikit-learn cannot split factors by level subsets and grew a different tree than rpart (section 1.5) | accepted 2026-10-29 |
+| D2 | JSC370 random forest: top-3 importance has Hour where R has Premises_Type | near tie, 0.115 vs 0.113 | factor handling in the forest (section 1.5) | accepted 2026-10-29 |
+| D3 | JSC370 XGBoost single fit with SEED: TP 232 vs 199 | outside; 10-seed mean is within | R's seed cannot be replayed; judged on a fixed seed set | accepted 2026-10-29 (10-seed rule) |
 | D4 | Colour restyle: Bicycle theft is deep magenta (was blue in the Explorer), Auto theft is blue, Theft over pink | see section 6 | Okabe-Ito hues re-assigned so that all pairs pass the colour-vision checks | none (logged restyle) |
 
 Original captions the data contradicts are listed in `parity/inventory/*.md` and are flagged here when the charts are ported.

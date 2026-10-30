@@ -4,11 +4,11 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P4 Faithful ports: 4a, 4b, 4d done; chart checklist and 4c outstanding; parity gate waits for the user's decision on deviations D1-D3 |
+| Current phase | P4 Faithful ports: 4a, 4b, 4d done; deviations D1-D3 accepted; chart checklist and 4c outstanding |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P3 complete) |
-| Next action | (1) Ask the user to accept or reject deviations D1-D3 (PARITY.md section 5) and answer Q2. (2) R-side export of chart aggregates (JSC370 EDA widgets by neighbourhood, Explorer charts), then `compare_charts.py`. (3) Python CV-selected hyperparameter row (4b). (4) 4c Explore engine after Q2. (5) Tag `parity-pass` only after (1)-(4) |
-| Blockers | Q2 blocks 4c; D1-D3 need the user's written acceptance before the `parity-pass` tag; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
+| Next action | (1) R-side export of chart aggregates (JSC370 EDA widgets by neighbourhood, Explorer charts), then `compare_charts.py`. (2) Python CV-selected hyperparameter row (4b). (3) 4c Explore engine once Q2 is answered. (4) Code review of P4, then tag `parity-pass` locally (not pushed) |
+| Blockers | Q2 blocks 4c; Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
 Add a row whenever work moves to a different machine or app.
@@ -36,6 +36,7 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29: original captions the data contradicts are kept in the port and flagged in PARITY.md, then corrected in P5 and logged in CHANGES.md.
 - 2026-10-29: Explore gets exact parity on its 3 categories first, then adds auto theft and B&E.
 - 2026-10-29 (P3, agent decision, reversible): the unified table drops events labelled both Robbery and another category (350 events, 708 rows), per PLAN.md P3 "choose a rule"; logged, with alternatives selectable by flag. Revisit if the user prefers keep-all.
+- 2026-10-29: user accepted parity deviations D1 (JSC370 tree TP 83 vs 71), D2 (RF top-3 importance Hour vs Premises_Type) and D3 (XGBoost judged on the 10-seed mean) in chat, as written in PARITY.md section 5.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
