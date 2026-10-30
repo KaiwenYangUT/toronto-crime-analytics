@@ -49,3 +49,31 @@ def test_roundtrip_values():
     assert arrays["event_class"].max() + 1 == events["event_id"].nunique()
     days = (events["date"] - np.datetime64("1970-01-01")).dt.days
     assert (arrays["day"].astype(int) == days).all()
+
+
+def test_v2_bundle_shares_the_legacy_event_classes():
+    from tca.build import explore_legacy
+    from tca.definitions import EXPLORE_SPEC_V2
+    from tca.explore.export import write_v2_bundle
+
+    v2 = write_v2_bundle()
+    legacy, _ = explore_legacy()
+    extra, _ = explore_legacy(spec=EXPLORE_SPEC_V2)
+    assert v2["n"] == len(extra)
+    assert v2["gzip_bytes"] <= 2_000_000
+    assert v2["dictionaries"]["category"] == ["Auto theft", "Break and enter"]
+    blob = np.frombuffer(
+        (OUT_DIR / "v2.bin").read_bytes(),
+        dtype="<u4",
+        count=v2["n"],
+        offset=v2["columns"][2]["offset"],
+    )
+    legacy_ids = sorted(legacy["event_id"].unique())
+    rank = {v: i for i, v in enumerate(legacy_ids)}
+    shared = extra["event_id"].isin(rank).to_numpy()
+    assert shared.any()
+    assert (blob[shared] == extra["event_id"][shared].map(rank).to_numpy()).all()
+    assert (blob[~shared] >= len(legacy_ids)).all()
+    assert int(blob.max()) + 1 <= v2["n_event_classes"]
+    # the same event ID always has the same class, inside the bundle too
+    assert extra.assign(c=blob).groupby("event_id")["c"].nunique().max() == 1

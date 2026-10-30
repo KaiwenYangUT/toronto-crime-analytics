@@ -1,0 +1,124 @@
+{
+ "n": 56457,
+ "endianness": "little",
+ "columns": [
+  {
+   "name": "lon",
+   "dtype": "f8",
+   "offset": 0
+  },
+  {
+   "name": "lat",
+   "dtype": "f8",
+   "offset": 451656
+  },
+  {
+   "name": "event_class",
+   "dtype": "u4",
+   "offset": 903312
+  },
+  {
+   "name": "day",
+   "dtype": "u2",
+   "offset": 1129140
+  },
+  {
+   "name": "hour",
+   "dtype": "u1",
+   "offset": 1242054
+  },
+  {
+   "name": "category",
+   "dtype": "u1",
+   "offset": 1298511
+  },
+  {
+   "name": "status",
+   "dtype": "u1",
+   "offset": 1354968
+  },
+  {
+   "name": "premises",
+   "dtype": "u1",
+   "offset": 1411425
+  },
+  {
+   "name": "location",
+   "dtype": "u1",
+   "offset": 1467882
+  }
+ ],
+ "dictionaries": {
+  "category": [
+   "Auto theft",
+   "Break and enter"
+  ],
+  "status": [
+   "Not applicable"
+  ],
+  "premises": [
+   "Apartment",
+   "Commercial",
+   "Educational",
+   "House",
+   "Other",
+   "Outside",
+   "Transit"
+  ],
+  "location": [
+   "Apartment (Rooming House, Condo)",
+   "Bank And Other Financial Institutions (Money Mart, Tsx)",
+   "Bar / Restaurant",
+   "Cargo Train",
+   "Commercial Dwelling Unit (Hotel, Motel, B & B, Short Term Rental)",
+   "Community Group Home",
+   "Construction Site (Warehouse, Trailer, Shed)",
+   "Convenience Stores",
+   "Dealership (Car, Motorcycle, Marine, Trailer, Etc.)",
+   "Gas Station (Self, Full, Attached Convenience)",
+   "Go Station",
+   "Go Train",
+   "Group Homes (Non-Profit, Halfway House,",
+   "Group Homes (Non-Profit, Halfway House, Social Agency)",
+   "Halfway House",
+   "Homeless Shelter / Mission",
+   "Hospital / Institutions / Medical Facilities (Clinic, Dentist, Morgue)",
+   "Jails / Detention Centres",
+   "Nursing Home",
+   "Open Areas (Lakes, Parks, Rivers)",
+   "Other Commercial / Corporate Places (For Profit, Warehouse, Corp. Bldg",
+   "Other Non Commercial / Corporate Places (Non-Profit, Gov'T, Firehall)",
+   "Other Passenger Train Station",
+   "Other Train Admin Or Support Facility",
+   "Other Train Tracks",
+   "Other Train Yard",
+   "Parking Lots (Apt., Commercial Or Non-Commercial)",
+   "Pharmacy",
+   "Police / Courts (Parole Board, Probation Office)",
+   "Private Property Structure (Pool, Shed, Detached Garage)",
+   "Religious Facilities (Synagogue, Church, Convent, Mosque)",
+   "Retirement Home",
+   "Schools During Supervised Activity",
+   "Schools During Un-Supervised Activity",
+   "Single Home, House (Attach Garage, Cottage, Mobile)",
+   "Streets, Roads, Highways (Bicycle Path, Private Road)",
+   "Ttc Admin Or Support Facility",
+   "Ttc Bus",
+   "Ttc Bus Garage",
+   "Ttc Light Rail Transit Station",
+   "Ttc Light Rail Vehicle",
+   "Ttc Subway Station",
+   "Ttc Subway Train",
+   "Ttc Subway Tunnel / Outdoor Tracks",
+   "Universities / Colleges",
+   "Unknown"
+  ]
+ },
+ "first_day": 18262,
+ "last_day": 19722,
+ "bytes": 1524339,
+ "gzip_bytes": 745390,
+ "sha256": "8e21db4511c8117fc019c6985c26e2bbac305eb03dd6fe9f03d0847d69c2f818",
+ "source": "tca.build.explore_legacy with EXPLORE_SPEC_V2 (same validity, duplicate and 2020 rules)",
+ "n_event_classes": 79802
+}

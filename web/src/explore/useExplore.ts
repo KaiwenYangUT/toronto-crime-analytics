@@ -4,12 +4,14 @@ import {
   barCounts, dailyCounts, dayNumber, distinctEvents, filterEvents, nearestStation, trendCounts,
   type DailyRow, type NamedPoint,
 } from '../explore-engine/analysis.ts'
-import { loadBundle, type Bundle } from '../explore-engine/bundle.ts'
+import { loadBundle, loadV2, mergeTables, type Bundle } from '../explore-engine/bundle.ts'
 import places from '../data/explore-places.json'
-import { defaults, fromParams, toParams, type ExploreState } from './state.ts'
+import { ALL_CATEGORIES, defaults, fromParams, toParams, V2_CATEGORIES, type ExploreState } from './state.ts'
 
 export const PLACES = places.places as (NamedPoint & { id: string; type: string })[]
 export const STATIONS = places.stations as (NamedPoint & { id: string })[]
+
+export type V2Load = { status: 'idle' | 'loading' } | { status: 'error'; message: string } | { status: 'ready'; bundle: Bundle }
 
 export type Load = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; bundle: Bundle }
 
@@ -32,22 +34,39 @@ export function useExplore() {
     }
   }, [attempt])
 
-  const categories = useMemo(() => (load.status === 'ready' ? load.bundle.table.categories : []), [load])
-  const base = useMemo(() => defaults(categories), [categories])
+  const [v2, setV2] = useState<V2Load>({ status: 'idle' })
+  const base = useMemo(() => defaults(), [])
   const state = useMemo(
-    () => (mounted && load.status === 'ready' ? fromParams(params, base, PLACES.map((p) => p.id), categories) : base),
-    [mounted, load.status, params, base, categories],
+    () => (mounted && load.status === 'ready' ? fromParams(params, base, PLACES.map((p) => p.id), ALL_CATEGORIES) : base),
+    [mounted, load.status, params, base],
+  )
+  const wantsV2 = state.cats.some((c) => V2_CATEGORIES.includes(c))
+  useEffect(() => {
+    if (!wantsV2 || v2.status !== 'idle') return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setV2({ status: 'loading' })
+    loadV2(`${import.meta.env.BASE_URL}data/explore`).then(
+      (bundle) => setV2({ status: 'ready', bundle }),
+      (e: unknown) => setV2({ status: 'error', message: e instanceof Error ? e.message : 'Could not load the additional crime types.' }),
+    )
+  }, [wantsV2, v2.status])
+  const table = useMemo(
+    () => (load.status !== 'ready' ? null : v2.status === 'ready' ? mergeTables(load.bundle.table, v2.bundle.table) : load.bundle.table),
+    [load, v2],
   )
   const update = (patch: Partial<ExploreState>) => setParams(toParams({ ...state, ...patch }, base), { replace: true, preventScrollReset: true })
   const reset = () => setParams(new URLSearchParams(), { replace: true, preventScrollReset: true })
   const retry = () => {
-    setLoad({ status: 'loading' })
-    setAttempt((a) => a + 1)
+    if (load.status === 'error') {
+      setLoad({ status: 'loading' })
+      setAttempt((a) => a + 1)
+    }
+    if (v2.status === 'error') setV2({ status: 'idle' })
   }
 
   const derived = useMemo(() => {
-    if (load.status !== 'ready') return null
-    const { table, meta } = load.bundle
+    if (load.status !== 'ready' || !table || (wantsV2 && v2.status !== 'ready')) return null
+    const { meta } = load.bundle
     const dateFrom = state.from ? dayNumber(state.from) : meta.first_day
     const dateTo = state.to ? dayNumber(state.to) : meta.last_day
     const site = PLACES.find((p) => p.id === state.place) ?? PLACES[0]
@@ -68,7 +87,7 @@ export function useExplore() {
     } catch (e) {
       return { error: e instanceof Error ? e.message : 'Invalid filters', dateFrom, dateTo, site, center, selected: new Int32Array(), daily: [] as DailyRow[], trend: [], bars: barCounts(table, new Int32Array()), records: 0, distinct: 0 }
     }
-  }, [load, state])
+  }, [load, state, table, wantsV2, v2.status])
 
-  return { load, state, update, reset, retry, derived, base, ready: mounted && load.status === 'ready' }
+  return { load, v2, wantsV2, table, state, update, reset, retry, derived, base, ready: mounted && load.status === 'ready' }
 }

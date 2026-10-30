@@ -59,6 +59,40 @@ export async function verifyBundle(buffer: ArrayBuffer, meta: BundleMeta): Promi
   if (hex !== meta.sha256) throw new Error('The Explore data bundle does not match its checksum.')
 }
 
+function concat<T extends Int32Array | Uint8Array | Float64Array | Uint32Array>(a: T, b: T): T {
+  const out = new (a.constructor as new (n: number) => T)(a.length + b.length)
+  out.set(a)
+  out.set(b, a.length)
+  return out
+}
+
+/** The legacy table followed by the v2 records; v2 category codes are shifted past the legacy dictionary. */
+export function mergeTables(a: EventTable, b: EventTable): EventTable {
+  const shift = a.categories.length
+  const shifted = Uint8Array.from(b.category, (c) => c + shift)
+  return {
+    n: a.n + b.n,
+    day: concat(a.day, b.day),
+    hour: concat(a.hour, b.hour),
+    weekday: concat(a.weekday, b.weekday),
+    category: concat(a.category, shifted),
+    lon: concat(a.lon, b.lon),
+    lat: concat(a.lat, b.lat),
+    eventClass: concat(a.eventClass, b.eventClass),
+    categories: [...a.categories, ...b.categories],
+  }
+}
+
+/** Auto theft and break and enter, fetched only when one of them is switched on. */
+export async function loadV2(base: string): Promise<Bundle> {
+  const [metaRes, binRes] = await Promise.all([fetch(`${base}/v2-meta.json`), fetch(`${base}/v2.bin`)])
+  if (!metaRes.ok || !binRes.ok) throw new Error('Could not load the additional crime types.')
+  const meta = (await metaRes.json()) as BundleMeta
+  const buffer = await binRes.arrayBuffer()
+  await verifyBundle(buffer, meta)
+  return parseBundle(buffer, meta)
+}
+
 export async function loadBundle(base: string): Promise<Bundle> {
   const [metaRes, binRes] = await Promise.all([fetch(`${base}/meta.json`), fetch(`${base}/legacy.bin`)])
   if (!metaRes.ok || !binRes.ok) throw new Error('Could not load the Explore data bundle.')

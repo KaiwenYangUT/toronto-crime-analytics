@@ -47,13 +47,15 @@ EXPLORE_COLUMNS = [
 ]
 
 
-def explore_legacy(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, dict]:
+def explore_legacy(
+    raw_dir: Path = RAW_DIR, spec: dict[str, str] = EXPLORE_SPEC
+) -> tuple[pd.DataFrame, dict]:
     """Port of the Explorer's ``scripts/build_data.R``. Returns the event table and the
     per-file manifest (source rows, invalid rows, duplicates removed, ...)."""
     manifest: dict[str, dict] = {}
     tables = []
     start = pd.Timestamp(EXPLORE_START)
-    for key, label in EXPLORE_SPEC.items():
+    for key, label in spec.items():
         filename = RAW_FILES[key]
         raw = read_text_csv(raw_dir / filename)
         month = month_from_abbrev(as_char(raw["OCC_MONTH"]))

@@ -66,3 +66,8 @@ EXPLORE_SPEC = {
     "robbery": "Robbery",
     "theft_over": "Theft over",
 }
+# Explore v2 adds two categories under the same rules; they load only when switched on.
+EXPLORE_SPEC_V2 = {
+    "auto_theft": "Auto theft",
+    "break_enter": "Break and enter",
+}

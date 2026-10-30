@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import explain from '../src/data/pages/explain.json'
 import { formatFor, formatNumber, getValue, numberText, splitKey, type PageResults } from '../src/lib/results.ts'
-import { defaults, fromParams, toParams } from '../src/explore/state.ts'
+import { ALL_CATEGORIES, defaults, fromParams, toParams } from '../src/explore/state.ts'
 
 const data = explain as unknown as PageResults
 
@@ -35,14 +35,18 @@ describe('results lookup and display formats', () => {
 })
 
 describe('Explore URL state', () => {
-  const cats = ['Bicycle theft', 'Robbery', 'Theft over']
-  const base = defaults(cats)
+  const cats = ALL_CATEGORIES
+  const base = defaults()
   it('round-trips a changed state and omits defaults', () => {
-    const s = { ...base, mode: 'destination' as const, place: 'site3', radius: 500, cats: ['Robbery'], hours: [6, 9] as [number, number], from: '2021-01-01' }
+    const s = { ...base, mode: 'destination' as const, place: 'site3', radius: 500, cats: ['Robbery', 'Auto theft'], hours: [6, 9] as [number, number], from: '2021-01-01' }
     const p = toParams(s, base)
     expect(p.get('place')).toBe('site3')
     expect(p.has('by')).toBe(false)
     expect(fromParams(p, base, ['site1', 'site3'], cats)).toEqual(s)
+  })
+  it('keeps the three original categories by default and omits them from the URL', () => {
+    expect(base.cats).toEqual(['Bicycle theft', 'Robbery', 'Theft over'])
+    expect(toParams(base, base).toString()).toBe('')
   })
   it('ignores values it does not recognise', () => {
     const p = new URLSearchParams('mode=bogus&radius=99999&hours=9-3&from=2021-02-30&cats=Robbery,Nope&by=year')

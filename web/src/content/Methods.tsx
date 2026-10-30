@@ -102,9 +102,9 @@ export function Methods() {
           <Section id="explorer" title="Explorer data">
             <div className="prose">
               <p>
-                The Explore page filters the 2020 to 2023 robbery, theft over and bicycle theft records. Exact duplicate rows are removed, distances use the haversine formula, and
+                The Explore page filters the 2020 to 2023 records of five crime types. Robbery, theft over and bicycle theft are the course application&apos;s categories; auto theft and break and enter are added under the same rules and load only when switched on. Exact duplicate rows are removed, distances use the haversine formula, and
                 counts show records and distinct event IDs separately. The browser implementation reproduces the course Shiny application&apos;s counts exactly on a large set of generated
-                test cases. These counts are computed in the browser from a checksummed data bundle, not read from a results file.
+                test cases for its three categories. These counts are computed in the browser from a checksummed data bundle, not read from a results file.
               </p>
             </div>
           </Section>

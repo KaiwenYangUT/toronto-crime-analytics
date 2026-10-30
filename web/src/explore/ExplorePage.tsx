@@ -7,7 +7,7 @@ import { dailyCsv, isoDate, type Interval } from '../explore-engine/analysis.ts'
 import { FilterPanel } from './FilterPanel.tsx'
 import { MapView } from './MapView.tsx'
 import { categoryBars, hourBars, trendSpec, weekdayBars } from './specs.ts'
-import { PRESETS, WEEKDAY_LABELS } from './state.ts'
+import { ALL_CATEGORIES, PRESETS, WEEKDAY_LABELS } from './state.ts'
 import { useExplore } from './useExplore.ts'
 import ui from '../components/ui.module.css'
 import s from './explore.module.css'
@@ -36,10 +36,9 @@ const n = (v: number) => v.toLocaleString('en-CA')
 
 export function Explore() {
   const x = useExplore()
-  const { load, state, update, reset, derived } = x
+  const { load, state, update, reset, derived, table, v2, wantsV2 } = x
   const [open, setOpen] = useState(false)
-  const table = load.status === 'ready' ? load.bundle.table : null
-  const categories = useMemo(() => table?.categories ?? [], [table])
+  const categories = ALL_CATEGORIES
   const colors = useCategoryColors(categories)
   const meta = load.status === 'ready' ? load.bundle.meta : null
   const dateMin = meta ? isoDate(meta.first_day) : ''
@@ -48,10 +47,10 @@ export function Explore() {
   const summary = useMemo(() => {
     if (!derived) return ''
     const where = state.mode === 'city' ? 'Citywide' : `${state.radius} m around ${state.mode === 'station' ? (derived.center?.name ?? '') : derived.site.name}`
-    const what = state.cats.length === categories.length ? 'all crime types' : state.cats.join(', ') || 'no crime type'
+    const what = state.cats.length === ALL_CATEGORIES.length ? 'all crime types' : state.cats.join(', ') || 'no crime type'
     const when = PRESETS.find((p) => p.value === state.preset)?.label ?? ''
     return `${where} · ${what} · ${isoDate(derived.dateFrom)} to ${isoDate(derived.dateTo)} · ${when.toLowerCase()} · ${state.weekdays.length === 7 ? 'every weekday' : state.weekdays.map((d) => WEEKDAY_LABELS[d - 1]).join(', ') || 'no weekday'} · hours ${state.hours[0]} to ${state.hours[1]}`
-  }, [derived, state, categories])
+  }, [derived, state])
 
   const charts = useMemo(() => {
     if (!derived || !table) return null
@@ -86,7 +85,7 @@ export function Explore() {
       <PageHeader
         eyebrow="Explore · reported incidents"
         title="Reported incidents differ by place, weekday and hour, and every filter changes the count."
-        dek="Robbery, theft over and bicycle theft reports from 2020 to 2023. Counts are reported incidents, not risk."
+        dek="Reports of five property-type crimes, 2020 to 2023. Auto theft and break and enter load when you switch them on. Counts are reported incidents, not risk."
       />
       <div className={s.layout}>
         <div className={s.panelWrap}>
@@ -111,9 +110,10 @@ export function Explore() {
 
         <div className={s.main}>
           {load.status === 'loading' && <div className={s.skeleton} style={{ minHeight: 420 }} role="status">Loading the incident data…</div>}
-          {load.status === 'error' && (
+          {wantsV2 && v2.status === 'loading' && <div className={s.skeleton} style={{ minHeight: 120 }} role="status">Loading auto theft and break and enter records…</div>}
+          {(load.status === 'error' || v2.status === 'error') && (
             <div className={s.error} role="alert">
-              <p>{load.message}</p>
+              <p>{load.status === 'error' ? load.message : v2.status === 'error' ? v2.message : ''}</p>
               <button type="button" className={ui.btn} onClick={x.retry}>Try again</button>
             </div>
           )}

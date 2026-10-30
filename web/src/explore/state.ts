@@ -33,8 +33,14 @@ export const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 export const RADII_MIN = 100
 export const RADII_MAX = 2000
 
-export function defaults(allCats: string[]): ExploreState {
-  return { mode: 'city', place: 'site1', radius: 300, preset: 'all', cats: allCats, weekdays: [1, 2, 3, 4, 5, 6, 7], hours: [0, 23], from: '', to: '', interval: 'week' }
+/** Loaded with the page; the first three are the Explorer's original categories. */
+export const LEGACY_CATEGORIES = ['Bicycle theft', 'Robbery', 'Theft over']
+/** Fetched on demand (v2 bundle). */
+export const V2_CATEGORIES = ['Auto theft', 'Break and enter']
+export const ALL_CATEGORIES = [...LEGACY_CATEGORIES, ...V2_CATEGORIES]
+
+export function defaults(): ExploreState {
+  return { mode: 'city', place: 'site1', radius: 300, preset: 'all', cats: LEGACY_CATEGORIES, weekdays: [1, 2, 3, 4, 5, 6, 7], hours: [0, 23], from: '', to: '', interval: 'week' }
 }
 
 export function toParams(s: ExploreState, d: ExploreState): URLSearchParams {
