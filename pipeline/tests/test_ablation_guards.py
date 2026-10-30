@@ -129,7 +129,7 @@ def test_cache_signature_changes_with_rows_design_and_variant(table):
 def test_stale_cache_is_recomputed_not_reused(table, tmp_path, monkeypatch):
     monkeypatch.setattr(ab, "CACHE", tmp_path)
     small = table.iloc[:600]
-    first, info = ab.cached("A", "L1", small, tag="t", outer_folds=2)
+    _, info = ab.cached("A", "L1", small, tag="t", outer_folds=2)
     assert info["signature"] == ab.signature("A", "L1", small)
     info_path = tmp_path / "t_A_L1.json"
     stored = json.loads(info_path.read_text())

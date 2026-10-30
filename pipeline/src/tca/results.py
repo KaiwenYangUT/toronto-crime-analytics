@@ -89,6 +89,7 @@ def write_result(
             "key": key,
             "producer": producer,
             "git_sha": git_sha(),
+            "code_dirty": code_dirty(),
             "seed": seed,
             "inputs": input_hashes(inputs or []),
             "created": datetime.now(UTC).isoformat(timespec="seconds"),
