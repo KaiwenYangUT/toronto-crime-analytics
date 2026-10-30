@@ -39,6 +39,7 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29: user accepted parity deviations D1 (JSC370 tree TP 83 vs 71), D2 (RF top-3 importance Hour vs Premises_Type) and D3 (XGBoost judged on the 10-seed mean) in chat, as written in PARITY.md section 5.
 - 2026-10-29: Q2 answered by the user: do not credit the STA313 team; reimplement rather than copy.
 - 2026-10-29: the global seed stays 303313 (PLAN.md proposed 20240415 but 303313 was set in P3 and deviation D3 names it); PLAN.md section 3.2 updated to say so.
+- 2026-10-29: compute budget for the ablation ladder, measured on a 10% sample of neighbourhoods (11,134 rows, 15 neighbourhoods; `.cache/logs/ablation_timing.json`): design A takes 2.8 s (L1), 9.7 s (L3), 32.2 s (L4), 16.9 s (L5); design B about a fifth of A. Nine variants x 14.3 (row ratio) projects about 30 minutes for A and 7 for B, so about 40 minutes of fitting plus about 30 for 1,000-replicate bootstraps; target was 3 hours. Run locally only; predictions cached as parquet in data/interim/ablation.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
