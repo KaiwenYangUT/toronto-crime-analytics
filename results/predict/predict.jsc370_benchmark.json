@@ -1,8 +1,8 @@
 {
  "_provenance": {
-  "code_dirty": true,
-  "created": "2026-10-30T14:35:01+00:00",
-  "git_sha": "1c96ebf60f9165698432270eae4eec1520c50167",
+  "code_dirty": false,
+  "created": "2026-10-30T15:03:18+00:00",
+  "git_sha": "0724143f273ce53cb100f57c0c97413c104c2058",
   "inputs": {},
   "key": "predict.jsc370_benchmark",
   "producer": "parity/compare/jsc370_benchmark_results.py",
