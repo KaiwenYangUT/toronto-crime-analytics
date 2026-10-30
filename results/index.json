@@ -1,0 +1,37 @@
+{
+ "explain.sta303_v2": {
+  "description": "Inference model: odds of robbery vs other major property crime by hour, month, weekday, solar darkness and the post-2019 period, with cluster-robust intervals, CV AUC and composition check",
+  "file": "results/explain/explain.sta303_v2.json",
+  "formats": {
+   "cv.auc_mean": {
+    "decimals": 3
+   },
+   "cv.auc_sd": {
+    "decimals": 3
+   },
+   "dark.or": {
+    "decimals": 2
+   },
+   "post2019.or": {
+    "decimals": 2
+   },
+   "post2019.or_hi": {
+    "decimals": 2
+   },
+   "post2019.or_lo": {
+    "decimals": 2
+   },
+   "post2019.robust_or_hi": {
+    "decimals": 2
+   },
+   "post2019.robust_or_lo": {
+    "decimals": 2
+   },
+   "robbery_share": {
+    "decimals": 1,
+    "percent": true
+   }
+  },
+  "producer": "tca.explain.sta303_v2"
+ }
+}

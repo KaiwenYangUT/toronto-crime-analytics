@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P5 Analytical improvements (started) |
-| In progress | P5.0/5.1 results infrastructure (`tca/results.py`, `tools/hash_outputs.py`, `tools/gen_results_md.py`) and STA303 v2 (`pipeline/src/tca/explain/sta303_v2.py`, solar darkness in `features.py`) \| started 2026-10-29 \| files: pipeline/src/tca/{results,features}.py, pipeline/src/tca/explain/sta303_v2.py, results/, CHANGES.md, RESULTS.md, tools/ \| machine: Kevins-iMac.local |
+| In progress | P5.2 ablation ladder: step 1 compute-budget measurement on a 10% sample, then `pipeline/src/tca/predict/ablation.py` \| started 2026-10-29 \| files: pipeline/src/tca/predict/ablation.py, pipeline/tests/, results/predict/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Read only PLAN.md P5 and start with the compute-budget measurement and STA303 v2 (binomial summary model, categorical hour/month, post-2019 wording); log each change in CHANGES.md |
+| Next action | Build the ablation feature table (unified rows + census join, NSA dropped), time one rung of each model on a 10% sample, record the projection here, then run the full ladder with cached out-of-fold predictions |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -109,7 +109,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] PARITY.md: every comparison is within tolerance or an accepted deviation (D1-D3 accepted by the user 2026-10-29; D4 logged restyle). P4 code review (/code-review high, 10 findings) all fixed: CSV quote doubling, NaN hour guard, project SEED for the calibration folds (corrected curve now 0.0105 from R, tolerance 0.02), full-length coordinate check, one XGBoost constructor, pure-root guard, dead code removed, runtime bundle checksum, in-repo palette search (reproduces the same 17 candidates), seed-range figure corrected. Local tag `parity-pass` created (not pushed).
 
 ### P5 Improvements
-- [ ] STA303 v2 (items 1–9 in PLAN.md §5.1)
+- [x] STA303 v2 (items 1-9 in PLAN.md 5.1 plus weekday as a factor): `pipeline/src/tca/explain/sta303_v2.py`, solar darkness in `features.py` (astronomy tests), results `results/explain/explain.sta303_v2.json` (identical identity hash across two runs), CHANGES.md rows S1-S10, RESULTS.md generated. Headline: 159,056 rows; post-2019 OR 0.55 (0.53-0.56; cluster-robust 0.52-0.58); composition: auto theft 0.34, break and enter 0.81, theft over 0.61; CV AUC 0.631 (sd 0.003); harmonic model worse (AIC +517). Cluster covariance checked against statsmodels. Infrastructure: `tca/results.py`, `tools/hash_outputs.py`, `tools/gen_results_md.py`.
 - [ ] Compute-budget measurement on a 10% sample
 - [ ] Ablation ladder L0–L5 + no-premises, grouped CV + temporal holdout, CIs, leakage tests
 - [ ] XGBoost grid fix, seeds, caption corrections
