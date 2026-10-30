@@ -54,11 +54,10 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
     <>
       <PageHeader
         eyebrow="Predict · classification"
-        title="Where an incident happens separates robbery from other property crime; the hour and month add little, and census context adds almost nothing."
+        title="Place separates robbery from other property crime; time and census context add little."
         dek={
           <>
-            Five models on the same <Num k={`${A}:designs.${DESIGN_A}.rows`} /> reported incidents. Each rung of the ladder adds one thing, and every score
-            comes with a 95% interval from a neighbourhood bootstrap.
+            Five models on the same <Num k={`${A}:designs.${DESIGN_A}.rows`} /> reported incidents, each scored with a 95% interval.
           </>
         }
         sources={[A, V, J]}
@@ -203,7 +202,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
           />
           <Callout variant="caveat" title="A bug in the original XGBoost tuning">
             <p>
-              The original defined a 40-row tuning grid but never passed it to the trainer, which used caret's default grid. With the intended grid the mean test F1 over ten seeds is{' '}
+              The original defined a tuning grid of <Num k="predict.xgb_grid_fix:as_intended.grid_size" /> rows but never passed it to the trainer, which used caret's default grid. With the intended grid the mean test F1 over ten seeds is{' '}
               <Num k="predict.xgb_grid_fix:as_intended.test.f1_mean" />, against <Num k="predict.xgb_grid_fix:as_run_caret_default.test.f1_mean" /> as run.
             </p>
           </Callout>

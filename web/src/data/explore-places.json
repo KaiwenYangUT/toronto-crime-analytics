@@ -1,0 +1,177 @@
+{
+ "places": [
+  {
+   "id": "site1",
+   "name": "Little Canada",
+   "type": "tourist",
+   "lon": -79.3807673729588,
+   "lat": 43.6568357659546
+  },
+  {
+   "id": "site2",
+   "name": "Nathan Phillips Square",
+   "type": "tourist",
+   "lon": -79.3833481216624,
+   "lat": 43.652873349564
+  },
+  {
+   "id": "site3",
+   "name": "CN Tower",
+   "type": "tourist",
+   "lon": -79.3859893011263,
+   "lat": 43.6429077234565
+  },
+  {
+   "id": "site4",
+   "name": "Centre Island",
+   "type": "tourist",
+   "lon": -79.3937868320928,
+   "lat": 43.6290482186998
+  },
+  {
+   "id": "site5",
+   "name": "The Distillery District",
+   "type": "tourist",
+   "lon": -79.3599501085414,
+   "lat": 43.6502170318491
+  },
+  {
+   "id": "site6",
+   "name": "High Park",
+   "type": "tourist",
+   "lon": -79.4637439478213,
+   "lat": 43.6467341948746
+  },
+  {
+   "id": "site7",
+   "name": "Casa Loma",
+   "type": "tourist",
+   "lon": -79.4093527085398,
+   "lat": 43.6784715978572
+  },
+  {
+   "id": "site8",
+   "name": "Ripley's Aquarium of Canada",
+   "type": "tourist",
+   "lon": -79.3865753815551,
+   "lat": 43.6425511452949
+  },
+  {
+   "id": "site9",
+   "name": "Graffiti Alley",
+   "type": "tourist",
+   "lon": -79.3985383766568,
+   "lat": 43.6480719373943
+  },
+  {
+   "id": "site10",
+   "name": "Chinatown centre",
+   "type": "tourist",
+   "lon": -79.3982535472462,
+   "lat": 43.6511030142807
+  },
+  {
+   "id": "site11",
+   "name": "Robarts Library",
+   "type": "student",
+   "lon": -79.3993198588166,
+   "lat": 43.6647964177303
+  },
+  {
+   "id": "site12",
+   "name": "Kelly Library",
+   "type": "student",
+   "lon": -79.3892827895009,
+   "lat": 43.6654365144913
+  },
+  {
+   "id": "site13",
+   "name": "E.J. Pratt Library",
+   "type": "student",
+   "lon": -79.3914308429222,
+   "lat": 43.6668146698503
+  },
+  {
+   "id": "site14",
+   "name": "Gerstein Library",
+   "type": "student",
+   "lon": -79.3937379968961,
+   "lat": 43.662280915649
+  },
+  {
+   "id": "site15",
+   "name": "University College Library",
+   "type": "student",
+   "lon": -79.3955204005935,
+   "lat": 43.6631026548455
+  }
+ ],
+ "stations": [
+  {
+   "id": "station-1",
+   "name": "Dundas Station",
+   "lon": -79.3804278679396,
+   "lat": 43.6563805645442
+  },
+  {
+   "id": "station-2",
+   "name": "Queen Station",
+   "lon": -79.3791745238834,
+   "lat": 43.6527694819016
+  },
+  {
+   "id": "station-3",
+   "name": "Union Station",
+   "lon": -79.380594741447,
+   "lat": 43.6454693165352
+  },
+  {
+   "id": "station-4",
+   "name": "King Station",
+   "lon": -79.3778921067665,
+   "lat": 43.6493229969698
+  },
+  {
+   "id": "station-5",
+   "name": "High park station",
+   "lon": -79.4668395917225,
+   "lat": 43.6539082956622
+  },
+  {
+   "id": "station-6",
+   "name": "dupont station",
+   "lon": -79.4070059017933,
+   "lat": 43.6749870882529
+  },
+  {
+   "id": "station-7",
+   "name": "Osgoode station",
+   "lon": -79.3869172343277,
+   "lat": 43.6507851563425
+  },
+  {
+   "id": "station-8",
+   "name": "St. Patrick Station",
+   "lon": -79.3883055883011,
+   "lat": 43.6550248315924
+  },
+  {
+   "id": "station-9",
+   "name": "St.George station",
+   "lon": -79.3997921192672,
+   "lat": 43.6683407617929
+  },
+  {
+   "id": "station-10",
+   "name": "Museum station",
+   "lon": -79.3934147885153,
+   "lat": 43.6669921387833
+  },
+  {
+   "id": "station-11",
+   "name": "Queen's Park station",
+   "lon": -79.390086920266,
+   "lat": 43.660069125571
+  }
+ ]
+}

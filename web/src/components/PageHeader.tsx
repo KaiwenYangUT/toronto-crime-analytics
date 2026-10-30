@@ -19,7 +19,13 @@ export function PageHeader({ eyebrow, title, dek, sources }: Props) {
       {dek && <p className={s.dek}>{dek}</p>}
       {sources && sources.length > 0 && (
         <Link className={s.sourceChip} to="/methods#reproducibility">
-          Source: {sources.map((k, i) => (i ? <span key={k}>, <code>{k}</code></span> : <code key={k}>{k}</code>))}
+          Source:{' '}
+          {sources.map((k, i) => (
+            <span key={k} style={{ whiteSpace: 'nowrap' }}>
+              <code>{k}</code>
+              {i < sources.length - 1 ? ',' : ''}
+            </span>
+          ))}
         </Link>
       )}
     </header>

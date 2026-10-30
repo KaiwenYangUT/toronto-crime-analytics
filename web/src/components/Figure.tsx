@@ -22,6 +22,12 @@ interface Props {
   table?: TableRow[]
   minHeight?: number
   id?: string
+  onSignal?: { name: string; handler: (value: unknown) => void }
+  extraActions?: ReactNode
+  /** only the data table and CSV actions, for small charts in a row */
+  compact?: boolean
+  /** omit the generic CSV button when the page offers its own full export */
+  noCsv?: boolean
 }
 
 function download(name: string, mime: string, body: string) {
@@ -33,7 +39,7 @@ function download(name: string, mime: string, body: string) {
   URL.revokeObjectURL(url)
 }
 
-export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id }: Props) {
+export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv }: Props) {
   const view = useRef<View | null>(null)
   const [showTable, setShowTable] = useState(false)
   const slug = (id ?? title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -43,7 +49,7 @@ export function Figure({ title, subtitle, spec, svg, description, caption, sourc
       <figcaption className={s.figureTitle}>{title}</figcaption>
       {subtitle && <p className={s.figureSub}>{subtitle}</p>}
       <div className={s.figureBody}>
-        <VegaChart spec={spec} svg={svg} label={`${title}. ${description}`} viewRef={view} minHeight={minHeight} />
+        <VegaChart spec={spec} svg={svg} label={`${title}. ${description}`} viewRef={view} minHeight={minHeight} onSignal={onSignal} />
       </div>
       {caption && <p className={s.figureCaption}>{caption}</p>}
       {source && <p className={s.figureCaption}>{source}</p>}
@@ -53,18 +59,19 @@ export function Figure({ title, subtitle, spec, svg, description, caption, sourc
             {showTable ? 'Hide data table' : 'View data table'}
           </button>
         )}
-        {table && (
+        {table && !noCsv && (
           <button type="button" className={s.btn} onClick={() => download(`${slug}.csv`, 'text/csv', csvOf(table))}>
             Download CSV
           </button>
         )}
-        <button
+        {extraActions}
+        {!compact && <button
           type="button"
           className={s.btn}
           onClick={async () => view.current && download(`${slug}.svg`, 'image/svg+xml', await view.current.toSVG())}
         >
           Download SVG
-        </button>
+        </button>}
       </div>
       {table && showTable && (
         <div className={s.tableWrap} role="region" aria-label={`Data for ${title}`} tabIndex={0}>

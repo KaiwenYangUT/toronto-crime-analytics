@@ -33,7 +33,7 @@ export function Methods() {
     <>
       <PageHeader
         eyebrow="Methods"
-        title="Every result here comes from one validated pipeline whose ports reproduce the three course projects before anything is improved."
+        title="Every result comes from one pipeline that reproduced the three course projects first."
         dek="The definition, the data steps, the models and the checks, with the limits stated up front."
         sources={[X, A]}
       />
@@ -79,7 +79,7 @@ export function Methods() {
           <Section id="variables" title="Variables">
             <div className="prose">
               <p>
-                The inference model uses hour of day (24 levels), month, weekday, a post-2019 indicator and solar darkness. The prediction ladder adds premises and location type,
+                The inference model uses hour of day (one level per hour), month, weekday, a post-2019 indicator and solar darkness. The prediction ladder adds premises and location type,
                 neighbourhood geography (latitude, longitude, distances) and census measures at the neighbourhood level.
               </p>
             </div>
@@ -104,7 +104,7 @@ export function Methods() {
               <p>
                 The Explore page filters the 2020 to 2023 robbery, theft over and bicycle theft records. Exact duplicate rows are removed, distances use the haversine formula, and
                 counts show records and distinct event IDs separately. The browser implementation reproduces the course Shiny application&apos;s counts exactly on a large set of generated
-                test cases.
+                test cases. These counts are computed in the browser from a checksummed data bundle, not read from a results file.
               </p>
             </div>
           </Section>

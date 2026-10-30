@@ -1,6 +1,8 @@
 // Static preview of web/site/ under the /toronto-crime-analytics/ base path (no rewrites, like Pages).
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
+import { readFileSync } from 'node:fs'
+import { gzipSync } from 'node:zlib'
 import { extname, join, normalize } from 'node:path'
 
 const root = join(process.cwd(), 'site')
@@ -33,6 +35,11 @@ createServer((req, res) => {
     const end = range[2] ? Number(range[2]) : size - 1
     res.writeHead(206, { ...headers, 'content-range': `bytes ${start}-${end}/${size}`, 'content-length': end - start + 1 })
     createReadStream(file, { start, end }).pipe(res)
+  } else if (/\.(html|js|css|json|svg|data)$/.test(file) && /gzip/.test(req.headers['accept-encoding'] ?? '')) {
+    // GitHub Pages compresses text responses; do the same so transfer sizes are realistic.
+    const body = gzipSync(readFileSync(file))
+    res.writeHead(200, { ...headers, 'content-encoding': 'gzip', 'content-length': body.length })
+    res.end(body)
   } else {
     res.writeHead(200, { ...headers, 'content-length': size })
     createReadStream(file).pipe(res)

@@ -28,11 +28,10 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
     <>
       <PageHeader
         eyebrow="Explain · inference"
-        title="A reported property-type incident became much less likely to be a robbery after 2019, even with hour, month, weekday and darkness held fixed."
+        title="After 2019 a reported property-type incident was much less likely to be a robbery."
         dek={
           <>
-            A binomial model of <Num k={`${K}:n`} /> reported incidents from 2014 to 2023. Each estimate is an odds ratio for robbery
-            against auto theft, break and enter or theft over: association, not risk or cause.
+            Odds ratios from <Num k={`${K}:n`} /> reported incidents, 2014 to 2023, holding hour, month, weekday and darkness fixed: association, not risk or cause.
           </>
         }
         sources={[K, 'predict.eda_corrections']}

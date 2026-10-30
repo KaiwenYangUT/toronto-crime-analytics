@@ -21,11 +21,10 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
     <>
       <PageHeader
         eyebrow="Toronto Police open data · 2014 to 2023"
-        title="Where a reported property-type crime happens says far more about whether it is a robbery than when it happens."
+        title="Where a property-type crime happens says far more about whether it is a robbery than when."
         dek={
           <>
-            Among <Num k={`${X}:n`} /> reported incidents of robbery, auto theft, break and enter and theft over, we ask one question: which crime type is it? The answer is a
-            statement about reports, not about risk.
+            Among <Num k={`${X}:n`} /> reported incidents, which crime type is it? An answer about reports, not risk.
           </>
         }
         sources={[X, A]}

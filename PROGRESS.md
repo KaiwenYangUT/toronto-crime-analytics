@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P6 Design system and website (in progress) |
-| In progress | P6 stage A: React Router 7 framework-mode prerender, shell, components, theme toggle (write-ahead 2026-10-30) |
+| In progress | P6 stage C: Explore v2 bundle (auto theft, break and enter), design review, code review, DESIGN.md (write-ahead 2026-10-30) |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Read only PLAN.md P6 (design system and website). Start with the shell, design-system components, theme toggle and the Explore page, using web/src/styles/tokens.css, design/vega-theme.json and the Explore engine and bundle already in web/ |
+| Next action | (superseded) Read only PLAN.md P6 (design system and website). Start with the shell, design-system components, theme toggle and the Explore page, using web/src/styles/tokens.css, design/vega-theme.json and the Explore engine and bundle already in web/ |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -119,10 +119,14 @@ Add a row whenever work moves to a different machine or app.
 - [x] CHANGES.md (S1-S10, A1-A6, X1-X2, E1-E5, I1) and RESULTS.md (generated, 5 keys) complete; identity hashes identical across two runs (STA303 v2 twice, ablation report twice, model refits deterministic).
 
 ### P6 Website
-- [ ] Shell, design-system components, theme toggle
-- [ ] Pages: Explore → Predict → Explain → Overview → Methods → Paper → About
-- [ ] Explore v2 categories, URL state, parity suite in CI
-- [ ] Budgets, axe, Lighthouse, 10-second test; design review after each page
+- [x] Shell, design-system components, theme toggle (React Router 7 framework mode, ssr false, all 7 routes prerendered; commit 1c96ebf)
+- [x] Pages built: Explain, Predict, Overview, Methods, About, Explore (engine, MapLibre + PMTiles basemap, URL state, filters, charts); Paper is a placeholder until P7
+- [x] Numbers only through `<Num k>` from per-page results JSON (`tools/gen_web_data.py`, `design/display_formats.json`); missing value or format fails the build; `scripts/check-content-numerals.mjs` lint
+- [x] Budgets (`tools/check_bundle_size.mjs`, all pass; maplibre-gl pinned to 4.7.1 because 5.x was 270 KB gz against a 260 KB budget); Playwright smoke + axe on 7 routes x 3 widths x 2 schemes (zero serious/critical, no overflow, no console errors); Lighthouse mobile performance 90 to 100, accessibility 100 (gzip-serving local preview)
+- [ ] Explore v2 categories (auto theft, break and enter bundle `v2.bin`)
+- [ ] Design review (screenshots, 10-second test) and P6 code review; `design/DESIGN.md` prose
+- [ ] Not yet on the site: JSC370 Key Variable Statistics table, census scatter (Fig 1, Q4), LASSO / VIF / ROC / influence panels of the STA303 model checks (not exported to `results/`), Paper PDF (P7)
+- Decisions: Explore counts are computed in the browser from the checksummed bundle (not results JSON; stated on Methods). The basemap is not committed (`tools/fetch_basemap.sh`, sha256 pinned). Vega-Lite 6 / vega-embed 7 are used (PLAN said 5). Scaffold files `web/src/{App.tsx,main.tsx,App.css,index.css,assets/}` are unused and await approval to delete.
 
 ### P7 Paper
 - [ ] `\res{}` macros, generated tables, Vega-Lite PDF figures

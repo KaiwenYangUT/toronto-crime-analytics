@@ -1,5 +1,9 @@
-import { PageHeader } from '../components/PageHeader.tsx'
+import { Explore as ExplorePage } from '../explore/ExplorePage.tsx'
 
-export default function Page() {
-  return <PageHeader eyebrow="explore" title="explore placeholder" />
+export function meta() {
+  return [{ title: 'Explore · Toronto robbery vs property crime' }]
+}
+
+export default function ExploreRoute() {
+  return <ExplorePage />
 }

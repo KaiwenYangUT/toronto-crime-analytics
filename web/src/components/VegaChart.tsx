@@ -11,6 +11,8 @@ interface Props {
   label: string
   viewRef?: MutableRefObject<View | null>
   minHeight?: number
+  /** Listen to a Vega signal (for example an interval brush). */
+  onSignal?: { name: string; handler: (value: unknown) => void }
 }
 
 function currentMode(): Mode {
@@ -19,11 +21,24 @@ function currentMode(): Mode {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
+/** Vega draws interval-brush rectangles as unlabelled graphics; they carry no content for assistive technology. */
+function hideDecoration(el: HTMLElement) {
+  el.querySelectorAll('[class*="brush"], [class*="background"]').forEach((n) => {
+    n.removeAttribute('role')
+    n.setAttribute('aria-hidden', 'true')
+  })
+}
+
 /** Prerendered SVG first; the interactive Vega view replaces it once the browser is idle. */
-export function VegaChart({ spec, svg, label, viewRef, minHeight = 240 }: Props) {
+export function VegaChart({ spec, svg, label, viewRef, minHeight = 240, onSignal }: Props) {
   const host = useRef<HTMLDivElement>(null)
   const [live, setLive] = useState(false)
   const specKey = JSON.stringify(spec)
+  const handler = useRef(onSignal?.handler)
+  useEffect(() => {
+    handler.current = onSignal?.handler
+  })
+  const signalName = onSignal?.name
 
   useEffect(() => {
     let cancelled = false
@@ -43,6 +58,8 @@ export function VegaChart({ spec, svg, label, viewRef, minHeight = 240 }: Props)
         return
       }
       view = result.view
+      hideDecoration(el)
+      if (signalName) view.addSignalListener(signalName, (_n, v) => handler.current?.(v))
       if (viewRef) viewRef.current = view
       setLive(true)
     }
@@ -65,7 +82,7 @@ export function VegaChart({ spec, svg, label, viewRef, minHeight = 240 }: Props)
       view?.finalize()
       if (viewRef) viewRef.current = null
     }
-  }, [specKey, label, viewRef])
+  }, [specKey, label, viewRef, signalName])
 
   return (
     <div className={s.chart} style={{ minHeight }} role="img" aria-label={label}>

@@ -116,8 +116,31 @@ def load_formats() -> dict[str, dict]:
     return formats
 
 
+def write_explore_places() -> None:
+    """Destinations and stations with exact float64 coordinates (from the hex doubles the R rebuild wrote)."""
+    import csv
+
+    def rows(name: str) -> list[dict]:
+        path = ROOT / "parity" / "r_outputs" / "explorer" / name
+        with path.open() as f:
+            return [
+                {
+                    "id": r["id"],
+                    "name": r["name"],
+                    **({"type": r["type"]} if "type" in r else {}),
+                    "lon": float.fromhex(r["longitude_hex"]),
+                    "lat": float.fromhex(r["latitude_hex"]),
+                }
+                for r in csv.DictReader(f)
+            ]
+
+    data = {"places": rows("places_hex.csv"), "stations": rows("stations_hex.csv")}
+    (OUT.parent / "explore-places.json").write_text(json.dumps(data, indent=1) + "\n")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    write_explore_places()
     formats = load_formats()
     for page, keys in PAGES.items():
         results = {}

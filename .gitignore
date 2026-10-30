@@ -31,3 +31,4 @@ paper/build/
 .Rproj.user/
 __pycache__/
 *.pyc
+web/public/basemap/

@@ -29,7 +29,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className={s.header}>
         <div className={s.headerInner}>
           <NavLink to="/" className={s.brand}>
-            Toronto robbery vs property crime
+            <span className={s.brandLong}>Toronto robbery vs property crime</span>
+            <span className={s.brandShort}>Robbery vs property crime</span>
           </NavLink>
           <nav className={s.nav} aria-label="Main">
             {NAV.map((n) => (
@@ -39,7 +40,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <div className={s.headerRight}>
-            <ThemeToggle />
+            <div className={s.themeDesktop}><ThemeToggle /></div>
             <button
               type="button"
               className={s.menuButton}
@@ -57,6 +58,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {n.label}
             </NavLink>
           ))}
+          <div className={s.themeMobile}><ThemeToggle /></div>
         </nav>
       </header>
       <main id="main" className={s.main} tabIndex={-1}>
