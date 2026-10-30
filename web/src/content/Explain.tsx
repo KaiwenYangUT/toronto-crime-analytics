@@ -46,7 +46,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
           svg={svgs.forest}
           description={forest.description}
           table={forest.table}
-          minHeight={760}
+          minHeight={800}
           caption="A ratio above one means a reported incident at that hour, month or weekday was more likely to be a robbery than in the reference category; below one, less likely. Colour is not the only cue: highlighted rows are also labelled."
           source={<>Source: <code>{K}</code> · <Num k={`${K}:n`} /> incidents, <Num k={`${K}:log.neighbourhoods`} /> neighbourhoods.</>}
         />

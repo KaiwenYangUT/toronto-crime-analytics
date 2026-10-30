@@ -42,18 +42,20 @@ export function VegaChart({ spec, svg, label, viewRef, minHeight = 240, onSignal
 
   useEffect(() => {
     let cancelled = false
+    let generation = 0
     let view: View | null = null
     const el = host.current
     if (!el) return
     const mount = async () => {
+      const mine = ++generation
       const { default: embed } = await import('vega-embed')
-      if (cancelled) return
+      if (cancelled || mine !== generation) return
       const result = await embed(el, themed({ width: 'container', ...JSON.parse(specKey) }, currentMode()) as never, {
         actions: false,
         renderer: 'svg',
         ariaLabel: label,
       } as never)
-      if (cancelled) {
+      if (cancelled || mine !== generation) {
         result.finalize()
         return
       }

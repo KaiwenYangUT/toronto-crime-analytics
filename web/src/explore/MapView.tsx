@@ -46,6 +46,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
     latest.current = { table, selected, center, site, radiusM, catColors }
   })
   const loaded = useRef(false)
+  const lastFit = useRef('')
 
   const paint = () => {
     const m = map.current
@@ -94,14 +95,18 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
         node.append(text)
         markers.current.push(new ml.Marker({ element: node }).setLngLat([p.lon, p.lat]).addTo(map.current as MlMap))
       }
+      // Re-frame the map only when the spatial scope changes, not on every filter tweak.
+      const fitKey = `${ctr?.id ?? 'city'}|${r ?? 0}`
+      const refit = fitKey !== lastFit.current
+      lastFit.current = fitKey
       if (ctr) {
         if (st && st.id !== ctr.id) {
           add(st, 'Destination', palette().text)
           add(ctr, 'Nearest listed station', palette().accent)
         } else add(ctr, st ? 'Destination' : 'Centre', palette().accent)
         const pad = ((r ?? 500) / 111_320) * 1.6
-        map.current.fitBounds([[ctr.lon - pad * 1.4, ctr.lat - pad], [ctr.lon + pad * 1.4, ctr.lat + pad]], { duration: 400, maxZoom: 15 })
-      } else {
+        if (refit) map.current.fitBounds([[ctr.lon - pad * 1.4, ctr.lat - pad], [ctr.lon + pad * 1.4, ctr.lat + pad]], { duration: 400, maxZoom: 15 })
+      } else if (refit) {
         map.current.fitBounds([[-79.64, 43.58], [-79.12, 43.86]], { duration: 400 })
       }
     })

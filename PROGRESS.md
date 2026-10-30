@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P6 Design system and website (in progress) |
-| In progress | P6 stage C: Explore v2 bundle (auto theft, break and enter), design review, code review, DESIGN.md (write-ahead 2026-10-30) |
+| Current phase | P6 largely complete (see checklist for the open items); P7 paper next |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | (superseded) Read only PLAN.md P6 (design system and website). Start with the shell, design-system components, theme toggle and the Explore page, using web/src/styles/tokens.css, design/vega-theme.json and the Explore engine and bundle already in web/ |
+| Next action | Finish the P6 gaps (JSC370 Key Variable Statistics table, census scatter Fig 1 after Q4, STA303 model-check panels exported to results/, regenerate results on a clean tree because `predict.jsc370_benchmark` was written on a dirty tree), then P7 (paper, `\\res{key}` macros, vl-convert figures from the same specs). Ask before deleting the unused Vite scaffold files and before any push or deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -124,7 +124,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Numbers only through `<Num k>` from per-page results JSON (`tools/gen_web_data.py`, `design/display_formats.json`); missing value or format fails the build; `scripts/check-content-numerals.mjs` lint
 - [x] Budgets (`tools/check_bundle_size.mjs`, all pass; maplibre-gl pinned to 4.7.1 because 5.x was 270 KB gz against a 260 KB budget); Playwright smoke + axe on 7 routes x 3 widths x 2 schemes (zero serious/critical, no overflow, no console errors); Lighthouse mobile performance 90 to 100, accessibility 100 (gzip-serving local preview)
 - [x] Explore v2 categories: `v2.bin` (56,457 records, 728 KB gz, event classes shared with legacy; Python test and vitest merge test; legacy bytes unchanged; loads only when switched on; script `web/scripts/v2-check.mjs`)
-- [ ] Design review (screenshots, 10-second test) and P6 code review; `design/DESIGN.md` prose
+- [x] Self design review with Playwright screenshots (375 / 768 / 1280, light and dark; fixes: filled line marks, mobile header, long H1s, overflow); P6 code review (8 findings: 5 fixed, 2 skipped awaiting approval, 1 documented); `design/DESIGN.md` written. A separate read-only design-review agent pass is still to do in P8
 - [ ] Not yet on the site: JSC370 Key Variable Statistics table, census scatter (Fig 1, Q4), LASSO / VIF / ROC / influence panels of the STA303 model checks (not exported to `results/`), Paper PDF (P7)
 - Decisions: Explore counts are computed in the browser from the checksummed bundle (not results JSON; stated on Methods). The basemap is not committed (`tools/fetch_basemap.sh`, sha256 pinned). Vega-Lite 6 / vega-embed 7 are used (PLAN said 5). Scaffold files `web/src/{App.tsx,main.tsx,App.css,index.css,assets/}` are unused and await approval to delete.
 

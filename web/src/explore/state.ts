@@ -47,10 +47,8 @@ export function toParams(s: ExploreState, d: ExploreState): URLSearchParams {
   const p = new URLSearchParams()
   const set = (k: string, v: string, def: string) => v !== def && p.set(k, v)
   set('mode', s.mode, d.mode)
-  if (s.mode !== 'city') {
-    set('place', s.place, d.place)
-    set('radius', String(s.radius), String(d.radius))
-  }
+  set('place', s.place, d.place)
+  set('radius', String(s.radius), String(d.radius))
   set('time', s.preset, d.preset)
   set('cats', s.cats.join(','), d.cats.join(','))
   set('days', s.weekdays.join(','), d.weekdays.join(','))
