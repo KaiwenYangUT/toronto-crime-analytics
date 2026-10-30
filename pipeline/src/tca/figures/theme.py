@@ -75,10 +75,10 @@ def vega_config(tokens: dict, mode: str) -> dict:
         "rule": {"color": c["text-muted"], "strokeWidth": 1},
         "text": {"font": font, "color": c["text"], "fontSize": scale["xs"]["size"]},
         "style": {
-            "accent": {"color": c["accent"], "fill": c["accent"], "stroke": c["accent"]},
-            "muted": {"color": c["text-muted"], "fill": c["text-muted"], "stroke": c["text-muted"]},
-            "ink": {"color": c["text"], "fill": c["text"], "stroke": c["text"]},
-            "surface": {"fill": c["bg"]},
+            "accent": {"color": c["accent"]},
+            "accentOutline": {"stroke": c["accent"]},
+            "muted": {"color": c["text-muted"]},
+            "ink": {"color": c["text"]},
         },
     }
 

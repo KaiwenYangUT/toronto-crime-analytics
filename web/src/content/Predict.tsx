@@ -82,7 +82,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
           minHeight={380}
           caption={
             <>
-              Rungs: {RUNGS.map((r) => `${r} ${RUNG_LABEL[r].toLowerCase()}`).join('; ')}. The F1 score uses the threshold that maximises F1 on the inner
+              Rungs: {RUNGS.map((r) => `${r} ${RUNG_LABEL[r]}`).join('; ')}. The F1 score uses the threshold that maximises F1 on the inner
               out-of-fold predictions. Grouped cross-validation holds out whole neighbourhoods (<Num k={`${A}:designs.${DESIGN_A}.clusters`} />); the temporal holdout trains on
               years up to 2021 and tests on 2022 and 2023.
             </>

@@ -95,22 +95,16 @@
     },
     "style": {
       "accent": {
-        "color": "#0B57A4",
-        "fill": "#0B57A4",
+        "color": "#0B57A4"
+      },
+      "accentOutline": {
         "stroke": "#0B57A4"
       },
       "muted": {
-        "color": "#4B535E",
-        "fill": "#4B535E",
-        "stroke": "#4B535E"
+        "color": "#4B535E"
       },
       "ink": {
-        "color": "#15181C",
-        "fill": "#15181C",
-        "stroke": "#15181C"
-      },
-      "surface": {
-        "fill": "#FFFFFF"
+        "color": "#15181C"
       }
     }
   },
@@ -209,22 +203,16 @@
     },
     "style": {
       "accent": {
-        "color": "#79B8FF",
-        "fill": "#79B8FF",
+        "color": "#79B8FF"
+      },
+      "accentOutline": {
         "stroke": "#79B8FF"
       },
       "muted": {
-        "color": "#A3ABB6",
-        "fill": "#A3ABB6",
-        "stroke": "#A3ABB6"
+        "color": "#A3ABB6"
       },
       "ink": {
-        "color": "#E7E9EC",
-        "fill": "#E7E9EC",
-        "stroke": "#E7E9EC"
-      },
-      "surface": {
-        "fill": "#0F1216"
+        "color": "#E7E9EC"
       }
     }
   },

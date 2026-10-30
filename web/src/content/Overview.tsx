@@ -46,9 +46,9 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
           value={<><Num k={v('L1', 'pr_auc', 'estimate')} /> to <Num k={v('L5', 'pr_auc', 'estimate')} /></>}
           unit="PR-AUC, grouped cross-validation"
           ci={<>Intervals <Num k={v('L1', 'pr_auc', 'lo')} /> to <Num k={v('L1', 'pr_auc', 'hi')} />, then <Num k={v('L5', 'pr_auc', 'lo')} /> to <Num k={v('L5', 'pr_auc', 'hi')} /></>}
-          meaning="Time of day, month and weekday leave a model close to the baseline; adding place and premises triples the score."
+          meaning="Time of day, month and weekday leave a model close to the baseline; adding place and premises roughly triples the score."
           notMean="It is not a forecast of where robberies will happen."
-          sourceKey={`${A}:designs.A.variants.L1,L5`}
+          sourceKey={A}
           to="/predict"
         />
         <FindingCard
@@ -56,9 +56,9 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
           value={<Num k={v('L5-nopremises', 'pr_auc', 'estimate')} />}
           unit="PR-AUC of the full model without premises and location type"
           ci={<>95% CI <Num k={v('L5-nopremises', 'pr_auc', 'lo')} /> to <Num k={v('L5-nopremises', 'pr_auc', 'hi')} /></>}
-          meaning="Take premises and location type away and the best model falls back to near the time-only level."
+          meaning="Take premises and location type away and the best model scores far below its full-model value."
           notMean="Premises partly define the crime type, so this measures what information separates the classes."
-          sourceKey={`${A}:designs.A.variants.L5-nopremises`}
+          sourceKey={A}
           to="/predict#ladder"
         />
       </CardGrid>

@@ -2,7 +2,7 @@
 import { mkdirSync } from 'node:fs'
 import { chromium } from '@playwright/test'
 
-const routes = (process.argv[2] ?? '').split(',').filter(Boolean)
+const routes = (process.argv[2] ?? '').split(',').filter(Boolean).map((r) => (r === 'home' ? '' : r))
 const widths = (process.argv[3] ?? '1280').split(',').map(Number)
 const schemes = (process.argv[4] ?? 'light').split(',')
 const full = process.argv[5] !== 'fold'
