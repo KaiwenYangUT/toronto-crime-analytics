@@ -180,7 +180,7 @@ toronto-crime-analytics/
 - Outputs: every results file records a header `{producer, git_sha, inputs:{file: sha256}, seed, created}`. `tools/hash_outputs.py` writes `results/CHECKSUMS.sha256`.
 - Two clean runs **on the same machine** must produce byte-identical results JSON. Floats are written with `repr`; timestamps are excluded from the hash.
 - Across machines (macOS arm64 locally vs Ubuntu in CI), only integer and data outputs must match exactly: tables, explore bundle, fixtures. Model outputs are checked against the parity tolerances. CI never retrains P5 models; it validates the committed results (schema, provenance, hashes, and parity compare against the committed `r_outputs`).
-- Seeds: global `SEED = 20240415` in `definitions.py`, passed explicitly to every RNG (numpy Generator, sklearn `random_state`, xgboost `seed`). `n_jobs` is fixed and xgboost uses `tree_method="hist"` with deterministic settings.
+- Seeds: global `SEED = 303313` in `definitions.py` (the plan first proposed 20240415; 303313 has been in use since P3 and the accepted deviation D3 names it, so it stays), passed explicitly to every RNG (numpy Generator, sklearn `random_state`, xgboost `seed`). `n_jobs` is fixed and xgboost uses `tree_method="hist"` with deterministic settings.
 
 ### 3.3 Web data bundle (budgets enforced in CI by `tools/check_bundle_size.mjs`, gzip sizes)
 | Asset | Content | Budget |

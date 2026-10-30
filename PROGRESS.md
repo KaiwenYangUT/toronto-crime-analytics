@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P4 complete (tag `parity-pass`); P5 Analytical improvements next |
-| In progress | — |
+| Current phase | P5 Analytical improvements (started) |
+| In progress | P5.0/5.1 results infrastructure (`tca/results.py`, `tools/hash_outputs.py`, `tools/gen_results_md.py`) and STA303 v2 (`pipeline/src/tca/explain/sta303_v2.py`, solar darkness in `features.py`) \| started 2026-10-29 \| files: pipeline/src/tca/{results,features}.py, pipeline/src/tca/explain/sta303_v2.py, results/, CHANGES.md, RESULTS.md, tools/ \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | Read only PLAN.md P5 and start with the compute-budget measurement and STA303 v2 (binomial summary model, categorical hour/month, post-2019 wording); log each change in CHANGES.md |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
@@ -38,6 +38,7 @@ Add a row whenever work moves to a different machine or app.
 - 2026-10-29 (P3, agent decision, reversible): the unified table drops events labelled both Robbery and another category (350 events, 708 rows), per PLAN.md P3 "choose a rule"; logged, with alternatives selectable by flag. Revisit if the user prefers keep-all.
 - 2026-10-29: user accepted parity deviations D1 (JSC370 tree TP 83 vs 71), D2 (RF top-3 importance Hour vs Premises_Type) and D3 (XGBoost judged on the 10-seed mean) in chat, as written in PARITY.md section 5.
 - 2026-10-29: Q2 answered by the user: do not credit the STA313 team; reimplement rather than copy.
+- 2026-10-29: the global seed stays 303313 (PLAN.md proposed 20240415 but 303313 was set in P3 and deviation D3 names it); PLAN.md section 3.2 updated to say so.
 
 ## Open questions (PLAN.md §13)
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
