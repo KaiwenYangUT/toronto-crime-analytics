@@ -14,6 +14,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from tca.definitions import SEED
+
 TERMS = [
     "Presence_of_Sunset",
     "Hour",
@@ -301,10 +303,6 @@ def influence(fit: Fit) -> dict[str, np.ndarray]:
 # --- ROC, lrm statistics, calibration -----------------------------------------------------------
 
 
-def fitted_probability(fit: Fit) -> np.ndarray:
-    return fit.mu
-
-
 def auc(y: np.ndarray, score: np.ndarray) -> float:
     """Mann-Whitney AUC with ties counted half (what ``pROC::auc`` returns, direction "<")."""
     ranks = stats.rankdata(score)
@@ -374,7 +372,7 @@ def calibration(
     y: np.ndarray,
     terms: list[str],
     groups: int = 10,
-    seed: int = 0,
+    seed: int = SEED,
     grid_points: int = 50,
 ) -> pd.DataFrame:
     """Port of ``rms::calibrate(lrm, method = "crossvalidation", B = 10)``.
@@ -428,17 +426,10 @@ def calibration_errors(fit: Fit, curve: pd.DataFrame) -> dict[str, float]:
 
 
 def lasso_matrix(frame: pd.DataFrame) -> tuple[np.ndarray, list[str]]:
-    """The LASSO design of the Rmd: ``model.matrix(~ ... - 1)`` gives Covid_Outbreak both dummies
-    (no intercept column) and Season treatment-coded."""
-    cols = {
-        "Presence_of_Sunset": frame["Presence_of_Sunset"].astype(float),
-        "Hour": frame["Hour"].astype(float),
-        "Day_Of_Week_Numeric": frame["Day_Of_Week_Numeric"].astype(float),
-        "Covid_Outbreak0": (frame["Covid_Outbreak"] == "0").astype(float),
-        "Covid_Outbreak1": (frame["Covid_Outbreak"] == "1").astype(float),
-        "Month": frame["Month"].astype(float),
-        "SeasonSpring": (frame["Season"] == "Spring").astype(float),
-        "SeasonSummer": (frame["Season"] == "Summer").astype(float),
-        "SeasonWinter": (frame["Season"] == "Winter").astype(float),
-    }
-    return np.column_stack(list(cols.values())), list(cols)
+    """The LASSO design of the Rmd: ``model.matrix(~ ... - 1)`` is the GLM design without the
+    intercept column, except that Covid_Outbreak gets both dummies (no reference level)."""
+    x = design(frame).drop(columns="(Intercept)")
+    x.insert(
+        list(x.columns).index("Covid_Outbreak1"), "Covid_Outbreak0", 1.0 - x["Covid_Outbreak1"]
+    )
+    return x.to_numpy(), list(x.columns)

@@ -135,7 +135,9 @@ export function filterEvents(t: EventTable, f: Filter): Int32Array {
     throw new Error('Choose a valid date range.')
   }
   const [h0, h1] = f.hours
-  if (h0 < 0 || h1 > 23 || h0 > h1) throw new Error('Choose a valid hour range.')
+  if (Number.isNaN(h0) || Number.isNaN(h1) || h0 < 0 || h1 > 23 || h0 > h1) {
+    throw new Error('Choose a valid hour range.')
+  }
   if (f.center && !(f.radiusM !== undefined && Number.isFinite(f.radiusM) && f.radiusM > 0)) {
     throw new Error('Invalid spatial filter.')
   }
@@ -231,19 +233,22 @@ export interface CsvMeta {
 const CSV_HEADER =
   '"date","category","count","scope","radius_m","time_preset","selected_weekdays","selected_hours"'
 
+/** A quoted CSV string, with embedded quotes doubled as write.csv does. */
+const quoted = (s: string) => `"${s.replaceAll('"', '""')}"`
+
 /** The "Download daily counts" file, byte-for-byte what R's write.csv produced (LF line ends). */
 export function dailyCsv(daily: readonly DailyRow[], meta: CsvMeta): string {
   const scope = meta.scope === null ? 'All supplied locations' : meta.scope
   const tail = [
-    `"${scope}"`,
+    quoted(scope),
     meta.radiusM === null ? '' : String(meta.radiusM),
-    `"${meta.preset}"`,
-    `"${meta.weekdays.join(',')}"`,
-    `"${meta.hours[0]}-${meta.hours[1]}"`,
+    quoted(meta.preset),
+    quoted(meta.weekdays.join(',')),
+    quoted(`${meta.hours[0]}-${meta.hours[1]}`),
   ].join(',')
   const lines = [CSV_HEADER]
   for (const r of daily) {
-    lines.push(`${isoDate(r.day)},"${r.category}",${Number.isNaN(r.count) ? '' : r.count},${tail}`)
+    lines.push(`${isoDate(r.day)},${quoted(r.category)},${Number.isNaN(r.count) ? '' : r.count},${tail}`)
   }
   return lines.join('\n') + '\n'
 }

@@ -200,7 +200,8 @@ class PrunedTree:
         n = t.node_count
         collapsed = np.zeros(n, bool)
         order = np.arange(n - 1, -1, -1)  # children have larger ids than their parent
-        self.pruning_sequence: list[float] = []
+        if risk[0] <= 0:
+            raise ValueError("the root node is pure; there is nothing to prune")
         while True:
             n_leaf = np.ones(n)
             sub = risk.copy()
@@ -216,7 +217,6 @@ class PrunedTree:
             target = int(np.argmin(g))
             if g[target] >= cp:
                 break
-            self.pruning_sequence.append(float(g[target]))
             collapsed[target] = True
         parent = np.full(n, -1)
         for i in range(n):
@@ -290,24 +290,29 @@ def fit_gbm(train: pd.DataFrame, test: pd.DataFrame):
     return model, xtr, xte
 
 
-def fit_xgb(train: pd.DataFrame, test: pd.DataFrame, best_tune: dict):
-    """xgboost at caret's bestTune on caret's dummy design (exact tree method, base_score 0.5)."""
-    xtr, xte = caret_dummies(train, test)
-    model = XGBClassifier(
-        n_estimators=int(best_tune["nrounds"]),
-        max_depth=int(best_tune["max_depth"]),
-        learning_rate=float(best_tune["eta"]),
-        gamma=float(best_tune["gamma"]),
-        colsample_bytree=float(best_tune["colsample_bytree"]),
-        min_child_weight=float(best_tune["min_child_weight"]),
-        subsample=float(best_tune["subsample"]),
+def make_xgb(params: dict, seed: int, n_jobs: int = 4) -> XGBClassifier:
+    """xgboost at a caret-style tuning row (exact tree method, base_score 0.5). Keys not in the
+    row take caret's fixed values (gamma 0, min_child_weight 1)."""
+    return XGBClassifier(
+        n_estimators=int(params["nrounds"]),
+        max_depth=int(params["max_depth"]),
+        learning_rate=float(params["eta"]),
+        gamma=float(params.get("gamma", 0.0)),
+        colsample_bytree=float(params["colsample_bytree"]),
+        min_child_weight=float(params.get("min_child_weight", 1.0)),
+        subsample=float(params["subsample"]),
         tree_method="exact",
         base_score=0.5,
         objective="binary:logistic",
-        n_jobs=4,
-        random_state=SEED,
+        n_jobs=n_jobs,
+        random_state=seed,
     )
-    model.fit(xtr, train["Robbery"].astype(int).to_numpy())
+
+
+def fit_xgb(train: pd.DataFrame, test: pd.DataFrame, best_tune: dict, seed: int = SEED):
+    """xgboost at caret's bestTune on caret's dummy design."""
+    xtr, xte = caret_dummies(train, test)
+    model = make_xgb(best_tune, seed).fit(xtr.to_numpy(), train["Robbery"].astype(int).to_numpy())
     return model, xtr, xte
 
 
@@ -402,22 +407,11 @@ def xgb_seed_spread(
 ) -> pd.DataFrame:
     """The XGBoost fit is random (colsample_bytree = 0.8) and R's seed cannot be replayed, so the
     port is judged on the seeds SEED + 0 .. SEED + 9, fixed in advance, not on one fit."""
+    xtr, xte = caret_dummies(train, test)
+    y = train["Robbery"].astype(int).to_numpy()
     rows = []
     for k in range(n_seeds):
-        xtr, xte = caret_dummies(train, test)
-        model = XGBClassifier(
-            n_estimators=int(best_tune["nrounds"]),
-            max_depth=int(best_tune["max_depth"]),
-            learning_rate=float(best_tune["eta"]),
-            gamma=float(best_tune["gamma"]),
-            colsample_bytree=float(best_tune["colsample_bytree"]),
-            min_child_weight=float(best_tune["min_child_weight"]),
-            subsample=float(best_tune["subsample"]),
-            tree_method="exact",
-            base_score=0.5,
-            n_jobs=4,
-            random_state=SEED + k,
-        ).fit(xtr, train["Robbery"].astype(int).to_numpy())
-        cm = confusion(test["Robbery"].to_numpy(), model.predict_proba(xte)[:, 1] > 0.5)
+        model = make_xgb(best_tune, SEED + k).fit(xtr.to_numpy(), y)
+        cm = confusion(test["Robbery"].to_numpy(), model.predict_proba(xte.to_numpy())[:, 1] > 0.5)
         rows.append({"seed": SEED + k, **cm, **scores(cm)})
     return pd.DataFrame(rows)

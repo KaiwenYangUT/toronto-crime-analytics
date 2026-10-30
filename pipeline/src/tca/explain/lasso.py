@@ -68,7 +68,6 @@ def fit_path(
     tol: float = 1e-11,
     max_outer: int = 100,
     max_inner: int = 10_000,
-    warm: tuple[float, np.ndarray] | None = None,
     early_stop: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Solve the penalised problem for each lambda in order, warm-starting from the previous one.
@@ -77,8 +76,7 @@ def fit_path(
     fraction of null deviance explained exceeds 0.999 or gains less than 1e-5. (The gain is an
     absolute difference: that reproduces the 44-value path R returned for this data.)"""
     nobs, p = xs.shape
-    b0, b = warm if warm is not None else (float(np.log(y.mean() / (1 - y.mean()))), np.zeros(p))
-    b = b.copy()
+    b0, b = float(np.log(y.mean() / (1 - y.mean()))), np.zeros(p)
     intercepts, betas = [], []
     null_dev = _deviance(y, np.full(nobs, b0))
     ratio_prev = 0.0

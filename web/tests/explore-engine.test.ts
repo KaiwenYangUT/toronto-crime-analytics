@@ -6,7 +6,7 @@ import {
   nearestStation, periodMask, trendCounts, type DailyRow, type EventTable, type Filter,
   type NamedPoint, type TrendRow,
 } from '../src/explore-engine/analysis.ts'
-import { parseBundle, type BundleMeta } from '../src/explore-engine/bundle.ts'
+import { parseBundle, verifyBundle, type BundleMeta } from '../src/explore-engine/bundle.ts'
 import { asArray, CATEGORIES, hexToDouble, loadEvents, loadFixtures, loadPoints, parseCsv } from './r-fixtures.ts'
 
 const sha = (s: string) => createHash('sha256').update(s).digest('hex')
@@ -129,7 +129,7 @@ describe('parity with the R fixtures', () => {
     const bundle = parseBundle(bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength), meta)
     expect(bundle.table.n).toBe(25_242)
     // the bundle must hold the same records as R's table, coordinates bit for bit
-    expect(Array.from(bundle.table.lon.slice(0, 5000)).every((v, i) => Object.is(v, events.lon[i]))).toBe(true)
+    expect(Array.from(bundle.table.lon).every((v, i) => Object.is(v, events.lon[i]))).toBe(true)
     expect(Array.from(bundle.table.lat).every((v, i) => Object.is(v, events.lat[i]))).toBe(true)
     expect(Array.from(bundle.table.day).every((v, i) => v === events.day[i])).toBe(true)
     expect(runAll(bundle.table, null).slice(0, 10)).toEqual([])
@@ -151,12 +151,30 @@ describe('parity with the R fixtures', () => {
     expect(filterEvents(events, { ...full, categories: new Set([1]) }).length).toBe(8455)
   })
 
+  it('doubles embedded quotes in the CSV like write.csv', () => {
+    const csv = dailyCsv([{ day: 0, category: 'A"B', count: 1 }], {
+      scope: '5" Spot', radiusM: 300, preset: 'all', weekdays: [1], hours: [0, 23],
+    })
+    expect(csv.split('\n')[1]).toBe('1970-01-01,"A""B",1,"5"" Spot",300,"all","1","0-23"')
+  })
+
+  it('refuses a bundle whose checksum does not match', async () => {
+    const dir = new URL('../public/data/explore/', import.meta.url)
+    const meta = JSON.parse(readFileSync(new URL('meta.json', dir), 'utf8')) as BundleMeta
+    const bin = readFileSync(new URL('legacy.bin', dir))
+    const copy = bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength)
+    await expect(verifyBundle(copy, meta)).resolves.toBeUndefined()
+    new Uint8Array(copy)[1000] ^= 1
+    await expect(verifyBundle(copy, meta)).rejects.toThrow('checksum')
+  })
+
   it('rejects invalid input like the original', () => {
     const f: Filter = {
       dateFrom: 2, dateTo: 1, categories: new Set([0]), preset: 'all', weekdays: new Set([1]), hours: [0, 23],
     }
     expect(() => filterEvents(events, f)).toThrow('valid date range')
     expect(() => filterEvents(events, { ...f, dateFrom: 1, hours: [5, 4] })).toThrow('valid hour range')
+    expect(() => filterEvents(events, { ...f, dateFrom: 1, hours: [Number.NaN, 23] })).toThrow('valid hour range')
     expect(() => filterEvents(events, { ...f, dateFrom: 1, center: { lon: 0, lat: 0 }, radiusM: 0 })).toThrow('spatial')
   })
 })

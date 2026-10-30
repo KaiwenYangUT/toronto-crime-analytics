@@ -138,7 +138,7 @@ def compare_roc_lrm(frame: pd.DataFrame) -> dict:
 def compare_calibration(frame: pd.DataFrame) -> dict:
     y = frame["Robbery"].to_numpy()
     fit = port.fit_glm(port.design(frame), y)
-    cal = port.calibration(frame, y, port.TERMS, seed=123)
+    cal = port.calibration(frame, y, port.TERMS)
     r_cal = pd.read_csv(R / "calibration_matrix.csv")
     out = {
         "grid_max_abs_diff": float(np.max(np.abs(cal["predy"] - r_cal["predy"]))),

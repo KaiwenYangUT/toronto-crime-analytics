@@ -11,7 +11,6 @@ import pandas as pd
 from joblib import Parallel, delayed
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
-from xgboost import XGBClassifier
 
 from tca.definitions import SEED
 from tca.predict import jsc370_port as j
@@ -30,26 +29,10 @@ def _grid(spec: dict[str, list]) -> list[dict]:
     return [dict(zip(spec, values, strict=True)) for values in product(*spec.values())]
 
 
-def _xgb(params: dict, seed: int, n_jobs: int = 1) -> XGBClassifier:
-    return XGBClassifier(
-        n_estimators=int(params["nrounds"]),
-        max_depth=int(params["max_depth"]),
-        learning_rate=float(params["eta"]),
-        gamma=0.0,
-        colsample_bytree=float(params["colsample_bytree"]),
-        min_child_weight=1.0,
-        subsample=float(params["subsample"]),
-        tree_method="exact",
-        base_score=0.5,
-        n_jobs=n_jobs,
-        random_state=seed,
-    )
-
-
 def _cv_accuracy(params: dict, x: np.ndarray, y: np.ndarray, folds: int, seed: int) -> float:
     accs = []
     for tr, te in StratifiedKFold(folds, shuffle=True, random_state=seed).split(x, y):
-        model = _xgb(params, seed).fit(x[tr], y[tr])
+        model = j.make_xgb(params, seed, n_jobs=1).fit(x[tr], y[tr])
         accs.append(float((model.predict(x[te]) == y[te]).mean()))
     return float(np.mean(accs))
 
@@ -128,7 +111,7 @@ def tuned_rows(train: pd.DataFrame, test: pd.DataFrame) -> dict:
     yte = test["Robbery"].to_numpy()
     table, best = tune_xgb(train, test)
     xtr, xte = j.caret_dummies(train, test)
-    model = _xgb(best, SEED, n_jobs=4).fit(xtr.to_numpy(), train["Robbery"].astype(int).to_numpy())
+    model = j.make_xgb(best, SEED).fit(xtr.to_numpy(), train["Robbery"].astype(int).to_numpy())
     cm = j.confusion(yte, model.predict_proba(xte.to_numpy())[:, 1] > 0.5)
     out["xgb"] = {
         "best": {k: float(v) for k, v in best.items()},

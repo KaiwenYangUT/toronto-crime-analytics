@@ -1,15 +1,22 @@
-"""Sweep one palette slot in OKLCH and keep candidates that pass the dataviz validator.
-Usage: python design/search_slot.py MODE SURFACE FIXED_HEXES L_MIN L_MAX [--pairs all]
-Standard library only (the validator itself is the skill's node script)."""
+"""Sweep one palette slot in OKLCH and keep candidates that pass tools/check_palette.py.
 
+Usage: python design/search_slot.py MODE SURFACE FIXED_HEXES L_MIN L_MAX
+Example (the dark-mode bicycle slot, with the other four colours fixed):
+  python design/search_slot.py dark "#0F1216" "#D55E00,#0072B2,#009E73,#B87EB3" 0.50 0.67
+Standard library plus the in-repo checker; this is how the colours in tokens.json were found."""
+
+import importlib.util
 import math
-import subprocess
 import sys
+from pathlib import Path
 
-VALIDATOR = sys.argv[6] if len(sys.argv) > 6 else "validate_palette.js"
+ROOT = Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location("check_palette", ROOT / "tools" / "check_palette.py")
+check = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(check)
 
 
-def oklch_to_hex(L, C, h):
+def oklch_to_hex(L: float, C: float, h: float) -> str | None:
     a, b = C * math.cos(math.radians(h)), C * math.sin(math.radians(h))
     l_ = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3
     m_ = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3
@@ -29,35 +36,25 @@ def oklch_to_hex(L, C, h):
     return "#{:02X}{:02X}{:02X}".format(*out)
 
 
-mode, surface, fixed, lmin, lmax = sys.argv[1:6]
-found = []
-L = float(lmin)
-while L <= float(lmax) + 1e-9:
-    for C in (0.10, 0.13, 0.16):
-        for h in range(0, 360, 10):
-            hexv = oklch_to_hex(L, C, h)
-            if not hexv:
-                continue
-            r = subprocess.run(
-                [
-                    "node",
-                    VALIDATOR,
-                    f"{fixed},{hexv}",
-                    "--mode",
-                    mode,
-                    "--surface",
-                    surface,
-                    "--pairs",
-                    "all",
-                ],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            if "[FAIL]" not in r.stdout:
-                warn = r.stdout.count("[WARN]")
-                found.append((warn, hexv, round(L, 2), C, h))
-    L += 0.03
-for warn, hexv, L, C, h in sorted(found)[:15]:
-    print(hexv, f"L{L} C{C} h{h}", "warns", warn)
-print(len(found), "passing candidates")
+def main(mode: str, surface: str, fixed: str, lmin: str, lmax: str) -> None:
+    base = fixed.split(",")
+    found = []
+    L = float(lmin)
+    while L <= float(lmax) + 1e-9:
+        for C in (0.10, 0.13, 0.16):
+            for h in range(0, 360, 10):
+                hex_value = oklch_to_hex(L, C, h)
+                if not hex_value:
+                    continue
+                rows = check.check_categorical([*base, hex_value], mode, surface)
+                if all(status != "FAIL" for _, status, _ in rows):
+                    warnings = sum(status == "WARN" for _, status, _ in rows)
+                    found.append((warnings, hex_value, round(L, 2), C, h))
+        L += 0.03
+    for warnings, hex_value, L, C, h in sorted(found)[:15]:
+        print(hex_value, f"L{L} C{C} h{h}", "warnings", warnings)
+    print(len(found), "passing candidates")
+
+
+if __name__ == "__main__":
+    main(*sys.argv[1:6])

@@ -73,7 +73,7 @@ Python trains on R's exported `train_data` / `test_data` and is compared with R'
 *Tree row:* the Python tree is pruned at R's chosen cp (0.0027965) on a scikit-learn tree whose factors are ordered by response rate; it has 12 leaves (R: 8 leaves, 7 splits). R's full tree has 66 leaves, ours 150, so no pruning level gives exactly R's size.
 Alternatives tried and rejected (none within tolerance on every count): alphabetical integer codes (TP 76, FP 38), a best-first 8-leaf tree, one-hot levels (TP 24), pruning to R's leaf count by Gini or error.
 
-*XGBoost:* the fit is random (`colsample_bytree` 0.8) and R's seed cannot be replayed. The seed set SEED..SEED+9 was fixed before the comparison; the single fit with SEED itself (TP 232) sits above the range of the others (205 to 225), so the port is judged on the 10-seed mean. All 10 seeds give TP at or above R's 199, so a small systematic difference between xgboost 3.4 and 1.7.8 may remain.
+*XGBoost:* the fit is random (`colsample_bytree` 0.8) and R's seed cannot be replayed. The seed set SEED..SEED+9 was fixed before the comparison; the single fit with SEED itself (TP 232) sits above the range of the other nine (203 to 224), so the port is judged on the 10-seed mean. All 10 seeds give TP at or above R's 199, so a small systematic difference between xgboost 3.4 and 1.7.8 may remain.
 
 *Importance:* bagging's top three (Longitude, Latitude, Hour) match R. The random forest's top three have Hour where R has Premises_Type (0.115 vs 0.113 Gini share, a near tie). Premises_Type and Season were fed as alphabetical integer codes (`character_as_codes=True`, per the plan). R's formula interface may have turned them into factors (`model.frame` converts character columns); the alternative, ordering levels by response rate, gives RF's R top three but misses RF's FP count (135 vs 112) and changes bagging's top three. Both variants are recorded in the report.
 
@@ -126,8 +126,8 @@ Tolerances (PLAN.md P4): raw values rtol 1e-6; LASSO coefficients 1e-4; apparent
 | `lrm` statistics (L.R., C, Dxy, R2, Brier, g) | 1e-12 |
 | Gaussian "final" table (coefficients, SE, t, AIC, BIC) | 1e-12 |
 | Calibration: grid, apparent curve | 9e-13, 7e-12 |
-| Calibration: bias-corrected curve | 0.0044 (fold draw differs; tolerance 0.02) |
-| Calibration: printed n, mean abs error, MSE, 0.9 quantile | n equal, 5.7e-5 (tolerance 1e-3) |
+| Calibration: bias-corrected curve | 0.0105 (fold draw differs; tolerance 0.02) |
+| Calibration: printed n, mean abs error, MSE, 0.9 quantile | n equal, 1.6e-4 (tolerance 1e-3) |
 | LASSO: lambda sequence (44 values), lambda.min | 3e-13, equal |
 | LASSO: coefficients, linear predictor | 2.4e-5, 2.6e-5 (tolerance 1e-4) |
 | LASSO: Covid1 minus Covid0 contrast | -0.568696 vs -0.568693 |

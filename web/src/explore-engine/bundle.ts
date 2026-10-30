@@ -52,8 +52,18 @@ export function parseBundle(buffer: ArrayBuffer, meta: BundleMeta): Bundle {
   }
 }
 
+/** SHA-256 of the buffer must equal the value recorded when the bundle was written. */
+export async function verifyBundle(buffer: ArrayBuffer, meta: BundleMeta): Promise<void> {
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', buffer))
+  const hex = Array.from(digest, (b) => b.toString(16).padStart(2, '0')).join('')
+  if (hex !== meta.sha256) throw new Error('The Explore data bundle does not match its checksum.')
+}
+
 export async function loadBundle(base: string): Promise<Bundle> {
   const [metaRes, binRes] = await Promise.all([fetch(`${base}/meta.json`), fetch(`${base}/legacy.bin`)])
   if (!metaRes.ok || !binRes.ok) throw new Error('Could not load the Explore data bundle.')
-  return parseBundle(await binRes.arrayBuffer(), (await metaRes.json()) as BundleMeta)
+  const meta = (await metaRes.json()) as BundleMeta
+  const buffer = await binRes.arrayBuffer()
+  await verifyBundle(buffer, meta)
+  return parseBundle(buffer, meta)
 }

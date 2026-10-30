@@ -47,8 +47,7 @@ export function hexToDouble(s: string): number {
   return m[1] ? -value : value
 }
 
-function table(rows: string[][], categories: string[]): { header: string[]; body: string[][] } {
-  void categories
+function table(rows: string[][]): { header: string[]; body: string[][] } {
   return { header: rows[0], body: rows.slice(1).filter((r) => r.length > 1) }
 }
 
@@ -56,7 +55,7 @@ export const CATEGORIES = ['Bicycle theft', 'Robbery', 'Theft over']
 
 export function loadEvents(): { table: EventTable; ids: string[] } {
   const rows = parseCsv(gunzipSync(readFileSync(new URL('events_hex.csv.gz', root))).toString('utf8'))
-  const { header, body } = table(rows, CATEGORIES)
+  const { header, body } = table(rows)
   const col = (name: string) => header.indexOf(name)
   const n = body.length
   const t: EventTable = {
@@ -89,7 +88,7 @@ export function loadEvents(): { table: EventTable; ids: string[] } {
 
 export function loadPoints(file: 'places_hex.csv' | 'stations_hex.csv'): NamedPoint[] {
   const rows = parseCsv(readFileSync(new URL(file, root), 'utf8'))
-  const { header, body } = table(rows, [])
+  const { header, body } = table(rows)
   const col = (name: string) => header.indexOf(name)
   return body.map((r) => ({
     id: r[col('id')], name: r[col('name')],
