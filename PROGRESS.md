@@ -127,7 +127,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Explore v2 categories: `v2.bin` (56,457 records, 728 KB gz, event classes shared with legacy; Python test and vitest merge test; legacy bytes unchanged; loads only when switched on; script `web/scripts/v2-check.mjs`)
 - [x] Self design review with Playwright screenshots (375 / 768 / 1280, light and dark; fixes: filled line marks, mobile header, long H1s, overflow); P6 code review (8 findings: 5 fixed, 2 skipped awaiting approval, 1 documented); `design/DESIGN.md` written. A separate read-only design-review agent pass is still to do in P8
 - [ ] Not yet on the site: JSC370 Key Variable Statistics table, census scatter (Fig 1, Q4), LASSO / VIF / ROC / influence panels of the STA303 model checks (not exported to `results/`), Paper PDF (P7)
-- Decisions: Explore counts are computed in the browser from the checksummed bundle (not results JSON; stated on Methods). The basemap is not committed (`tools/fetch_basemap.sh`, sha256 pinned). Vega-Lite 6 / vega-embed 7 are used (PLAN said 5). Scaffold files `web/src/{App.tsx,main.tsx,App.css,index.css,assets/}` are unused and await approval to delete.
+- Decisions: Explore counts are computed in the browser from the checksummed bundle (not results JSON; stated on Methods). The basemap is committed since P9 (20 MB, sha256 pinned; `tools/fetch_basemap.sh` documents the extraction). Vega-Lite 6 / vega-embed 7 are used (PLAN said 5). Scaffold files `web/src/{App.tsx,main.tsx,App.css,index.css,assets/}` are unused and await approval to delete.
 
 ### P7 Paper
 - [x] `\res{}` macros (`\resG/A/B/I` shorthands) generated from results by `tools/gen_paper.py` into `paper/generated/numbers.tex`; tables `tab_flow.tex`, `tab_metrics.tex`; four figures from `web/src/lib/paperSpecs.ts` (reusing the site's row builders and theme) rendered by vl-convert; Python formatter parity-tested against the site's `formatNumber` (`tools/tests/test_gen_paper.py`)
@@ -145,7 +145,7 @@ Add a row whenever work moves to a different machine or app.
 
 ### P9 Release (ask before each step)
 - [x] README (with four screenshots in `docs/screenshots/`), `LICENSE` (MIT with "Kaiwen Yang" as holder: the plan's defaults for Q3 and Q6, not yet confirmed by the user), `DATA_LICENSE.md` (existing)
-- [x] `.github/workflows/ci.yml` and `pages.yml` written locally; never run, third-party action `wtfjoke/setup-tectonic@v3` unverified; `pages.yml` is `workflow_dispatch` only and has an OPEN basemap issue (the pinned Protomaps daily build may be gone; commit the verified 20 MB file or host it before any deploy)
+- [x] `.github/workflows/ci.yml` and `pages.yml` written locally; never run, third-party action `wtfjoke/setup-tectonic@v3` unverified; `pages.yml` is `workflow_dispatch` only
 - [ ] Ask → git push (blocked on Q1: repository name and visibility; free Pages needs a public repo)
 - [ ] Ask → enable and deploy GitHub Pages (the user sets Settings > Pages > Source to "GitHub Actions", then runs `pages` manually)
 - [x] Suggested old-repo pointer READMEs listed in `docs/old-repo-pointers.md` (not done), with the Q2 rights note for the Explorer
@@ -168,3 +168,4 @@ Add a row whenever work moves to a different machine or app.
 - P1 checkpoint: Q5 recorded, local `main` initialized, `.editorconfig` added; initial commit includes the existing planning files and the resume preflight. No remote configured.
 
 - P1 environment acceptance: `make env` completed twice, `pip check` reports no broken requirements, analysis imports pass, `npm run lint` and `npm run build` pass, Playwright Chromium downloaded. TypeScript 6.0 selected for typescript-eslint compatibility; no analysis or parity result generated. System installation: R/tectonic and their required dependencies; Homebrew cleanup disabled.
+

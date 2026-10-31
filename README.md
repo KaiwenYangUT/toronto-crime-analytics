@@ -1,5 +1,7 @@
 # Toronto robbery vs other major property crime
 
+Repository: <https://github.com/KaiwenYangUT/toronto-crime-analytics>
+
 Given that a major property-type crime was reported in Toronto, **which type is it?** This repository answers that
 question twice, from Toronto Police Service open data for 2014 to 2023:
 
@@ -54,7 +56,8 @@ make check      # unit tests and lint
 ```
 
 `make rref` re-runs the original R projects (hours); the committed `parity/r_outputs/` are used otherwise. The Toronto
-basemap used by Explore is not committed: `bash tools/fetch_basemap.sh` extracts and verifies it.
+basemap used by Explore (`web/public/basemap/toronto.pmtiles`, 20 MB, sha256 pinned) is committed; `tools/fetch_basemap.sh`
+records how it was extracted from Protomaps and verifies its checksum.
 
 Two runs on the same machine give identical result hashes (`results/CHECKSUMS.sha256`); `tools/fresh_checkout.sh`
 verifies this in a fresh clone.

@@ -31,7 +31,6 @@ paper/build/
 .Rproj.user/
 __pycache__/
 *.pyc
-web/public/basemap/
 
 # review agents scratch (reports in reviews/*.md are kept)
 reviews/shots/

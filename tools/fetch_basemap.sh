@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Extract the pinned Toronto basemap (Protomaps, maxzoom 14) into web/public/basemap/ and verify its sha256.
+# Provenance of the committed basemap: extract the pinned Toronto basemap (Protomaps, maxzoom 14) into web/public/basemap/ and verify its sha256.
 # Source tools/env.sh first. The publisher keeps daily builds only briefly, so keep the verified file.
 set -euo pipefail
 OUT=web/public/basemap/toronto.pmtiles

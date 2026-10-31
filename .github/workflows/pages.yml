@@ -1,7 +1,6 @@
 # Deploy to GitHub Pages. Manual only (workflow_dispatch) so nothing deploys by accident; enable it only after the
 # user approves the deploy and sets Settings > Pages > Source to "GitHub Actions". Written in P9, never run.
-# OPEN: the 20 MB Toronto basemap is not committed and the publisher keeps daily builds only briefly, so
-# tools/fetch_basemap.sh may fail here; decide to commit the verified file (or host it) before the first deploy.
+# The 20 MB Toronto basemap is committed (web/public/basemap/toronto.pmtiles); its checksum is verified below.
 name: pages
 on:
   workflow_dispatch:
@@ -32,7 +31,7 @@ jobs:
       - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
       - run: make data
       - run: cd web && npm ci
-      - run: source tools/env.sh && bash tools/fetch_basemap.sh
+      - run: echo "93f086e6378c522f802758e664a2cda8eb1a31cc4d0b2cd7bb49f38ff2bff445  web/public/basemap/toronto.pmtiles" | sha256sum -c -
       - run: .venv/bin/python tools/gen_web_data.py && cd web && npm run build && npm run package
       - run: node tools/check_bundle_size.mjs
       - uses: actions/configure-pages@v5
