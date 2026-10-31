@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import type { Map as MlMap, GeoJSONSource, Marker, Popup } from 'maplibre-gl'
 import type { EventTable, NamedPoint, Point } from '../explore-engine/analysis.ts'
 import { isoDate } from '../explore-engine/analysis.ts'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { CLUSTER_STEPS } from './state.ts'
 import s from './explore.module.css'
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   catColors: Record<string, string>
   /** a fixed reference point for the citywide view (Union Station), so "downtown" can be checked on the map */
   landmark?: NamedPoint
+  /** drawn over the map's top-left corner (the colour key) */
+  children?: ReactNode
 }
 
 const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim()
@@ -54,7 +57,7 @@ function circlePolygon(c: Point, radiusM: number) {
 
 const EMPTY = { type: 'FeatureCollection' as const, features: [] }
 
-export function MapView({ table, selected, center, site, radiusM, catColors, landmark }: Props) {
+export function MapView({ table, selected, center, site, radiusM, catColors, landmark, children }: Props) {
   const el = useRef<HTMLDivElement>(null)
   const map = useRef<MlMap | null>(null)
   const markers = useRef<Marker[]>([])
@@ -81,7 +84,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors, lan
     set('roads-major', 'line-color', mix(c.border, c.muted, 0.2))
     set('radius-fill', 'fill-color', c.accent)
     set('radius-line', 'line-color', c.accent)
-    set('clusters', 'circle-color', ['step', ['get', 'point_count'], c.density[1], 50, c.density[2], 300, c.density[3], 1500, c.density[4]])
+    set('clusters', 'circle-color', ['step', ['get', 'point_count'], c.density[1], CLUSTER_STEPS[0], c.density[2], CLUSTER_STEPS[1], c.density[3], CLUSTER_STEPS[2], c.density[4]])
     set('clusters', 'circle-stroke-color', c.bg)
     const cats = Object.entries(latest.current.catColors).flat()
     set('points', 'circle-color', ['match', ['get', 'cat'], ...cats, c.muted])
@@ -170,7 +173,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors, lan
             { id: 'roads-major', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'highway', 'major_road'], paint: { 'line-color': '#999', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.4, 16, 2.4] } },
             { id: 'radius-fill', type: 'fill', source: 'radius', paint: { 'fill-color': '#06c', 'fill-opacity': 0.08 } },
             { id: 'radius-line', type: 'line', source: 'radius', paint: { 'line-color': '#06c', 'line-width': 2, 'line-dasharray': [3, 2] } },
-            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 9, 50, 12, 300, 16, 1500, 22], 'circle-stroke-width': 2, 'circle-opacity': 1 } },
+            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 9, CLUSTER_STEPS[0], 12, CLUSTER_STEPS[1], 16, CLUSTER_STEPS[2], 22], 'circle-stroke-width': 2, 'circle-opacity': 1 } },
             { id: 'points', type: 'circle', source: 'events', filter: ['!', ['has', 'point_count']], paint: { 'circle-color': '#666', 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-opacity': 1 } },
           ],
         },
@@ -239,6 +242,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors, lan
   return (
     <div className={s.mapBox}>
       <div ref={el} className={s.map} role="region" aria-label="Map of the selected incidents. The totals and charts give the same counts as text." />
+      {children}
     </div>
   )
 }

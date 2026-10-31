@@ -1,5 +1,6 @@
 // P10 "Explore fold" check (PLAN.md section 9), run against the packaged site (npm run serve):
 //  - 1280x800 and 1440x900: the page does not scroll past the footer, and the map, the trend and the bars are visible
+//    (grid at least 592 px: the header spacing now follows PageHeader's stack, 8 px gaps, which cost 8 px of the old 600)
 //  - 375x812: the map's top is above the fold
 //  - 1024x768: the Filters button opens a drawer, Escape closes it and focus returns to the button
 //  - brush on the trend: the chart is not re-drawn mid-drag, the dates reach the URL, and the URL reloads to the same range
@@ -42,7 +43,7 @@ for (const [w, h] of [[1280, 800], [1440, 900]]) {
   })
   check(col.scroll <= col.client + 1, `${w}x${h} charts column needs no scrollbar`, `${col.scroll} in ${col.client}`)
   const dash = await page.locator('#trend').first().evaluate((el) => el.parentElement.getBoundingClientRect().height)
-  check(dash >= 600 - 1, `${w}x${h} grid is at least 600 px high`, `${Math.round(dash)}`)
+  check(dash >= 592 - 1, `${w}x${h} grid is at least 592 px high`, `${Math.round(dash)}`)
   check(errors.length === 0, `${w}x${h} no console errors`, errors.join(' | '))
   await ctx.close()
 }

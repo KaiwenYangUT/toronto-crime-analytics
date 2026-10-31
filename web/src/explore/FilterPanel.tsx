@@ -53,7 +53,7 @@ function DateField({ label, value, min, max, onCommit }: { label: string; value:
   )
 }
 
-const MODE_LABEL: Record<Mode, string> = { city: 'Citywide', destination: 'Near a destination', station: 'Near its nearest listed station' }
+const MODE_LABEL: Record<Mode, string> = { city: 'Citywide', destination: 'Near a destination', station: 'Near a destination’s nearest listed station' }
 
 export function FilterPanel({ state, categories, catColors, dateMin, dateMax, onChange, onReset, onPresetFig5, open, onClose, active }: Props) {
   const head = useRef<HTMLHeadingElement>(null)
@@ -149,7 +149,7 @@ export function FilterPanel({ state, categories, catColors, dateMin, dateMax, on
                 <Slider.Track className={s.sliderTrack}><Slider.Range className={s.sliderRange} /></Slider.Track>
                 <Slider.Thumb className={s.sliderThumb} aria-label="Radius in metres" />
               </Slider.Root>
-              {state.mode === 'station' && <p className={s.hint}>The nearest listed station is one of the stations in this data, not necessarily the nearest station.</p>}
+              {state.mode === 'station' && <p className={s.hint}>The circle is drawn around the listed station closest to the destination. The list may not include every nearby station.</p>}
             </div>
           </>
         )}
@@ -200,7 +200,7 @@ export function FilterPanel({ state, categories, catColors, dateMin, dateMax, on
           </Slider.Root>
         </div>
 
-        <button type="button" className={ui.btn} onClick={onPresetFig5}>Course report Figure 5: 2020 robberies</button>
+        <button type="button" className={ui.btn} onClick={onPresetFig5}>2020 robberies (as in the original report)</button>
         </div>
         </div>
         <div className={s.fade} data-more={more} aria-hidden="true" />

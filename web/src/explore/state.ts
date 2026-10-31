@@ -29,6 +29,9 @@ export const PRESETS: { value: Preset; label: string; note: string }[] = [
   { value: 'off_peak', label: 'Outside commute peaks', note: 'Everything except weekday commute peaks.' },
 ]
 
+/** Cluster size steps on the map (reported incidents per cluster); the map colours and the legend both read these. */
+export const CLUSTER_STEPS = [50, 300, 1500] as const
+
 export const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 export const RADII_MIN = 100
 export const RADII_MAX = 2000

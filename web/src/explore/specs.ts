@@ -50,7 +50,7 @@ const colorField = { field: 'category', type: 'nominal', title: null, scale: { d
  */
 export function trendSpec(rows: TrendRow[], height: number, range?: { from: string; to: string }): Spec {
   const values = rows.map((r) => ({ date: isoDate(r.day), category: r.category, count: Number.isNaN(r.count) ? null : r.count }))
-  const x = { field: 'date', type: 'temporal', title: null, scale: { type: 'utc' }, axis: { tickCount: 5, labelOverlap: true } }
+  const x = { field: 'date', type: 'temporal', title: null, scale: { type: 'utc' }, axis: { tickCount: 5, labelOverlap: true, labelAlign: 'left', labelPadding: 4 } }
   const yMax = niceCeil(Math.max(1, ...values.map((v) => v.count ?? 0)))
   const ends = endLabels(values, yMax, height - 34)
 
@@ -59,10 +59,10 @@ export function trendSpec(rows: TrendRow[], height: number, range?: { from: stri
     params: [{ name: 'brush', select: { type: 'interval', encodings: ['x'] } }],
     encoding: {
       x,
-      y: { field: 'count', type: 'quantitative', title: 'Records', axis: { tickCount: 3 }, scale: { domain: [0, yMax], nice: false } },
+      y: { field: 'count', type: 'quantitative', title: 'Incidents', axis: { tickCount: 3 }, scale: { domain: [0, yMax], nice: false } },
       color: colorField,
       strokeDash: { field: 'category', type: 'nominal', legend: null, scale: { domain: CATEGORY_DOMAIN, range: DASHES } },
-      tooltip: [{ field: 'date', type: 'temporal', title: 'Date' }, { field: 'category', title: 'Crime type' }, { field: 'count', title: 'Records' }],
+      tooltip: [{ field: 'date', type: 'temporal', title: 'Date' }, { field: 'category', title: 'Crime type' }, { field: 'count', title: 'Incidents' }],
     },
   }
   const band = range
@@ -108,8 +108,8 @@ export function weekdayBars(counts: number[], height: number): Spec {
     mark: { type: 'bar', style: 'accent' },
     encoding: {
       x: { field: 'day', type: 'ordinal', sort: labels, title: null, axis: { labelAngle: 0, ticks: false } },
-      y: { field: 'count', type: 'quantitative', title: 'Records', axis: { tickCount: 3 } },
-      tooltip: [{ field: 'day', title: 'Weekday' }, { field: 'count', title: 'Records' }],
+      y: { field: 'count', type: 'quantitative', title: 'Incidents', axis: { tickCount: 3 } },
+      tooltip: [{ field: 'day', title: 'Weekday' }, { field: 'count', title: 'Incidents' }],
     },
   }
 }
@@ -124,9 +124,9 @@ export function hourBars(counts: number[], height: number): Spec {
     mark: { type: 'bar', style: 'accent' },
     encoding: {
       x: { field: 'hour', type: 'ordinal', title: null, axis: { labelAngle: 0, ticks: false, values: [0, 6, 12, 18], labelExpr: "datum.value + ':00'" } },
-      y: { field: 'count', type: 'quantitative', title: 'Records', axis: { tickCount: 3 } },
+      y: { field: 'count', type: 'quantitative', title: 'Incidents', axis: { tickCount: 3 } },
       opacity: { condition: { test: 'datum.peak', value: 1 }, value: 0.7 },
-      tooltip: [{ field: 'hour', title: 'Hour (starting)' }, { field: 'count', title: 'Records' }],
+      tooltip: [{ field: 'hour', title: 'Hour (starting)' }, { field: 'count', title: 'Incidents' }],
     },
   }
 }

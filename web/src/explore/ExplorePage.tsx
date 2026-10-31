@@ -6,7 +6,7 @@ import { ChartCard } from './ChartCard.tsx'
 import { FilterPanel } from './FilterPanel.tsx'
 import { MapView } from './MapView.tsx'
 import { categoryBars, hourBars, trendSpec, weekdayBars } from './specs.ts'
-import { activeFilters, ALL_CATEGORIES, PRESETS, WEEKDAY_LABELS } from './state.ts'
+import { activeFilters, ALL_CATEGORIES, CLUSTER_STEPS, PRESETS, WEEKDAY_LABELS } from './state.ts'
 import { STATIONS, useExplore } from './useExplore.ts'
 import ui from '../components/ui.module.css'
 import s from './explore.module.css'
@@ -35,6 +35,8 @@ const n = (v: number) => v.toLocaleString('en-CA')
 const MS_PER_DAY = 86_400_000
 /** "Downtown" in the headline: records within this distance of Union Station. */
 const DOWNTOWN_KM = 3
+/** "Late afternoon to evening": hours 15 to 21, that is 15:00 to 21:59. */
+const EVENING: [number, number] = [15, 21]
 const NO_ROWS = new Int32Array()
 
 interface Heights { trend: number; type: number; when: number }
@@ -78,20 +80,50 @@ function useCardHeights(column: RefObject<HTMLDivElement | null>, bars: number):
   return h
 }
 
+/** Records within DOWNTOWN_KM of Union Station, overall and for each crime type in the selection. */
 function downtownShare(t: EventTable, selected: Int32Array) {
   const u = STATIONS.find((x) => x.name === 'Union Station')
   if (!u || !selected.length) return null
-  let inside = 0
+  const inside = new Array<number>(t.categories.length).fill(0)
+  const total = new Array<number>(t.categories.length).fill(0)
   for (let k = 0; k < selected.length; k++) {
     const i = selected[k]
-    if (haversineM(t.lon[i], t.lat[i], u.lon, u.lat) <= DOWNTOWN_KM * 1000) inside++
+    const c = t.category[i]
+    total[c]++
+    if (haversineM(t.lon[i], t.lat[i], u.lon, u.lat) <= DOWNTOWN_KM * 1000) inside[c]++
   }
-  return { inside, total: selected.length }
+  const byType = t.categories
+    .map((name, c) => ({ name, inside: inside[c], total: total[c] }))
+    .filter((r) => r.total > 0)
+  return { inside: inside.reduce((a, b) => a + b, 0), total: selected.length, byType }
+}
+
+const pct = (a: number, b: number) => `${((100 * a) / b).toFixed(1)}%`
+
+/** Share of the records reported in the evening hours, with the share an even spread over the same hours would give. */
+function eveningShare(byHour: number[], hours: [number, number]) {
+  const total = byHour.reduce((a, b) => a + b, 0)
+  const lo = Math.max(EVENING[0], hours[0])
+  const hi = Math.min(EVENING[1], hours[1])
+  const window = hours[1] - hours[0] + 1
+  const inside = hi - lo + 1
+  if (!total || inside <= 0 || inside >= window) return null
+  let count = 0
+  for (let h = lo; h <= hi; h++) count += byHour[h]
+  return { count, total, even: inside / window }
 }
 
 const UNION = STATIONS.find((x) => x.name === 'Union Station')
 
 type When = 'hour' | 'weekday'
+
+/** The map's cluster colours (see CLUSTER_STEPS) with the sizes the map draws them at, for the colour key. */
+const CLUSTER_KEY = [
+  { label: `under ${n(CLUSTER_STEPS[0])}`, density: 2, size: 12 },
+  { label: `${n(CLUSTER_STEPS[0])}–${n(CLUSTER_STEPS[1] - 1)}`, density: 3, size: 15 },
+  { label: `${n(CLUSTER_STEPS[1])}–${n(CLUSTER_STEPS[2] - 1)}`, density: 4, size: 18 },
+  { label: `${n(CLUSTER_STEPS[2])}+`, density: 5, size: 22 },
+]
 
 export function Explore() {
   const x = useExplore()
@@ -154,8 +186,9 @@ export function Explore() {
     return {
       hour: peak > 0 ? byHour.indexOf(peak) : null,
       downtown: state.mode === 'city' ? downtownShare(table, derived.selected) : null,
+      evening: eveningShare(byHour, state.hours),
     }
-  }, [details, derived, table, state.mode])
+  }, [details, derived, table, state.mode, state.hours])
 
   const csv = () => {
     if (!derived) return
@@ -203,14 +236,16 @@ export function Explore() {
   }
 
   const ready = derived && table && charts && barRows
-  const modeLabel = state.mode === 'city' ? 'Citywide' : state.mode === 'destination' ? 'Near a destination' : 'Near a listed station'
+  const modeLabel = state.mode === 'city' ? 'Citywide' : state.mode === 'destination' ? 'Near a destination' : 'Near a station'
 
   return (
     <div className={s.page}>
       <header className={s.head}>
         <p className={s.eyebrow}>Explore · reported incidents</p>
-        <h1 className={s.title}>Reported incidents cluster downtown and peak in the evening.</h1>
-        <p className={s.dek}>Default view: robbery, bicycle theft and theft over, 2020 to 2023. Counts are reported incidents, not risk.</p>
+        <h1 className={s.title}>Reported robbery, bicycle theft and theft over cluster downtown.</h1>
+        <p className={s.dek}>
+          In the default view, 2020 to 2023, reports peak from late afternoon into the evening. <strong>Counts are reported incidents, not risk.</strong>
+        </p>
       </header>
 
       <div className={s.dash}>
@@ -266,19 +301,24 @@ export function Explore() {
           )}
           {load.status === 'ready' && table && (
             <>
-              <MapView table={table} selected={derived?.selected ?? NO_ROWS} center={derived?.center} site={state.mode === 'station' ? derived?.site : undefined} radiusM={state.mode === 'city' ? undefined : state.radius} catColors={colors} landmark={UNION} />
-              <ul className={s.legend} aria-label="Map legend">
+              <MapView table={table} selected={derived?.selected ?? NO_ROWS} center={derived?.center} site={state.mode === 'station' ? derived?.site : undefined} radiusM={state.mode === 'city' ? undefined : state.radius} catColors={colors} landmark={UNION}>
+                <div className={s.clusterLegend} role="group" aria-label="Map colour key">
+                  <p className={s.clusterTitle}>Reported incidents per cluster</p>
+                  <ul className={s.clusterKey}>
+                    {CLUSTER_KEY.map((k) => (
+                      <li key={k.label}><i style={{ width: k.size, height: k.size, background: `var(--density-${k.density})` }} aria-hidden="true" />{k.label}</li>
+                    ))}
+                  </ul>
+                </div>
+              </MapView>
+              <ul className={s.legend} aria-label="Crime type colours of single points">
+                <li className={s.legendLead}>Zoomed-in points:</li>
                 {shown.map((c) => (
                   <li key={c} className={s.legendItem}><span className={s.legendSwatch} style={{ background: colors[c] }} aria-hidden="true" />{c}</li>
                 ))}
-                <li className={s.legendItem}>
-                  Records per cluster: few
-                  <span className={s.clusterKey} aria-hidden="true"><i /><i /><i /><i /></span>
-                  many
-                </li>
               </ul>
               <div className={s.noteRow}>
-                <p className={s.note}>Click a cluster to zoom in.</p>
+                <p className={s.note}>Click a cluster to zoom in. One report can have several records, so event IDs are fewer.</p>
                 <button type="button" className={`${ui.btn} ${s.detailsBtn}`} aria-expanded={details} aria-controls="map-details" onClick={() => setDetails((d) => !d)}>
                   Details
                   <svg className={details ? s.chevOpen : undefined} width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m3 6 5 5 5-5" /></svg>
@@ -286,15 +326,28 @@ export function Explore() {
               </div>
               {details && (
                 <div id="map-details" className={s.details} role="region" aria-label="About these counts" tabIndex={0}>
-                  <p>One event can have several records, so records can exceed distinct event IDs. Click a cluster to zoom in, or a point for its crime type, date and hour.</p>
+                  <p>
+                    A record is one row of the police data. One report (event ID) can have several rows, for example a robbery listed with two offence types or a bicycle theft with two bicycles, so there are more records than event IDs.
+                    Click a cluster to zoom in, or a point for its crime type, date and hour.
+                  </p>
                   <p>
                     These are counts of reported incidents. They are not adjusted for how many people or properties are present, so counts alone do not rank places. The time-of-year
                     presets are illustrative, not official calendars. Bicycle theft records also carry a status such as stolen or recovered that these counts do not separate.
                   </p>
                   {facts && (facts.downtown || facts.hour !== null) && (
                     <p>
-                      {facts.downtown && <>Within {DOWNTOWN_KM} km of Union Station (downtown): {n(facts.downtown.inside)} of {n(facts.downtown.total)} records shown. </>}
+                      {facts.downtown && (
+                        <>
+                          Within {DOWNTOWN_KM} km of Union Station (downtown): {n(facts.downtown.inside)} of {n(facts.downtown.total)} records shown, {pct(facts.downtown.inside, facts.downtown.total)}.
+                          {facts.downtown.byType.length > 1 && <> By crime type: {facts.downtown.byType.map((r) => `${r.name} ${pct(r.inside, r.total)}`).join(', ')}. </>}{' '}
+                        </>
+                      )}
                       {facts.hour !== null && <>Busiest hour: {String(facts.hour).padStart(2, '0')}:00. </>}
+                      {facts.evening && (
+                        <>
+                          Reported from {EVENING[0]}:00 to {EVENING[1]}:59: {pct(facts.evening.count, facts.evening.total)} of the records shown, against {pct(facts.evening.even, 1)} if they were spread evenly over the day.{' '}
+                        </>
+                      )}
                       Computed in your browser from the filters above.
                     </p>
                   )}
@@ -321,9 +374,9 @@ export function Explore() {
                 }
                 spec={charts.trend}
                 height={heights.trend}
-                description="Lines of the number of selected records per period for each crime type, over the full date range."
-                table={derived.trend.filter((_, i) => i < 400).map((r) => ({ Date: isoDate(r.day), 'Crime type': r.category, Records: Number.isNaN(r.count) ? '' : n(r.count) }))}
-                csvName="records-over-time.csv"
+                description="Lines of the number of selected reported incidents per period for each crime type, over the full date range."
+                table={derived.trend.filter((_, i) => i < 400).map((r) => ({ Date: isoDate(r.day), 'Crime type': r.category, Incidents: Number.isNaN(r.count) ? '' : n(r.count) }))}
+                csvName="incidents-over-time.csv"
                 onSignal={{ name: 'brush', handler: onBrush }}
                 footnote={ranged ? `Dates: ${isoDate(derived.dateFrom)} to ${isoDate(derived.dateTo)}` : 'Drag across the chart to set the dates.'}
                 menuExtra={
@@ -338,21 +391,21 @@ export function Explore() {
                 title="By crime type"
                 spec={charts.category}
                 height={heights.type}
-                description="Bars of selected records per crime type."
-                table={barRows.names.map((c, i) => ({ 'Crime type': c, Records: n(barRows.counts[i]) }))}
-                csvName="records-by-crime-type.csv"
+                description="Bars of selected reported incidents per crime type."
+                table={barRows.names.map((c, i) => ({ 'Crime type': c, Incidents: n(barRows.counts[i]) }))}
+                csvName="incidents-by-crime-type.csv"
               />
               <ChartCard
                 id="by-when"
-                srTitle={when === 'hour' ? 'Records by hour of day' : 'Records by weekday'}
+                srTitle={when === 'hour' ? 'Incidents by hour of day' : 'Incidents by weekday'}
                 controls={
-                  <Segmented<When> label="Show records by" value={when} onChange={setWhen} options={[{ value: 'hour', label: 'Hour' }, { value: 'weekday', label: 'Weekday' }]} />
+                  <Segmented<When> label="Show incidents by" value={when} onChange={setWhen} options={[{ value: 'hour', label: 'Hour' }, { value: 'weekday', label: 'Weekday' }]} />
                 }
                 spec={when === 'hour' ? charts.hour : charts.weekday}
                 height={heights.when}
-                description={when === 'hour' ? 'Bars of selected records per hour of the day; the busiest hour is darker.' : 'Bars of selected records per weekday, Monday to Sunday.'}
-                table={when === 'hour' ? derived.bars.byHour.map((c, h) => ({ Hour: `${String(h).padStart(2, '0')}:00`, Records: n(c) })) : WEEKDAY_LABELS.map((d, i) => ({ Weekday: d, Records: n(derived.bars.byWeekday[i]) }))}
-                csvName={when === 'hour' ? 'records-by-hour.csv' : 'records-by-weekday.csv'}
+                description={when === 'hour' ? 'Bars of selected reported incidents per hour of the day; the busiest hour is darker.' : 'Bars of selected reported incidents per weekday, Monday to Sunday.'}
+                table={when === 'hour' ? derived.bars.byHour.map((c, h) => ({ Hour: `${String(h).padStart(2, '0')}:00`, Incidents: n(c) })) : WEEKDAY_LABELS.map((d, i) => ({ Weekday: d, Incidents: n(derived.bars.byWeekday[i]) }))}
+                csvName={when === 'hour' ? 'incidents-by-hour.csv' : 'incidents-by-weekday.csv'}
                 menuUp
               />
             </>
