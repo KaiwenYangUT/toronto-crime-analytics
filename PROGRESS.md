@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P7 paper built (6 pages); P8 review loop next (P6 open items remain in its checklist) |
-| In progress | — |
+| Current phase | P8 review loop (P7 done; P6 open items remain in its checklist) |
+| In progress | P8: (1) `tools/audit_numbers.py` honesty audit; (2) read-only design-review and honesty-audit agents writing to `reviews/`; (3) code/simplify/security review; (4) Makefile targets for `make all`; (5) fresh checkout in `build/fresh/` |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | P8: honesty audit of site and paper (`tools/audit_numbers.py`), read-only design review, code and security review, fresh-checkout `make all`. Still open: P6 gaps (Key Variable Statistics table, census scatter after Q4, STA303 model-check panels), paper author line (Q6) and repository link (Q1). Ask before deleting the unused Vite scaffold files and before any push or deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
