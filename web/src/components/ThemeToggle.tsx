@@ -20,15 +20,26 @@ function read(): Theme {
   return stored() ?? (query().matches ? 'dark' : 'light')
 }
 
+/** Mirror the stored choice onto <html> when another tab changes it (choose() does this for this tab). */
+function syncFromStorage() {
+  const t = stored()
+  if (t) document.documentElement.dataset.theme = t
+  else delete document.documentElement.dataset.theme
+}
+
 function subscribe(cb: () => void) {
+  const onStorage = () => {
+    syncFromStorage()
+    cb()
+  }
   listeners.add(cb)
   const mq = query()
   mq.addEventListener('change', cb)
-  window.addEventListener('storage', cb)
+  window.addEventListener('storage', onStorage)
   return () => {
     listeners.delete(cb)
     mq.removeEventListener('change', cb)
-    window.removeEventListener('storage', cb)
+    window.removeEventListener('storage', onStorage)
   }
 }
 

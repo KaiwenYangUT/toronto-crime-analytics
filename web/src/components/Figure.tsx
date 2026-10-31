@@ -63,7 +63,7 @@ function DataMenu({ children, label }: { children: ReactNode; label: string }) {
   }, [open])
   return (
     <div className={s.dataMenu} ref={root}>
-      <button ref={button} type="button" className={s.btn} aria-expanded={open} aria-controls={panel} aria-label={label} onClick={() => setOpen((o) => !o)}>
+      <button ref={button} type="button" className={s.btn} aria-expanded={open} aria-controls={open ? panel : undefined} aria-label={label} onClick={() => setOpen((o) => !o)}>
         Data
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="m3 6 5 5 5-5" />
@@ -101,7 +101,12 @@ export function Figure({ title, subtitle, spec, svg, description, caption, sourc
           )}
           {extraActions}
           {!compact && (
-            <button type="button" onClick={async () => view.current && download(`${slug}.svg`, 'image/svg+xml', await view.current.toSVG())}>
+            <button type="button" onClick={async () => {
+              // before the live chart mounts, fall back to the prerendered SVG for the theme in effect
+              const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches)
+              const body = view.current ? await view.current.toSVG() : svg && (dark ? svg.dark : svg.light)
+              if (body) download(`${slug}.svg`, 'image/svg+xml', body)
+            }}>
               Download SVG
             </button>
           )}
