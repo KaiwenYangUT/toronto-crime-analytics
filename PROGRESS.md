@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
-| In progress | — |
+| In progress | P10 R1 (R1a, R1b, R1c as parallel subagents; the main session commits per agent) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | P10 R1: three parallel subagents (R1a foundations, R1b census pipeline, R1c paper rule), then code-review, then Gate A. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
@@ -158,7 +158,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] R0: tree reconciled (review scripts and `.claude/launch.json` committed; `paper.pdf` timestamp diff left to the rebuild); §0 applied to AGENTS.md, PLAN.md, DESIGN.md, PROGRESS.md
 - [ ] R1a Foundations: tokens (type scale, layout, magnitude ramp, paper theme block), shared components, theme switch, Gate A
 - [ ] R1b Census pipeline: `predict.census_scatter`, removal of `jsc370_benchmark` / `xgb_grid_fix` from site PAGES, audit points exclusion, PARITY/CHANGES entries
-- [ ] R1c Paper rule: references on a new page, content-page count, audit `\f` cut
+- [x] R1c Paper rule: `\clearpage` before the bibliography, `check_page_count.py` counts content pages (limit 7, warn above 6, fails without a References page), 7 tests; `make paper` = 6 content pages + references on page 7. The audit `\f` cut is R1b's
 - [ ] Code review (high) at the end of R1, then Gate A (design lead, Predict at 375/1280/1440, light and dark)
 - [ ] R2a Explore dashboard; R2b Explain and Predict; R2c 3D scatter (plotly chunk, bundle rule); Gate B
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
