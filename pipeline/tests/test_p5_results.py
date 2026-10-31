@@ -127,6 +127,7 @@ def test_inference_vs_prediction_counts_match_the_sources():
 
 
 def test_provenance_records_whether_the_code_was_dirty(tmp_path, monkeypatch):
+    monkeypatch.setattr(results, "ROOT", tmp_path)
     monkeypatch.setattr(results, "RESULTS_DIR", tmp_path / "results")
     monkeypatch.setattr(results, "INDEX", tmp_path / "results" / "index.json")
     monkeypatch.setattr(results, "code_dirty", lambda: True)

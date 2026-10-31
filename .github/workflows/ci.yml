@@ -57,5 +57,5 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
       - run: cd web && npm ci
-      - run: make paper
+      - run: make paper web
       - run: .venv/bin/python tools/audit_numbers.py
