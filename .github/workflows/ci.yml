@@ -13,7 +13,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
       - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
+      - run: cd web && npm ci
       - run: make data
       - name: Tests, lint and parity against the committed R outputs
         run: |
