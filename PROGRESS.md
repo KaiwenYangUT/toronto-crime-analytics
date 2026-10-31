@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P9 prepared locally; waiting for the user's decisions before any push or deploy |
+| Current phase | P9: pushed, CI green; local preview before the Pages deploy |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Check the CI run on GitHub (Actions tab) and fix failures; then, with the user's OK, enable Pages (Settings > Pages > Source: GitHub Actions) and run the `pages` workflow manually |
+| Next action | Review the local preview (`cd web && npm run serve`), apply edits, then the user runs the `pages` workflow from the Actions tab (Pages source is already set to GitHub Actions) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -147,7 +147,9 @@ Add a row whenever work moves to a different machine or app.
 - [x] README (with four screenshots in `docs/screenshots/`), `LICENSE` (MIT with "Kaiwen Yang" as holder: the plan's defaults for Q3 and Q6, not yet confirmed by the user), `DATA_LICENSE.md` (existing)
 - [x] `.github/workflows/ci.yml` and `pages.yml` written locally; never run, third-party action `wtfjoke/setup-tectonic@v3` unverified; `pages.yml` is `workflow_dispatch` only
 - [x] git push done 2026-10-31 with the user's OK: `main` (66d464c) and tag `parity-pass` to https://github.com/KaiwenYangUT/toronto-crime-analytics (the CI workflow will have started on that push; its result has not been checked)
-- [ ] Ask → enable and deploy GitHub Pages (the user sets Settings > Pages > Source to "GitHub Actions", then runs `pages` manually)
+- [x] CI green on 5e6dddb (2026-10-31) after five fixes: provenance test wrote outside the repo; `paper` job built no site for the audit; `python` job lacked Node and `npm ci` (formatting test imports react); neighbourhood sort now uses code-point order instead of the `en_CA` locale (glibc orders names differently from the Mac the R reference ran on; identical on this data, per PARITY.md); `python` job steps split so a failure names itself
+- [x] User set Settings > Pages > Source to "GitHub Actions" (2026-10-31)
+- [ ] Review the local preview, then deploy: the user runs the `pages` workflow (Actions tab > pages > Run workflow); I cannot trigger it (no `gh`)
 - [x] Suggested old-repo pointer READMEs listed in `docs/old-repo-pointers.md` (not done), with the Q2 rights note for the Explorer
 - Before the first push also: replace `[link added at release]` in `paper/sections/availability.tex`, check `skogan1977dark` and the portal URL, confirm the author line, decide on the scaffold-file deletion and the committed review scratch files (`reviews/shots*`)
 
