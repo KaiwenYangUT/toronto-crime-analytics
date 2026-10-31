@@ -67,12 +67,6 @@ PAGES: dict[str, dict[str, list[str] | None]] = {
         ],
         "predict.ablation": [*ABLATION_SUMMARY, "table", "evaluation"],
         "predict.eda_corrections": ["year", "rows", "robberies"],
-        "predict.xgb_grid_fix": [
-            "seeds",
-            "threshold",
-            "as_intended.grid_size",
-            "as_run_caret_default.grid_size",
-        ],
     },
 }
 

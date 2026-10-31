@@ -1,67 +1,85 @@
-import { Link } from 'react-router'
-import { Callout } from '../components/Callout.tsx'
+import { KeyPoints } from '../components/KeyPoints.tsx'
 import { Num } from '../components/Num.tsx'
 import { PageHeader } from '../components/PageHeader.tsx'
-import { Section } from '../components/Section.tsx'
 import { DESIGN_A } from '../lib/specs.ts'
 import ui from '../components/ui.module.css'
+import p from './pages.module.css'
 
-const X = 'explain.sta303_v2'
 const A = 'predict.ablation'
 const I = 'predict.inference_vs_prediction'
 const v = (rung: string, m: string, f: string) => `${A}:designs.${DESIGN_A}.variants.${rung}.${m}.${f}`
+
+const INSIDE = [
+  ['Question', 'Which crime type is a reported incident?'],
+  ['Data', 'Toronto Police major crime files.'],
+  ['Models', 'A logistic regression and a five-step prediction ladder.'],
+  ['Findings', 'Timing effects are clear, but weak predictors of crime type.'],
+]
 
 export function Paper() {
   const pdf = `${import.meta.env.BASE_URL}paper/paper.pdf`
   return (
     <>
-      <PageHeader
-        eyebrow="Paper"
-        title="Many time effects are statistically clear, yet time alone predicts little."
-        dek="A short research paper that answers one question twice: given a reported property-type crime, which type is it?"
-      />
-      <div className="prose">
-        <p>
-          <a className={`${ui.btn} ${ui.btnPrimary}`} href={pdf}>Download the paper (PDF)</a>
-        </p>
-        <Section id="abstract" title="In brief">
-          <div className="prose">
-          <p>
-            An explanatory model and a prediction ladder use the same <Num k={`${X}:n`} /> reported incidents from 2014 to 2023. The regression finds that the odds of a robbery were{' '}
-            <Num k={`${X}:post2019.or`} /> times as high after 2019 (cluster-robust 95% interval <Num k={`${X}:post2019.robust_or_lo`} /> to <Num k={`${X}:post2019.robust_or_hi`} />), and that{' '}
-            <Num k={`${I}:time_terms_clear`} /> of <Num k={`${I}:time_terms`} /> time terms have intervals that exclude one.
-          </p>
-          <p>
-            In the ladder, under neighbourhood-grouped cross-validation, time alone reaches a PR-AUC of <Num k={v('L1', 'pr_auc', 'estimate')} /> (95% interval <Num k={v('L1', 'pr_auc', 'lo')} /> to{' '}
-            <Num k={v('L1', 'pr_auc', 'hi')} />) where a constant score would reach <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />. The full model reaches <Num k={v('L5', 'pr_auc', 'estimate')} /> (
-            <Num k={v('L5', 'pr_auc', 'lo')} /> to <Num k={v('L5', 'pr_auc', 'hi')} />), and without premises and location type only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} /> (
-            <Num k={v('L5-nopremises', 'pr_auc', 'lo')} /> to <Num k={v('L5-nopremises', 'pr_auc', 'hi')} />). The estimates describe the mix of reported crime types, not
-            the risk of being robbed.
-          </p>
-          </div>
-        </Section>
-        <Section id="contents" title="What the paper covers">
-          <div className="prose">
-          <ul>
-            <li>The task definition, the data and how the mix of crime types shifted over the decade.</li>
-            <li>The corrected odds-of-robbery model with cluster-robust intervals, and the five-rung prediction ladder.</li>
-            <li>Two evaluation designs: held-out neighbourhoods and a held-out later period, with bootstrap intervals for every score and difference.</li>
-            <li>A side-by-side reading of inference and prediction, and the limitations of both.</li>
-          </ul>
-          <p>
-            Precision–recall curves and the original six-model benchmark do not fit the page budget; they are on <Link to="/predict">Predict</Link>, and calibration is on <Link to="/explain">Explain</Link>. The{' '}
-            <Link to="/explore">Explorer</Link> is a site feature and is not part of the paper.
-          </p>
-          </div>
-        </Section>
-        <Section id="reproduce" title="Where the numbers come from">
-          <Callout variant="info" title="Every number is generated">
-            <p>
-              The paper's numbers and tables are generated from the same result files as this site, and its figures are drawn from the same chart specifications. See{' '}
-              <Link to="/methods#reproducibility">Reproducibility</Link>.
-            </p>
-          </Callout>
-        </Section>
+      <PageHeader eyebrow="Paper" title="Many time effects are statistically clear, yet time alone predicts little." />
+      <div className={p.paperGrid}>
+        <div className={p.paperMain}>
+          <section aria-labelledby="brief-h">
+            <h2 id="brief-h" className={p.subhead}>In brief</h2>
+            <KeyPoints
+              items={[
+                {
+                  stat: (
+                    <>
+                      <Num k={`${I}:time_terms_clear`} /> of <Num k={`${I}:time_terms`} />
+                    </>
+                  ),
+                  text: 'time effects are statistically clear, with 95% intervals that exclude no effect.',
+                },
+                {
+                  stat: <Num k={v('L1', 'pr_auc', 'estimate')} />,
+                  text: (
+                    <>
+                      PR-AUC from time alone, where guessing scores <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />.
+                    </>
+                  ),
+                },
+                {
+                  stat: <Num k={v('L5', 'pr_auc', 'estimate')} />,
+                  text: (
+                    <>
+                      PR-AUC for the full model, but only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} /> without premises and location type.
+                    </>
+                  ),
+                },
+              ]}
+            />
+          </section>
+          <section aria-labelledby="inside-h">
+            <h2 id="inside-h" className={p.subhead}>Inside the paper</h2>
+            <dl className={p.inside}>
+              {INSIDE.map(([k, text]) => (
+                <div key={k} style={{ display: 'contents' }}>
+                  <dt>{k}</dt>
+                  <dd>{text}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+          <p className={p.fine}>Reported incidents, not risk.</p>
+        </div>
+
+        <div className={p.paperSide}>
+          <article className={p.docCard} aria-labelledby="doc-title">
+            <p className={p.docKind}>PDF</p>
+            <h2 id="doc-title" className={p.docTitle}>Which crime type is it?</h2>
+            <p className={p.docMeta}>Kaiwen Yang</p>
+            <div className={p.docActions}>
+              <a className={`${ui.btn} ${ui.btnPrimary}`} href={pdf} download>Download PDF</a>
+              <a className={ui.btn} href={pdf} target="_blank" rel="noopener noreferrer">Open in browser</a>
+            </div>
+          </article>
+          <iframe className={p.preview} src={pdf} loading="lazy" title="Preview of the paper (PDF)" />
+        </div>
       </div>
     </>
   )

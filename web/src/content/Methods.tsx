@@ -2,154 +2,109 @@ import { Callout } from '../components/Callout.tsx'
 import { DataTable } from '../components/DataTable.tsx'
 import { Num } from '../components/Num.tsx'
 import { PageHeader } from '../components/PageHeader.tsx'
-import { Section } from '../components/Section.tsx'
-import { getValue, useResults } from '../lib/results.ts'
-import ui from '../components/ui.module.css'
+import p from './pages.module.css'
 
 const X = 'explain.sta303_v2'
-const A = 'predict.ablation'
 const TOC = [
-  ['data', 'Data'],
-  ['variables', 'Variables'],
-  ['methods', 'Methods'],
-  ['explorer', 'Explorer data'],
+  ['data', 'Data and sample flow'],
+  ['task', 'Task and variables'],
+  ['models', 'Models and evaluation'],
+  ['explorer', 'Explore counts'],
   ['limitations', 'Limitations'],
-  ['reproducibility', 'Reproducibility'],
 ]
 const STEPS = [
-  ['log.source_rows', 'Rows in the four Toronto Police files'],
-  ['log.rows_outside_2014_2023_or_invalid_date', 'Removed: occurrence outside 2014 to 2023, or an invalid date'],
-  ['log.rows_outside_toronto_box', 'Removed: coordinates outside the Toronto box'],
-  ['log.exact_duplicate_rows_dropped', 'Removed: exact duplicates within a category'],
-  ['log.cross_category_conflict_rows_dropped', 'Removed: rows of events labelled both robbery and another type'],
+  ['log.source_rows', 'Rows in the four police files'],
+  ['log.rows_outside_2014_2023_or_invalid_date', 'Removed: outside 2014 to 2023, or invalid date'],
+  ['log.rows_outside_toronto_box', 'Removed: coordinates outside Toronto'],
+  ['log.exact_duplicate_rows_dropped', 'Removed: exact duplicates'],
+  ['log.cross_category_conflict_rows_dropped', 'Removed: events labelled both robbery and another type'],
   ['log.ledger_final_rows', 'Rows in the unified table'],
-  ['log.nsa_rows_dropped', 'Removed from the model: no neighbourhood (NSA)'],
-  ['log.model_rows', 'Rows used by the inference model'],
+  ['log.nsa_rows_dropped', 'Removed: no neighbourhood'],
+  ['log.model_rows', 'Rows used by the models'],
 ] as const
 
 export function Methods() {
-  const data = useResults()
-  const evaluation = getValue(data, `${A}:evaluation`) as Record<string, string>
-  const keys = Object.entries(data.results)
   return (
     <>
-      <PageHeader
-        eyebrow="Methods"
-        title="Every result comes from one pipeline that reproduced the three course projects first."
-        dek="The definition, the data steps, the models and the checks, with the limits stated up front."
-      />
-      <div className={ui.withToc}>
-        <nav className={ui.toc} aria-label="On this page">
-          <ol>
-            {TOC.map(([id, label]) => (
-              <li key={id}><a href={`#${id}`}>{label}</a></li>
-            ))}
-          </ol>
+      <PageHeader eyebrow="Methods" title="One cleaned dataset of reported incidents feeds every result on this site." />
+      <div className={p.pageGrid}>
+        <nav className={`${p.pageAside} ${p.asideFirst}`} aria-label="On this page">
+          <div className={p.onThis}>
+            <p className={p.onThisTitle}>On this page</p>
+            <ol>
+              {TOC.map(([id, label]) => (
+                <li key={id}><a href={`#${id}`}>{label}</a></li>
+              ))}
+            </ol>
+          </div>
         </nav>
-        <div>
-          <Section id="data" title="Data">
-            <div className="prose">
-              <p>
-                <strong>The task.</strong> Predict which major crime type a reported incident is: the positive class is robbery, the negative class is auto theft, break and enter or
-                theft over. The quantity is P(robbery | reported incident), not the risk of robbery at a place or time. Assault, bicycle theft, homicide and shootings are excluded
-                by rule, and the window is 2014 to 2023.
-              </p>
-              <p>
-                <strong>Sources.</strong> The Toronto Police Service Public Safety Data Portal major crime indicator files (robbery, auto theft, break and enter, theft over), Toronto
-                neighbourhood boundaries and census income measures. Police data are released under the Open Government Licence – Ontario and the City of Toronto profiles under the Open Government Licence – Toronto; the files are fetched and
-                checked against recorded checksums, never committed.
-              </p>
-            </div>
-            <div style={{ marginTop: 'var(--space-4)' }}>
-              <DataTable
-                caption="How the unified table is built (counts logged by the pipeline)"
-                rowKey={(r) => r[0]}
-                columns={[
-                  { key: 'step', header: 'Step', render: (r) => r[1] },
-                  { key: 'n', header: 'Count', num: true, render: (r) => <Num k={`${X}:${r[0]}`} /> },
-                ]}
-                rows={[...STEPS]}
-              />
-            </div>
-            <p className="prose" style={{ marginTop: 'var(--space-3)' }}>
-              The last removal covers <Num k={`${X}:log.cross_category_conflict_events_dropped`} /> events that carry more than one crime type. Robberies are <Num k={`${X}:robbery`} /> of the model rows, a share of{' '}
-              <Num k={`${X}:robbery_share`} />.
+
+        <div className={p.pageMain}>
+          <section id="data" aria-labelledby="data-h" className={p.stack}>
+            <h2 id="data-h">Data and sample flow</h2>
+            <p className={p.lede}>
+              Four Toronto Police major crime files, with neighbourhood boundaries and census income, are cleaned in one pipeline. Files are checked against recorded checksums and never committed.
             </p>
-          </Section>
+            <DataTable
+              caption="From source files to model rows"
+              rowKey={(r) => r[0]}
+              columns={[
+                { key: 'step', header: 'Step', render: (r) => r[1] },
+                { key: 'n', header: 'Count', num: true, render: (r) => <Num k={`${X}:${r[0]}`} /> },
+              ]}
+              rows={[...STEPS]}
+            />
+            <p className={p.lede}>
+              Robberies are <Num k={`${X}:robbery`} /> of the model rows, a share of <Num k={`${X}:robbery_share`} />.
+            </p>
+          </section>
 
-          <Section id="variables" title="Variables">
-            <div className="prose">
-              <p>
-                The inference model uses hour of day (one level per hour), month, weekday, a post-2019 indicator and solar darkness. The prediction ladder adds premises and location type,
-                a smooth function of latitude and longitude and census measures at the neighbourhood level.
-              </p>
-            </div>
-          </Section>
+          <section id="task" aria-labelledby="task-h" className={p.stack}>
+            <h2 id="task-h">Task and variables</h2>
+            <ul className={p.bullets}>
+              <li>The task is P(robbery | reported incident): which major crime type a reported incident is. It describes reported incidents, not risk.</li>
+              <li>Robbery is the positive class; auto theft, break and enter and theft over are the negative class. Assault, bicycle theft, homicide and shootings are excluded by rule.</li>
+              <li>The explanatory model uses hour, month, weekday, a post-2019 indicator and solar darkness. The prediction models add premises and location type, latitude and longitude, and neighbourhood census measures.</li>
+            </ul>
+          </section>
 
-          <Section id="methods" title="Methods">
-            <div className="prose">
-              <p>
-                <strong>Inference.</strong> A binomial logistic regression of robbery against the other three types, with cluster-robust standard errors by neighbourhood (
-                <Num k={`${X}:log.neighbourhoods`} /> clusters), stratified random five-fold cross-validation (<Num k={`${X}:cv.folds`} /> folds) and a calibration check.
-              </p>
-              <p>
-                <strong>Prediction.</strong> Five rungs on identical rows: time-only logistic, plus place and premises, plus census, a random forest, and XGBoost. A variant without
-                premises and location type is fitted at each rung.
-              </p>
-              <p><strong>Evaluation.</strong> {evaluation.inner_tuning} {evaluation.threshold} {evaluation.confidence_intervals}</p>
-            </div>
-          </Section>
+          <section id="models" aria-labelledby="models-h" className={p.stack}>
+            <h2 id="models-h">Models and evaluation</h2>
+            <ul className={p.bullets}>
+              <li>
+                Explanatory model: a logistic regression of robbery against the other three types, with standard errors clustered by neighbourhood (<Num k={`${X}:log.neighbourhoods`} /> clusters).
+              </li>
+              <li>Prediction models: five steps on identical rows, from time only to XGBoost, each also fitted without premises and location type.</li>
+              <li>
+                Scores are PR-AUC (guessing scores the robbery share), ROC-AUC and F1, with bootstrap 95% intervals. They are tested on held-out neighbourhoods and on a held-out period, 2022 and 2023.
+              </li>
+            </ul>
+            <h3 className={p.sub}>Corrections to the course models</h3>
+            <ul className={p.bullets}>
+              <li>The STA303 summary model was accidentally linear; it is now a logistic regression.</li>
+              <li>The JSC370 XGBoost tuning grid was never used because of a bug; the intended grid is used now.</li>
+              <li>Hour, weekday and month were plain numbers; they are now categories.</li>
+            </ul>
+          </section>
 
-          <Section id="explorer" title="Explorer data">
-            <div className="prose">
-              <p>
-                The Explore page filters the 2020 to 2023 records of five crime types. Robbery, theft over and bicycle theft are the course application&apos;s categories; auto theft and break and enter are added under the same rules and load only when switched on. Exact duplicate rows are removed, distances use the haversine formula, and
-                counts show records and distinct event IDs separately. The browser implementation reproduces the course Shiny application&apos;s counts exactly on a large set of generated
-                test cases for its three categories. These counts are computed in the browser from a checksummed data bundle, not read from a results file.
-              </p>
-            </div>
-          </Section>
+          <section id="explorer" aria-labelledby="explorer-h" className={p.stack}>
+            <h2 id="explorer-h">Explore counts</h2>
+            <p className={p.lede}>
+              The Explore page counts 2020 to 2023 records in your browser from a checksummed data bundle, not from a results file. For the three course categories its counts match the original Shiny app exactly.
+            </p>
+          </section>
 
-          <Section id="limitations" title="Limitations">
+          <section id="limitations" aria-labelledby="limitations-h" className={p.stack}>
+            <h2 id="limitations-h">Limitations</h2>
             <Callout variant="caveat" title="What these results cannot say">
               <ul>
-                <li>Counts are reported incidents. They are not exposure-adjusted and not a measure of safety or risk.</li>
-                <li>The post-2019 term absorbs every change after 2019, including reporting practice and the mix of other crime types.</li>
-                <li>Premises and location type partly define the crime type, so the lift from place is partly built into the labels.</li>
-                <li>Neighbourhood-level census measures describe areas, not the people involved.</li>
-                <li>The time-only models separate the classes weakly even where many time terms are statistically clear.</li>
-                <li>The Explorer uses the nearest listed station, not the nearest station.</li>
+                <li>These are reported incidents, not risk, and are not adjusted for exposure.</li>
+                <li>The post-2019 term absorbs every change after 2019, including reporting practice.</li>
+                <li>Premises and location type partly define the crime type, so part of their lift is built into the labels.</li>
+                <li>Census measures describe areas, not people.</li>
               </ul>
             </Callout>
-          </Section>
-
-          <Section id="reproducibility" title="Reproducibility">
-            <div className="prose">
-              <p>
-                One command rebuilds everything (<code>make all</code>). The global seed is <Num k={`${X}:cv.seed`} />, every random generator receives it explicitly, and two runs on the same
-                machine produce identical result hashes. Every number on Overview, Explain, Predict, Methods and the paper traces to one of these result files (Explore counts are computed in your browser from the checksummed bundle):
-              </p>
-            </div>
-            <div style={{ marginTop: 'var(--space-4)' }}>
-              <DataTable
-                caption="Result files behind this site"
-                rowKey={(r) => r[0]}
-                columns={[
-                  { key: 'key', header: 'Key', render: (r) => <code>{r[0]}</code> },
-                  { key: 'producer', header: 'Producer', render: (r) => <code>{r[1].producer}</code> },
-                  { key: 'sha', header: 'Commit', render: (r) => <code>{r[1].git_sha.slice(0, 7)}</code> },
-                ]}
-                rows={keys}
-              />
-            </div>
-            <div className="prose" style={{ marginTop: 'var(--space-4)' }}>
-              <p>
-                <strong>Parity first.</strong> Each course project was re-run in R and ported before any change. Explorer counts match exactly. The inference model matches its coefficients to
-                rounding. The six JSC370 models match within stated tolerances and in tier ranking, apart from three deviations recorded in the parity report (the decision tree&apos;s true
-                positives, the random forest&apos;s third-ranked feature and XGBoost judged on a ten-seed mean). Improvements came afterwards and are logged one by one.
-              </p>
-            </div>
-          </Section>
+          </section>
         </div>
       </div>
     </>

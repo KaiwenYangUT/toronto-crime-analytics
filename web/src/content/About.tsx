@@ -1,37 +1,33 @@
-import { Link } from 'react-router'
 import { PageHeader } from '../components/PageHeader.tsx'
-import { Section } from '../components/Section.tsx'
+import p from './pages.module.css'
 
 export function About() {
   return (
     <>
-      <PageHeader
-        eyebrow="About"
-        title="Three University of Toronto course projects, rebuilt as one checked analysis."
-        dek="What this is, where the data come from, and how it may be used."
-      />
-      <div className="prose">
-        <Section id="credits" title="Credits">
-          <p>
-            This site and paper combine three course projects on Toronto Police open data: a robbery classification study (JSC370), a logistic-regression inference report
-            (STA303) and an interactive crime explorer (STA313). The analysis was re-implemented in Python, re-checked against the original R results and then extended; see{' '}
-            <Link to="/methods#reproducibility">Reproducibility</Link>.
+      <PageHeader eyebrow="About" title="Three University of Toronto course projects, rebuilt as one checked analysis." />
+      <div className={p.pageGrid}>
+        <div className={p.pageMain}>
+          <section id="credits" aria-labelledby="credits-h" className={p.credit}>
+            <h2 id="credits-h">Credits</h2>
+            <p>
+              This site and paper combine three course projects on Toronto Police open data: a robbery classification study (JSC370), a logistic-regression report (STA303) and an interactive crime explorer (STA313). The analysis was re-implemented in Python and extended.
+            </p>
+            <p>
+              Thanks to the course teaching teams, the Toronto Police Service and the City of Toronto. Basemap tiles use OpenStreetMap data (ODbL) via Protomaps.
+            </p>
+            <p>
+              <a href="https://github.com/KaiwenYangUT/toronto-crime-analytics#readme">Code and README on GitHub</a>
+            </p>
+          </section>
+        </div>
+        <aside className={p.pageAside} aria-labelledby="licences-h" id="licences">
+          <h2 id="licences-h" className={p.sub} style={{ marginTop: 0 }}>Licences and data</h2>
+          <p className={p.fine}>
+            Incident data: Toronto Police Service open data, Open Government Licence – Ontario. Reported incidents only, with no warranty.
           </p>
-        </Section>
-        <Section id="acknowledgements" title="Acknowledgements">
-          <p>
-            Thanks to the course teaching teams and to the Toronto Police Service and the City of Toronto for publishing the data. Basemap tiles are built from OpenStreetMap data (©
-            OpenStreetMap contributors, ODbL) by Protomaps.
-          </p>
-        </Section>
-        <Section id="licences" title="Licences and data">
-          <p>
-            Incident data are the Toronto Police Service Public Safety Data Portal open data, used under the Open Government Licence – Ontario with the Toronto Police Service conditions; the
-            Toronto Police Service makes no warranty about them and they describe reported incidents only. Census neighbourhood profiles come from the City of Toronto, used under the Open
-            Government Licence – Toronto. This is an independent analysis, not endorsed by either organization. The code licence and the data licence notice are set out in the repository at
-            release.
-          </p>
-        </Section>
+          <p className={p.fine}>Census profiles: City of Toronto, Open Government Licence – Toronto.</p>
+          <p className={p.fine}>An independent analysis, not endorsed by either organization.</p>
+        </aside>
       </div>
     </>
   )

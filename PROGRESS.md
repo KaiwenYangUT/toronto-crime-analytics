@@ -165,7 +165,8 @@ Add a row whenever work moves to a different machine or app.
 - [x] R2b Explain and Predict rebuilt (ResultSection, new specs oddsByTime/rungSteps/stepChart/censusScatter2d, benchmark section and grid-fix callout removed from the site; `jsc370_benchmark`, `xgb_grid_fix`, `inference_vs_prediction` dropped from the predict page data); words Explain 350/350, Predict 247/300; audit 0 unmatched
 - [x] Gate B GREEN (`reviews/gate-b.md`, no blockers). Should-fix S1-S8 (Predict 375 fold, empty space under figures, tables at 375, Explore 1440 alignment and map noise, trend series, odds chart ticks, Explain copy contradictions) go to R3b; R3a does Overview, Paper, Methods, About
 - [x] Paper Discussion sentence (Spearman rho income -0.23, job ratio 0.07 via `\res`, pointer to the three-dimensional view): `make paper` = 6 content pages + references; `predict.inference_vs_prediction` stays in the predict page JSON because the paper's figure 4 reads it
-- [ ] R3a Overview/Paper/Methods/About; R3b polish; then `xgb_grid_fix` out of the methods page data, `simplify`, code review of R2/R3
+- [x] R3a Overview (5/7 landing with stepChart), Paper (download card, lazy PDF preview), Methods (sticky On-this-page aside, Reproducibility section removed), About; words Overview 127/150, Paper 86/150, Methods 367/450, About 107/120; `xgb_grid_fix` removed from the methods page data. Overview section h2 says the robbery share fell after 2017 (the data: 21.6% in 2017 to 10.5% in 2023; 2019 is already 15.9%)
+- [ ] R3b polish (Gate B should-fix S1-S8); then `simplify`, code review of R2/R3, then R4
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
 - [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`
 
