@@ -4,8 +4,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P6 largely complete (see checklist for the open items); P7 paper next |
-| In progress | — |
+| Current phase | P7 paper (P6 largely complete; its open items are in the P6 checklist) |
+| In progress | P7 paper: (1) `category_by_year` added to explain.sta303_v2 for Fig 1; (2) `tools/gen_paper.py` (numbers.tex, tables, figures via vl-convert); (3) sections, build, page-count check; fonts fetched into `.cache/fonts` (Source Serif 4 It/Semibold/Bold, Inter Medium/SemiBold) |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | Finish the P6 gaps (JSC370 Key Variable Statistics table, census scatter Fig 1 after Q4, STA303 model-check panels exported to results/), then P7 (paper, `\res{key}` macros, vl-convert figures from the same specs). Ask before deleting the unused Vite scaffold files and before any push or deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |

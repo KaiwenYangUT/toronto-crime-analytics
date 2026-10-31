@@ -184,6 +184,7 @@ def run(write: bool = True) -> dict:
             "dark": pick(t, "dark"),
         }
     prevalence = df.groupby("year")["robbery"].agg(["mean", "size"])
+    by_year = df.groupby(["year", "category"]).size().unstack(fill_value=0)
     values = {
         "task": "P(robbery | reported major property-type incident); association, not risk or causation",
         "log": log,
@@ -194,6 +195,9 @@ def run(write: bool = True) -> dict:
         "prevalence_by_year": {
             int(y): {"share": float(r["mean"]), "n": int(r["size"])}
             for y, r in prevalence.iterrows()
+        },
+        "category_by_year": {
+            int(y): {c: int(r[c]) for c in by_year.columns} for y, r in by_year.iterrows()
         },
         "post2019": pick(table, "post2019"),
         "dark": pick(table, "dark"),
