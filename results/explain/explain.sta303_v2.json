@@ -1,8 +1,8 @@
 {
  "_provenance": {
-  "code_dirty": false,
-  "created": "2026-10-31T02:28:17+00:00",
-  "git_sha": "8cdc5b96f0bceb8203b47fe6fc2fa229b637dfa5",
+  "code_dirty": true,
+  "created": "2026-10-31T04:02:29+00:00",
+  "git_sha": "cde0622af8c1b7750c6534cc74bb0d6ef0547528",
   "inputs": {
    "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
    "Break_and_Enter_Open_Data.csv": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b",
@@ -453,13 +453,16 @@
   },
   "log": {
    "cross_category_conflict_events_dropped": 350,
+   "cross_category_conflict_rows_dropped": 708,
    "distinct_date_hours": 68971,
+   "exact_duplicate_rows_dropped": 12472,
    "fall_back_hour_rows": 37,
    "ledger_final_rows": 159072,
    "model_rows": 159056,
    "neighbourhoods": 158,
    "nsa_rows_dropped": 16,
    "rows_outside_2014_2023_or_invalid_date": 332,
+   "rows_outside_toronto_box": 2409,
    "source_rows": 174993,
    "spring_forward_hour_rows": 5
   },
