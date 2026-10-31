@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P8 done except the open items listed under P8; P9 release next (every step needs the user's OK) |
+| Current phase | P9 prepared locally; waiting for the user's decisions before any push or deploy |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Decide the open P8 items with the user (Explore map above the fold, Overview fold visual, paper author line Q6, repository link Q1, bibliography check of skogan1977dark, portal URL, scaffold deletion), then P9 (README, LICENSE; ask before every push or Pages deploy) |
+| Next action | Ask the user: Q1 (repository, visibility), Q3 (licence), Q6 (author line), basemap hosting, Explorer rights note; then, with explicit OK for each, push and deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -143,10 +143,12 @@ Add a row whenever work moves to a different machine or app.
 - Bibliography: `skogan1977dark` could not be confirmed (an NCJRS abstract dated 1975 was found); other ten entries recognised. Portal URL: `data.tps.ca` answers, a search suggests `data.torontopolice.on.ca`; confirm before release
 
 ### P9 Release (ask before each step)
-- [ ] README, LICENSE, DATA_LICENSE
-- [ ] Ask → git push
-- [ ] Ask → enable and deploy GitHub Pages
-- [ ] List suggested old-repo pointer READMEs for the user
+- [x] README (with four screenshots in `docs/screenshots/`), `LICENSE` (MIT with "Kaiwen Yang" as holder: the plan's defaults for Q3 and Q6, not yet confirmed by the user), `DATA_LICENSE.md` (existing)
+- [x] `.github/workflows/ci.yml` and `pages.yml` written locally; never run, third-party action `wtfjoke/setup-tectonic@v3` unverified; `pages.yml` is `workflow_dispatch` only and has an OPEN basemap issue (the pinned Protomaps daily build may be gone; commit the verified 20 MB file or host it before any deploy)
+- [ ] Ask → git push (blocked on Q1: repository name and visibility; free Pages needs a public repo)
+- [ ] Ask → enable and deploy GitHub Pages (the user sets Settings > Pages > Source to "GitHub Actions", then runs `pages` manually)
+- [x] Suggested old-repo pointer READMEs listed in `docs/old-repo-pointers.md` (not done), with the Q2 rights note for the Explorer
+- Before the first push also: replace `[link added at release]` in `paper/sections/availability.tex`, check `skogan1977dark` and the portal URL, confirm the author line, decide on the scaffold-file deletion and the committed review scratch files (`reviews/shots*`)
 
 ## Sitting log
 | Date | Phase | Done | Next |

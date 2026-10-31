@@ -1,0 +1,61 @@
+# Not yet run: written locally in P9 and untested until the repository is pushed (with the user's OK).
+# Runs everything except the R re-runs (committed parity/r_outputs are compared against the Python ports) and the deploy.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
+      - run: make data
+      - name: Tests, lint and parity against the committed R outputs
+        run: |
+          source .venv/bin/activate
+          ruff check .
+          python -m pytest -q
+          python -m pytest tools/tests -q
+          PYTHONPATH=pipeline/src bash -c 'for s in compare_sta303 compare_sta303_model compare_jsc370 compare_jsc370_models compare_explore compare_charts unified_ledger; do python parity/compare/$s.py; done'
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
+      - run: cd web && npm ci
+      - name: Page data must match the committed results (drift check)
+        run: |
+          .venv/bin/python tools/gen_web_data.py
+          git diff --exit-code web/src/data
+      - run: cd web && npm run lint && npm test && npm run build && npm run package
+      - run: node tools/check_bundle_size.mjs
+
+  paper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      # Third-party action: pin and review its version before the first run.
+      - uses: wtfjoke/setup-tectonic@v3
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
+      - run: cd web && npm ci
+      - run: make paper
+      - run: .venv/bin/python tools/audit_numbers.py
