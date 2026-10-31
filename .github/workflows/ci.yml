@@ -22,7 +22,12 @@ jobs:
       - name: Lint
         run: .venv/bin/ruff check .
       - name: Pipeline tests
-        run: .venv/bin/python -m pytest -q
+        run: |
+          set +e
+          .venv/bin/python -m pytest -q -rfE --tb=short 2>&1 | tee pytest.log
+          status=${PIPESTATUS[0]}
+          grep -E '^(FAILED|ERROR)|^E  ' pytest.log | head -20 | while IFS= read -r line; do echo "::error::${line:0:400}"; done
+          exit $status
       - name: Tool tests
         run: .venv/bin/python -m pytest tools/tests -q
       - name: Parity compare_sta303
