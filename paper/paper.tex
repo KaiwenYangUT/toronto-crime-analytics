@@ -1,0 +1,78 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{fontspec}
+\setmainfont[Path=../.cache/fonts/source-serif/, Extension=.otf, UprightFont=*-Regular, ItalicFont=*-It,
+  BoldFont=*-Semibold, BoldItalicFont=*-Bold, Scale=1.05]{SourceSerif4}
+\setsansfont[Path=../.cache/fonts/inter/, Extension=.otf, UprightFont=*-Regular, BoldFont=*-SemiBold,
+  Scale=0.92]{Inter}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage[font=footnotesize,labelfont={sf,bf},labelsep=period,justification=raggedright,singlelinecheck=false,skip=3pt]{caption}
+\usepackage[round,authoryear]{natbib}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\input{generated/colors.tex}
+\input{generated/numbers.tex}
+\hypersetup{colorlinks=true,linkcolor=tcaaccent,citecolor=tcaaccent,urlcolor=tcaaccent,
+  pdftitle={When and where: inference and prediction for robbery among major property crimes in Toronto, 2014--2023},
+  pdfauthor={Kaiwen Yang}}
+
+% Every number comes from results/ through generated/numbers.tex (tools/gen_paper.py).
+\makeatletter
+\newcommand{\res}[1]{\@ifundefined{tcares:#1}{\PackageError{tca}{Unknown result key #1}{Run tools/gen_paper.py}}{\csname tcares:#1\endcsname}}
+\makeatother
+\newcommand{\resG}[1]{\res{explain.sta303_v2:#1}}
+\newcommand{\resA}[1]{\res{predict.ablation:designs.A_neighbourhood_grouped_5fold_cv.#1}}
+\newcommand{\resB}[1]{\res{predict.ablation:designs.B_temporal_holdout_train_to_2021_test_2022_2023.#1}}
+\newcommand{\resI}[1]{\res{predict.inference_vs_prediction:#1}}
+\newcommand{\ci}[2]{[#1, #2]}
+\newcommand{\pct}{95\%}
+\newcommand{\tabsetup}{\setlength{\tabcolsep}{4pt}}
+
+\linespread{1.04}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0pt}
+\setlength{\bibsep}{1pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlist{nosep,leftmargin=1.4em}
+\titleformat{\section}{\sffamily\bfseries\large}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\sffamily\bfseries\normalsize}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{9pt plus 2pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt plus 2pt}{2pt}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}
+\pagestyle{plain}
+
+\begin{document}
+\special{pdf:minorversion 7}
+
+\begin{center}
+  {\sffamily\bfseries\Large When and where: inference and prediction for robbery\\[1pt]
+  among major property crimes in Toronto, 2014--2023\par}
+  \vspace{4pt}
+  {\sffamily Kaiwen Yang}
+\end{center}
+\vspace{-2pt}
+
+\input{sections/abstract}
+\input{sections/intro}
+\input{sections/data}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/availability}
+
+{\footnotesize
+\bibliographystyle{plainnat}
+\bibliography{refs}}
+
+\end{document}

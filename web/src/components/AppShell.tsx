@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <footer className={s.footer}>
         <div className={s.footerInner}>
           <span>
-            Data: Toronto Police Service Public Safety Data Portal, open data under the Open Government Licence – Toronto.
+            Data: Toronto Police Service Public Safety Data Portal, open data under the Open Government Licence – Ontario.
             Counts are reported incidents, not risk.
           </span>
           <NavLink to="/methods#reproducibility">Reproducibility</NavLink>

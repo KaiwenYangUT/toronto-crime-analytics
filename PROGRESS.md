@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P7 paper (P6 largely complete; its open items are in the P6 checklist) |
-| In progress | P7 paper: (1) `category_by_year` added to explain.sta303_v2 for Fig 1; (2) `tools/gen_paper.py` (numbers.tex, tables, figures via vl-convert); (3) sections, build, page-count check; fonts fetched into `.cache/fonts` (Source Serif 4 It/Semibold/Bold, Inter Medium/SemiBold) |
+| Current phase | P7 paper built (6 pages); P8 review loop next (P6 open items remain in its checklist) |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Finish the P6 gaps (JSC370 Key Variable Statistics table, census scatter Fig 1 after Q4, STA303 model-check panels exported to results/), then P7 (paper, `\res{key}` macros, vl-convert figures from the same specs). Ask before deleting the unused Vite scaffold files and before any push or deploy |
+| Next action | P8: honesty audit of site and paper (`tools/audit_numbers.py`), read-only design review, code and security review, fresh-checkout `make all`. Still open: P6 gaps (Key Variable Statistics table, census scatter after Q4, STA303 model-check panels), paper author line (Q6) and repository link (Q1). Ask before deleting the unused Vite scaffold files and before any push or deploy |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -129,8 +129,11 @@ Add a row whenever work moves to a different machine or app.
 - Decisions: Explore counts are computed in the browser from the checksummed bundle (not results JSON; stated on Methods). The basemap is not committed (`tools/fetch_basemap.sh`, sha256 pinned). Vega-Lite 6 / vega-embed 7 are used (PLAN said 5). Scaffold files `web/src/{App.tsx,main.tsx,App.css,index.css,assets/}` are unused and await approval to delete.
 
 ### P7 Paper
-- [ ] `\res{}` macros, generated tables, Vega-Lite PDF figures
-- [ ] ≤ 7 pages (draft ≤ 6.3), fonts embedded, no literal numerals
+- [x] `\res{}` macros (`\resG/A/B/I` shorthands) generated from results by `tools/gen_paper.py` into `paper/generated/numbers.tex`; tables `tab_flow.tex`, `tab_metrics.tex`; four figures from `web/src/lib/paperSpecs.ts` (reusing the site's row builders and theme) rendered by vl-convert; Python formatter parity-tested against the site's `formatNumber` (`tools/tests/test_gen_paper.py`)
+- [x] `make paper`: numerals lint (`tools/check_paper_numerals.py`), tectonic, `tools/check_paper_pdf.py` (6 pages, all fonts embedded, figure text extractable), copy to `web/public/paper/paper.pdf` (163 KB); Paper page now links it
+- [x] Added `category_by_year` to `explain.sta303_v2` (Fig 1); other values unchanged; regenerated on a clean tree, RESULTS/CHECKSUMS refreshed
+- Decisions: Tab 2 (original vs corrected) was cut as the plan allows, since the original's numbers live in `parity/r_outputs`, not `results/`; the corrections are described in words in Methods 3.4. Fonts: Source Serif 4 It/Semibold/Bold and Inter Medium/SemiBold were fetched into `.cache/fonts` (Adobe pinned commit; Inter from the cached 4.1 zip) and are not yet in `parity/spikes/assets.json`. Tectonic prints "PDF 1.7 newer than 1.5" warnings for the figure PDFs; harmless, the setting could not be raised. Fixed the site's data-licence wording (TPS data is OGL Ontario, census profiles OGL Toronto) in About, Methods and the footer.
+- To do before release: the bibliography was written from memory and must be verified entry by entry (P8); the author line is the default "Kaiwen Yang" (Q6); the availability paragraph has a visible `[link added at release]` placeholder (Q1)
 
 ### P8 Review loop
 - [ ] Honesty audit: 0 unmatched

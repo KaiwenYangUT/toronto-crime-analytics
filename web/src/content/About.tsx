@@ -26,9 +26,10 @@ export function About() {
         </Section>
         <Section id="licences" title="Licences and data">
           <p>
-            Data are the Toronto Police Service Public Safety Data Portal open data, used under the Open Government Licence – Toronto; the Toronto Police Service makes no warranty about
-            them and they describe reported incidents only. Census income measures come from Statistics Canada via the City of Toronto. The code licence and the data licence notice
-            are set out in the repository at release.
+            Incident data are the Toronto Police Service Public Safety Data Portal open data, used under the Open Government Licence – Ontario with the Toronto Police Service conditions; the
+            Toronto Police Service makes no warranty about them and they describe reported incidents only. Census neighbourhood profiles come from the City of Toronto, used under the Open
+            Government Licence – Toronto. This is an independent analysis, not endorsed by either organization. The code licence and the data licence notice are set out in the repository at
+            release.
           </p>
         </Section>
       </div>

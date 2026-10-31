@@ -1,0 +1,35 @@
+\section{Results}
+\subsection{Inference: odds of robbery by time}
+Figure~\ref{fig:forest} shows the odds ratios. After 2019 the odds that a reported property-type incident is a robbery are about half what they were before: the post-2019 odds ratio is \resG{post2019.or} (robust \pct{} interval \resG{post2019.robust_or_lo} to \resG{post2019.robust_or_hi}). The composition check matters here. Fitting robbery against each other category separately gives \resG{composition.Auto Theft.post2019.or} against auto theft, \resG{composition.Break and Enter.post2019.or} against break and enter and \resG{composition.Theft Over.post2019.or} against theft over, so the pooled ratio mixes a fall in robbery with a large rise in auto theft, the comparison class. Time of day matters most. Against noon, the odds of robbery are highest at 15:00 (\resG{hour_or_vs_12.15.or}, interval \resG{hour_or_vs_12.15.robust_or_lo} to \resG{hour_or_vs_12.15.robust_or_hi}) and lowest at 08:00 (\resG{hour_or_vs_12.8.or}, \resG{hour_or_vs_12.8.robust_or_lo} to \resG{hour_or_vs_12.8.robust_or_hi}). After dark the odds are higher, with ratio \resG{dark.or} (\resG{dark.robust_or_lo} to \resG{dark.robust_or_hi}). Month and weekday terms are small: the largest month effect is December against January (\resG{month_or_vs_jan.12.or}). Of the \resI{time_terms} time terms, \resI{time_terms_clear} have robust intervals that exclude one. Even so, the model separates the classes only weakly: its cross-validated AUC is \resG{cv.auc_mean} (standard deviation \resG{cv.auc_sd} over folds).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{build/figures/fig2.pdf}
+\caption{Odds ratios of robbery versus other major property crime, with cluster-robust \pct{} intervals on a log scale. Blue marks the post-2019 period, darkness and 15:00. Many hours and a few months have intervals that exclude one (the dashed line); most weekdays do not.}\label{fig:forest}
+\end{figure}
+
+\subsection{Prediction: what each ingredient adds}
+Table~\ref{tab:metrics} and Figure~\ref{fig:ladder} give the ladder. Time alone is a weak predictor. Under Design~A it reaches a PR-AUC of \resA{variants.L1.pr_auc.estimate} \ci{\resA{variants.L1.pr_auc.lo}}{\resA{variants.L1.pr_auc.hi}} against a baseline of \resA{prevalence}, and a ROC-AUC of \resA{variants.L1.roc_auc.estimate}. Adding place is the big step: PR-AUC rises by \resA{deltas.L2_minus_L1.pr_auc.estimate} \ci{\resA{deltas.L2_minus_L1.pr_auc.lo}}{\resA{deltas.L2_minus_L1.pr_auc.hi}} to \resA{variants.L2.pr_auc.estimate}. Most of that step is premises and location type: removing them from L2 costs \resA{deltas.L2_minus_L2-nopremises.pr_auc.estimate} of PR-AUC \ci{\resA{deltas.L2_minus_L2-nopremises.pr_auc.lo}}{\resA{deltas.L2_minus_L2-nopremises.pr_auc.hi}}. The census block adds little once place is known: \resA{deltas.L3_minus_L2.pr_auc.estimate} of PR-AUC \ci{\resA{deltas.L3_minus_L2.pr_auc.lo}}{\resA{deltas.L3_minus_L2.pr_auc.hi}} and \resA{deltas.L3_minus_L2.roc_auc.estimate} of ROC-AUC \ci{\resA{deltas.L3_minus_L2.roc_auc.lo}}{\resA{deltas.L3_minus_L2.roc_auc.hi}}. Non-linear models add more (random forest over L3: \resA{deltas.L4_minus_L3.pr_auc.estimate} of PR-AUC), but gradient boosting adds nothing measurable over the forest: the paired difference in PR-AUC has interval \resA{deltas.L5_minus_L4.pr_auc.lo} to \resA{deltas.L5_minus_L4.pr_auc.hi}, which includes zero. Without premises and location type even the best model falls to a PR-AUC of \resA{variants.L5-nopremises.pr_auc.estimate}.
+
+\begin{table}[t]
+\centering\footnotesize\tabsetup
+\caption{Ladder metrics with \pct{} cluster-bootstrap intervals (ROC-AUC, PR-AUC, F1) and point estimates (precision, recall at the tuned threshold). F1, precision and recall use a threshold tuned on inner out-of-fold predictions and are slightly optimistic. Prevalence differs between designs, so PR-AUC is compared only within a design.}\label{tab:metrics}
+\input{generated/tab_metrics.tex}
+\end{table}
+
+The temporal holdout tells the same story at lower levels, as expected when the robbery share has fallen to \resB{prevalence}. Time alone gives a PR-AUC of \resB{variants.L1.pr_auc.estimate} \ci{\resB{variants.L1.pr_auc.lo}}{\resB{variants.L1.pr_auc.hi}}, close to that baseline, and L5 reaches \resB{variants.L5.pr_auc.estimate} (ROC-AUC \resB{variants.L5.roc_auc.estimate} against \resA{variants.L5.roc_auc.estimate} under Design A).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{build/figures/fig3.pdf}
+\caption{PR-AUC by rung (L1 time only; L2 adds place; L3 adds census; L4 random forest; L5 XGBoost) under neighbourhood-grouped cross-validation (left) and the temporal holdout (right), with \pct{} cluster-bootstrap intervals. Diamonds drop premises and location type. Dotted lines show the share of robberies, the PR-AUC of a constant score.}\label{fig:ladder}
+\end{figure}
+
+\subsection{Inference versus prediction}
+Figure~\ref{fig:contrast} puts the two analyses side by side. In the regression, \resI{inference.hour.clear} of the \resI{inference.hour.terms} hour terms and every darkness and post-2019 term are statistically clear. In the prediction ladder, the time block matters little: shuffling it costs the L5 model \resA{variants.L5.block_permutation_importance_pr_auc_drop.time} of PR-AUC under Design~A, against \resA{variants.L5.block_permutation_importance_pr_auc_drop.premises} for premises and location type, and only \resA{variants.L5.block_permutation_importance_pr_auc_drop.census} for census and \resA{variants.L5.block_permutation_importance_pr_auc_drop.geo} for geography. Both findings are true at once. With \resG{n} rows, small associations get narrow intervals; a term can be clear and still move the odds too little to sort individual incidents.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{build/figures/fig4.pdf}
+\caption{Left: for each time feature, the number of terms in the regression whose robust interval excludes one (labels give the count of clear terms out of all terms). Right: PR-AUC lost by the L5 model on held-out neighbourhoods when a block of features is shuffled; ``Time'' covers hour, month, weekday and darkness.}\label{fig:contrast}
+\end{figure}

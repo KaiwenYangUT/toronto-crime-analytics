@@ -55,7 +55,7 @@ export function Methods() {
               </p>
               <p>
                 <strong>Sources.</strong> The Toronto Police Service Public Safety Data Portal major crime indicator files (robbery, auto theft, break and enter, theft over), Toronto
-                neighbourhood boundaries and census income measures. Data are open data released under the Open Government Licence – Toronto; the files are fetched and
+                neighbourhood boundaries and census income measures. Police data are released under the Open Government Licence – Ontario and the City of Toronto profiles under the Open Government Licence – Toronto; the files are fetched and
                 checked against recorded checksums, never committed.
               </p>
             </div>

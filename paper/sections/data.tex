@@ -1,0 +1,18 @@
+\section{Data and task definition}
+\paragraph{Sources.} Incident records come from the Toronto Police Service open-data Major Crime Indicator (MCI) files for robbery, auto theft, break and enter, and theft over. Neighbourhood features come from a City of Toronto census neighbourhood profile joined by neighbourhood: population, household size, rental properties, median and average individual income, and three ratios of workers to population or labour force. These features are fixed within a neighbourhood and over time.
+
+\paragraph{Definition.} The unit is one incident record. The positive class is robbery; the negative class is auto theft, break and enter or theft over. Assault is a Major Crime Indicator but is not a property crime and is not in the inputs; bicycle theft, homicide and shootings are excluded by rule. The window is occurrence years 2014 to 2023, since reporting in these files starts in 2014. Rows need a valid date, an hour of day, a premises type, coordinates inside the Toronto bounding box and a neighbourhood other than ``not a neighbourhood''; exact duplicates within a category are removed. Events labelled both robbery and another type are removed (\resG{log.cross_category_conflict_events_dropped} events), because their class is ambiguous. Table~\ref{tab:flow} gives the sample flow.
+
+\begin{table}[t]
+\centering\small
+\caption{Sample flow and class counts. Further rows leave the unified table through the rules above (exact duplicates, invalid coordinates, ambiguous events); the removals shown are the ones logged as single counts.}\label{tab:flow}
+\input{generated/tab_flow.tex}
+\end{table}
+
+\paragraph{Composition shifts over time.} The class mix is not stable (Figure~\ref{fig:comp}). Robbery incidents fell from \resG{category_by_year.2014.Robbery} in 2014 to \resG{category_by_year.2023.Robbery} in 2023, while auto thefts rose from \resG{category_by_year.2020.Auto Theft} in 2020 to \resG{category_by_year.2023.Auto Theft} in 2023. Robbery's share of the four-crime total therefore fell from \resG{prevalence_by_year.2014.share} to \resG{prevalence_by_year.2023.share}, partly because the denominator grew. Any model of this outcome inherits that drift.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{build/figures/fig1.pdf}
+\caption{Incidents per year by crime type (left) and the share of incidents that are robberies (right), 2014--2023. Auto theft rises sharply after 2021, and robbery is lower in 2023 than in 2014, so the robbery share falls partly through the denominator.}\label{fig:comp}
+\end{figure}

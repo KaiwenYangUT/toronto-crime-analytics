@@ -27,7 +27,7 @@ export const RUNG_LABEL: Record<string, string> = {
 export type Metric = 'pr_auc' | 'roc_auc' | 'f1'
 export const METRIC_LABEL: Record<Metric, string> = { pr_auc: 'PR-AUC', roc_auc: 'ROC-AUC', f1: 'F1 at the tuned threshold' }
 
-const ABL = 'predict.ablation'
+export const ABL = 'predict.ablation'
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -55,7 +55,7 @@ export function shareByYear(d: PageResults): FigureData {
   }
 }
 
-interface ForestRow {
+export interface ForestRow {
   group: string
   term: string
   or: number
@@ -69,8 +69,8 @@ interface ForestRow {
 
 const HIGHLIGHT = new Set(['Post-2019 period', 'After dark', 'Hour 15:00'])
 
-/** Forest plot of the odds ratios of robbery vs other property crime, with cluster-robust 95% intervals. */
-export function forestPlot(d: PageResults): FigureData {
+/** One row per odds ratio of the STA303 v2 model, with the cluster-robust 95% interval. */
+export function forestRows(d: PageResults): ForestRow[] {
   const K = 'explain.sta303_v2'
   const rows: ForestRow[] = []
   const add = (group: string, term: string, base: string) =>
@@ -90,6 +90,12 @@ export function forestPlot(d: PageResults): FigureData {
   for (let h = 0; h < 24; h++) if (h !== 12) add('Hour (vs noon)', `Hour ${String(h).padStart(2, '0')}:00`, `hour_or_vs_12.${h}`)
   for (let m = 2; m <= 12; m++) add('Month (vs January)', `Month ${MONTHS[m - 1]}`, `month_or_vs_jan.${m}`)
   for (let w = 2; w <= 7; w++) add('Weekday (vs Monday)', `Weekday ${WEEKDAYS[w - 1]}`, `weekday_or_vs_mon.${w}`)
+  return rows
+}
+
+/** Forest plot of the odds ratios of robbery vs other property crime, with cluster-robust 95% intervals. */
+export function forestPlot(d: PageResults): FigureData {
+  const rows = forestRows(d)
   const order = rows.map((r) => r.term)
   const y = { field: 'term', type: 'nominal', sort: order, title: null, axis: { labelLimit: 140, ticks: false, domain: false, grid: true } }
   const x = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3] }, axis: { values: [0.5, 0.75, 1, 1.5, 2, 3], format: '~g', title: 'Odds of robbery vs other property crime (log scale; 1 = no difference)' } }

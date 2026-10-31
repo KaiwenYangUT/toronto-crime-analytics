@@ -1,0 +1,9 @@
+\begin{abstract}\noindent\small
+Reported property-type crime in Toronto changed in composition after 2019: auto theft rose while robbery fell.
+We ask a narrow question: given that a major property-type crime was reported, which type is it?
+Using \resG{n} Toronto Police incident records from 2014 to 2023, we contrast robbery with auto theft, break and enter, and theft over, and answer it twice.
+A binomial logistic regression with neighbourhood-cluster-robust intervals describes how the odds of robbery vary by hour, month, weekday, solar darkness and a post-2019 period: the post-2019 odds ratio is \resG{post2019.or} \ci{\resG{post2019.robust_or_lo}}{\resG{post2019.robust_or_hi}}, and \resI{time_terms_clear} of \resI{time_terms} time terms have intervals that exclude one.
+A five-rung prediction ladder, from time only to gradient-boosted trees, evaluated on held-out neighbourhoods and on a held-out later period, shows how little those time terms predict: time alone reaches a PR-AUC of \resA{variants.L1.pr_auc.estimate} against a baseline of \resA{prevalence}, whereas adding place (premises, location type and coordinates) lifts it to \resA{variants.L2.pr_auc.estimate} and census features add \resA{deltas.L3_minus_L2.pr_auc.estimate}.
+Statistically clear time effects therefore coexist with weak prediction from time alone.
+Estimates describe the composition of reported incidents, not the risk of being robbed.
+\end{abstract}
