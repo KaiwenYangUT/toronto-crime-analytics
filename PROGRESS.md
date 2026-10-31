@@ -5,9 +5,9 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
-| In progress | P10 R1 (R1a, R1b, R1c as parallel subagents; the main session commits per agent) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
+| In progress | P10 R2 (R2a Explore, R2b Explain/Predict, R2c 3D scatter as parallel subagents) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | P10 R1: three parallel subagents (R1a foundations, R1b census pipeline, R1c paper rule), then code-review, then Gate A. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
+| Next action | P10 R2 then Gate B, then R3 and R4. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -159,7 +159,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] R1a Foundations: new type scale and layout tokens, viridis magnitude ramp (low end WARN 1.26:1 light / 1.23:1 dark, relief recorded in palette-validation.md), pinned `paper` chart block, ResultSection/StatCard/KeyPoints, Figure Data menu, 44 px theme button, narrow SVG support; lint, tests, build, smoke 42/42 pass. Core JS 179.4 / 180 KB. Gate A still to do
 - [x] R1b Census pipeline: `predict.census_scatter` (n 158; Spearman income rho -0.23, job ratio 0.07), 5 tests, wired into explain/overview pages, audit skips the points and cuts References after a form feed (0 unmatched), PARITY/CHANGES C1. Removal of `jsc370_benchmark` / `xgb_grid_fix` from PAGES deferred until Predict/Methods are rewritten (R2b/R3a)
 - [x] R1c Paper rule: `\clearpage` before the bibliography, `check_page_count.py` counts content pages (limit 7, warn above 6, fails without a References page), 7 tests; `make paper` = 6 content pages + references on page 7. The audit `\f` cut is R1b's
-- [ ] Code review (high) at the end of R1, then Gate A (design lead, Predict at 375/1280/1440, light and dark)
+- [x] Code review (high) of R1: 8 findings, 3 fixed (theme sync across tabs, Download SVG before live chart, DataMenu aria-controls), 5 handed to R2 owners (Explore CSS offsets and 44 px, specs.ts fontSize 13, ramp low-end relief, duplicate References logic, narrow width on concat specs). Gate A GREEN (`reviews/gate-a.md`); its should-fixes 1-2 applied (h2 24 px on mobile, auto-fit stat grid); 3 (prerender SVG at slot width) and 4 (prose outside ResultSection) go to R2b/R3a
 - [ ] R2a Explore dashboard; R2b Explain and Predict; R2c 3D scatter (plotly chunk, bundle rule); Gate B
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
 - [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`

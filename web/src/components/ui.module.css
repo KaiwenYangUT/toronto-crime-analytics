@@ -71,7 +71,8 @@
 /* StatCard (and FindingCard, which renders one) */
 .cards, .statGrid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
 @media (min-width: 1024px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 768px) { .statGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* auto-fit: one column in the 4-column aside, two or more in a wide container */
+.statGrid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .stat { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); color: inherit; }
 .statLink { display: flex; flex-direction: column; gap: var(--space-2); text-decoration: none; color: inherit; }
 .stat:has(.statLink:hover) { border-color: var(--accent); }

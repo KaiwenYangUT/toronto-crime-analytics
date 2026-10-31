@@ -79,6 +79,8 @@
     --gutter: 16px;
     --text-base: 1.0625rem;
     --leading-base: 1.6;
+    --text-xl: 1.5rem;
+    --leading-xl: 1.3;
   }
 }
 
