@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import * as RadioGroup from '@radix-ui/react-radio-group'
 import * as Slider from '@radix-ui/react-slider'
@@ -19,31 +19,107 @@ interface Props {
   onPresetFig5: () => void
   open: boolean
   onClose: () => void
+  /** how many filter groups differ from the defaults */
+  active: number
+}
+
+/**
+ * A date input that applies a date only when it lies inside the data's range. Typing a year digit by digit
+ * passes through years such as 0002 and 0202; those are held in the field but not applied.
+ */
+function DateField({ label, value, min, max, onCommit }: { label: string; value: string; min: string; max: string; onCommit: (v: string) => void }) {
+  const [draft, setDraft] = useState(value)
+  const [seen, setSeen] = useState(value)
+  if (seen !== value) {
+    setSeen(value)
+    setDraft(value)
+  }
+  return (
+    <label className={s.field}>
+      <span className={s.fieldLabel}>{label}</span>
+      <input
+        type="date"
+        className={s.date}
+        min={min}
+        max={max}
+        value={draft}
+        onChange={(e) => {
+          const v = e.target.value
+          setDraft(v)
+          if (v && v >= min && v <= max && v !== value) onCommit(v)
+        }}
+      />
+    </label>
+  )
 }
 
 const MODE_LABEL: Record<Mode, string> = { city: 'Citywide', destination: 'Near a destination', station: 'Near its nearest listed station' }
 
-export function FilterPanel({ state, categories, catColors, dateMin, dateMax, onChange, onReset, onPresetFig5, open, onClose }: Props) {
+export function FilterPanel({ state, categories, catColors, dateMin, dateMax, onChange, onReset, onPresetFig5, open, onClose, active }: Props) {
   const head = useRef<HTMLHeadingElement>(null)
+  const form = useRef<HTMLFormElement>(null)
+  const scroller = useRef<HTMLDivElement>(null)
+  const [more, setMore] = useState(false)
   useEffect(() => {
     if (open) head.current?.focus()
   }, [open])
+  // A fade at the bottom edge says "more below" until the list is scrolled to its end.
+  const measure = useCallback(() => {
+    const el = scroller.current
+    if (el) setMore(el.scrollTop + el.clientHeight < el.scrollHeight - 4)
+  }, [])
+  useEffect(() => {
+    const el = scroller.current
+    if (!el) return
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    if (el.firstElementChild) ro.observe(el.firstElementChild)
+    return () => ro.disconnect()
+  }, [measure])
   const preset = PRESETS.find((p) => p.value === state.preset)
   const check = (c: string, on: boolean) => onChange({ cats: on ? categories.filter((x) => x === c || state.cats.includes(x)) : state.cats.filter((x) => x !== c) })
+  // In the drawer the panel is modal: Escape closes it and Tab stays inside it.
+  const onKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
+    if (!open) return
+    if (e.key === 'Escape') {
+      onClose()
+      return
+    }
+    if (e.key !== 'Tab') return
+    const items = Array.from(form.current?.querySelectorAll<HTMLElement>('button, input, select, [tabindex]:not([tabindex="-1"]), [role="radio"], [role="checkbox"], [role="slider"]') ?? []).filter((n) => !n.hasAttribute('disabled') && n.offsetParent !== null)
+    if (!items.length) return
+    const first = items[0]
+    const last = items[items.length - 1]
+    const at = document.activeElement
+    if (e.shiftKey && (at === first || at === head.current)) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && at === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
   return (
     <>
       <div className={s.backdrop} data-open={open} onClick={onClose} aria-hidden="true" />
       <form
+        ref={form}
         className={s.panel}
         data-open={open}
         aria-label="Filters"
+        role={open ? 'dialog' : undefined}
+        aria-modal={open ? true : undefined}
         onSubmit={(e) => e.preventDefault()}
-        onKeyDown={(e) => e.key === 'Escape' && onClose()}
+        onKeyDown={onKeyDown}
       >
         <div className={s.panelHead}>
-          <h2 ref={head} tabIndex={-1} style={{ fontSize: 'var(--text-lg)' }}>Filters</h2>
+          <h2 ref={head} tabIndex={-1} className={s.panelTitle}>Filters{active > 0 ? <span className={s.panelCount}> ({active} active)</span> : null}</h2>
           <button type="button" className={`${ui.btn} ${s.closeBtn}`} onClick={onClose}>Show results</button>
         </div>
+        <div className={s.panelScrollWrap}>
+        <div className={s.panelScroll} ref={scroller} onScroll={measure}>
+        <div className={s.panelFields}>
 
         <RadioGroup.Root className={s.group} value={state.mode} onValueChange={(v) => onChange({ mode: v as Mode })} aria-label="Where">
           <span className={s.label}>Where</span>
@@ -95,10 +171,9 @@ export function FilterPanel({ state, categories, catColors, dateMin, dateMax, on
 
         <fieldset className={s.group}>
           <legend>Dates</legend>
-          <div className={s.dates}>
-            <label className={s.hint}>From<input type="date" className={s.date} min={dateMin} max={dateMax} value={state.from || dateMin} onChange={(e) => onChange({ from: e.target.value === dateMin ? '' : e.target.value })} /></label>
-            <label className={s.hint}>To<input type="date" className={s.date} min={dateMin} max={dateMax} value={state.to || dateMax} onChange={(e) => onChange({ to: e.target.value === dateMax ? '' : e.target.value })} /></label>
-          </div>
+          <DateField label="From" value={state.from || dateMin} min={dateMin} max={dateMax} onCommit={(v) => onChange({ from: v === dateMin ? '' : v })} />
+          <DateField label="To" value={state.to || dateMax} min={dateMin} max={dateMax} onCommit={(v) => onChange({ to: v === dateMax ? '' : v })} />
+          <p className={s.hint}>Dragging across the trend chart sets the same dates.</p>
         </fieldset>
 
         <div className={s.group}>
@@ -125,9 +200,13 @@ export function FilterPanel({ state, categories, catColors, dateMin, dateMax, on
           </Slider.Root>
         </div>
 
-        <div className={ui.figureActions}>
-          <button type="button" className={ui.btn} onClick={onPresetFig5}>Course report Figure 5: 2020 robberies</button>
-          <button type="button" className={ui.btn} onClick={onReset}>Reset filters</button>
+        <button type="button" className={ui.btn} onClick={onPresetFig5}>Course report Figure 5: 2020 robberies</button>
+        </div>
+        </div>
+        <div className={s.fade} data-more={more} aria-hidden="true" />
+        </div>
+        <div className={s.panelFoot}>
+          <button type="button" className={`${ui.btn} ${s.resetBtn}`} onClick={onReset}>Reset filters</button>
         </div>
       </form>
     </>

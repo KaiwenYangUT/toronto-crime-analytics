@@ -43,6 +43,19 @@ export function defaults(): ExploreState {
   return { mode: 'city', place: 'site1', radius: 300, preset: 'all', cats: LEGACY_CATEGORIES, weekdays: [1, 2, 3, 4, 5, 6, 7], hours: [0, 23], from: '', to: '', interval: 'week' }
 }
 
+/** How many filter groups differ from the defaults (shown on the "Filters" button). The trend interval is a view option, not a filter. */
+export function activeFilters(s: ExploreState, d: ExploreState): number {
+  const same = (a: readonly unknown[], b: readonly unknown[]) => a.length === b.length && a.every((v, i) => v === b[i])
+  return [
+    s.mode !== d.mode,
+    !same(s.cats, d.cats),
+    s.from !== d.from || s.to !== d.to,
+    s.preset !== d.preset,
+    !same(s.weekdays, d.weekdays),
+    !same(s.hours, d.hours),
+  ].filter(Boolean).length
+}
+
 export function toParams(s: ExploreState, d: ExploreState): URLSearchParams {
   const p = new URLSearchParams()
   const set = (k: string, v: string, def: string) => v !== def && p.set(k, v)

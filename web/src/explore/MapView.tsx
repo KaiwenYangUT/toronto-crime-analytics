@@ -61,7 +61,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
     set('roads-major', 'line-color', c.muted)
     set('radius-fill', 'fill-color', c.accent)
     set('radius-line', 'line-color', c.accent)
-    set('clusters', 'circle-color', ['step', ['get', 'point_count'], c.density[1], 20, c.density[2], 100, c.density[3], 500, c.density[4]])
+    set('clusters', 'circle-color', ['step', ['get', 'point_count'], c.density[1], 50, c.density[2], 300, c.density[3], 1500, c.density[4]])
     set('clusters', 'circle-stroke-color', c.bg)
     const cats = Object.entries(latest.current.catColors).flat()
     set('points', 'circle-color', ['match', ['get', 'cat'], ...cats, c.muted])
@@ -140,7 +140,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
             { id: 'roads-major', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'highway', 'major_road'], paint: { 'line-color': '#999', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 16, 4] } },
             { id: 'radius-fill', type: 'fill', source: 'radius', paint: { 'fill-color': '#06c', 'fill-opacity': 0.08 } },
             { id: 'radius-line', type: 'line', source: 'radius', paint: { 'line-color': '#06c', 'line-width': 2, 'line-dasharray': [3, 2] } },
-            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 8, 20, 11, 100, 15, 500, 20], 'circle-stroke-width': 2, 'circle-opacity': 0.9 } },
+            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 9, 50, 12, 300, 16, 1500, 22], 'circle-stroke-width': 2, 'circle-opacity': 0.9 } },
             { id: 'points', type: 'circle', source: 'events', filter: ['!', ['has', 'point_count']], paint: { 'circle-color': '#666', 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-opacity': 0.9 } },
           ],
         },
@@ -148,6 +148,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
         zoom: 10,
         attributionControl: { compact: true },
         cooperativeGestures: false,
+        trackResize: true,
       })
       m.addControl(new ml.NavigationControl({ showCompass: false }), 'top-right')
       m.on('load', () => {
@@ -204,5 +205,10 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
     paint()
   }, [table, selected, center, site, radiusM, catColors])
 
-  return <div ref={el} className={s.map} role="region" aria-label="Map of the selected incidents. The totals and charts give the same counts as text." />
+  // The box fills its grid cell; the map is absolutely positioned inside it, and MapLibre follows the box size.
+  return (
+    <div className={s.mapBox}>
+      <div ref={el} className={s.map} role="region" aria-label="Map of the selected incidents. The totals and charts give the same counts as text." />
+    </div>
+  )
 }

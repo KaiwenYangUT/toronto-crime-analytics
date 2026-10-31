@@ -64,30 +64,53 @@ export function useExplore() {
     if (v2.status === 'error') setV2({ status: 'idle' })
   }
 
-  const derived = useMemo(() => {
+  // Everything that does not depend on the date range. The trend always shows the full range, so
+  // brushing or typing dates changes the map and bars but never re-draws the trend data.
+  const scope = useMemo(() => {
     if (load.status !== 'ready' || !table || (wantsV2 && v2.status !== 'ready')) return null
     const { meta } = load.bundle
-    const dateFrom = state.from ? dayNumber(state.from) : meta.first_day
-    const dateTo = state.to ? dayNumber(state.to) : meta.last_day
     const site = PLACES.find((p) => p.id === state.place) ?? PLACES[0]
     const center = state.mode === 'city' ? undefined : state.mode === 'station' ? nearestStation(site, STATIONS) : site
     const cats = new Set(table.categories.map((c, i) => (state.cats.includes(c) ? i : -1)).filter((i) => i >= 0))
     const weekdays = new Set(state.weekdays)
+    const labels = table.categories.filter((c) => state.cats.includes(c))
     try {
-      const selected = filterEvents(table, { dateFrom, dateTo, categories: cats, preset: state.preset, weekdays, hours: state.hours, center, radiusM: center ? state.radius : undefined })
-      const labels = table.categories.filter((c) => state.cats.includes(c))
-      const daily: DailyRow[] = dailyCounts(table, selected, dateFrom, dateTo, labels, state.preset, weekdays, state.hours)
-      return {
-        error: null as string | null, dateFrom, dateTo, site, center, selected, daily,
-        trend: trendCounts(daily, state.interval),
-        bars: barCounts(table, selected),
-        records: selected.length,
-        distinct: distinctEvents(table, selected),
-      }
+      const all = filterEvents(table, { dateFrom: meta.first_day, dateTo: meta.last_day, categories: cats, preset: state.preset, weekdays, hours: state.hours, center, radiusM: center ? state.radius : undefined })
+      const dailyAll: DailyRow[] = dailyCounts(table, all, meta.first_day, meta.last_day, labels, state.preset, weekdays, state.hours)
+      return { error: null as string | null, site, center, all, dailyAll, labels, weekdays }
     } catch (e) {
-      return { error: e instanceof Error ? e.message : 'Invalid filters', dateFrom, dateTo, site, center, selected: new Int32Array(), daily: [] as DailyRow[], trend: [], bars: barCounts(table, new Int32Array()), records: 0, distinct: 0 }
+      return { error: e instanceof Error ? e.message : 'Invalid filters', site, center, all: new Int32Array(), dailyAll: [] as DailyRow[], labels, weekdays }
     }
-  }, [load, state, table, wantsV2, v2.status])
+  }, [load, state.mode, state.place, state.radius, state.preset, state.cats, state.weekdays, state.hours, table, wantsV2, v2.status])
+
+  const trend = useMemo(() => (scope ? trendCounts(scope.dailyAll, state.interval) : []), [scope, state.interval])
+
+  const derived = useMemo(() => {
+    if (load.status !== 'ready' || !table || !scope) return null
+    const { meta } = load.bundle
+    const dateFrom = state.from ? dayNumber(state.from) : meta.first_day
+    const dateTo = state.to ? dayNumber(state.to) : meta.last_day
+    const { site, center, labels, weekdays } = scope
+    let error = scope.error
+    let selected = scope.all
+    let daily = scope.dailyAll
+    if (!error && (state.from || state.to)) {
+      if (dateFrom > dateTo || Number.isNaN(dateFrom) || Number.isNaN(dateTo)) {
+        error = 'Choose a valid date range.'
+        selected = new Int32Array()
+        daily = []
+      } else {
+        selected = scope.all.filter((i) => table.day[i] >= dateFrom && table.day[i] <= dateTo)
+        daily = dailyCounts(table, selected, dateFrom, dateTo, labels, state.preset, weekdays, state.hours)
+      }
+    }
+    return {
+      error, dateFrom, dateTo, site, center, selected, daily, trend,
+      bars: barCounts(table, selected),
+      records: selected.length,
+      distinct: distinctEvents(table, selected),
+    }
+  }, [load, table, scope, trend, state.from, state.to, state.preset, state.hours])
 
   return { load, v2, wantsV2, table, state, update, reset, retry, derived, base, ready: mounted && load.status === 'ready' }
 }
