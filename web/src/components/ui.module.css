@@ -73,7 +73,10 @@ a.card:hover { border-color: var(--accent); }
 .calloutBody > * + * { margin-top: var(--space-2); }
 
 /* DataTable */
-.tableWrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); max-height: 520px; }
+.tableWrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); max-height: 520px;
+  /* edge shadows that appear only where more content scrolls out of view */
+  background: linear-gradient(to right, var(--bg) 30%, transparent) left / 24px 100% no-repeat local, linear-gradient(to left, var(--bg) 30%, transparent) right / 24px 100% no-repeat local,
+    linear-gradient(to right, var(--border), transparent) left / 12px 100% no-repeat scroll, linear-gradient(to left, var(--border), transparent) right / 12px 100% no-repeat scroll; }
 .table { width: 100%; font-size: var(--text-sm); line-height: var(--leading-sm); font-variant-numeric: tabular-nums; }
 .table caption { text-align: left; padding: var(--space-2) var(--space-3); color: var(--text-muted); font-size: var(--text-sm); caption-side: top; }
 .table th, .table td { padding: var(--space-2) var(--space-3); text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }

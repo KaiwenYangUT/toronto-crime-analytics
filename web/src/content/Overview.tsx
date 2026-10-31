@@ -32,16 +32,6 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
 
       <CardGrid>
         <FindingCard
-          label="Explain · after 2019"
-          value={<Num k={`${X}:post2019.or`} />}
-          unit="times the odds of being a robbery"
-          ci={<>95% CI <Num k={`${X}:post2019.robust_or_lo`} /> to <Num k={`${X}:post2019.robust_or_hi`} /> (cluster-robust)</>}
-          meaning="After 2019 a reported incident was much less likely to be a robbery, with hour, month, weekday and darkness held fixed."
-          notMean="It does not say robberies fell by that factor: the other crime types changed too."
-          sourceKey={`${X}:post2019`}
-          to="/explain"
-        />
-        <FindingCard
           label="Predict · time alone vs the full model"
           value={<><Num k={v('L1', 'pr_auc', 'estimate')} /> to <Num k={v('L5', 'pr_auc', 'estimate')} /></>}
           unit="PR-AUC, grouped cross-validation"
@@ -60,6 +50,16 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
           notMean="Premises partly define the crime type, so this measures what information separates the classes."
           sourceKey={A}
           to="/predict#ladder"
+        />
+        <FindingCard
+          label="Explain · after 2019"
+          value={<Num k={`${X}:post2019.or`} />}
+          unit="times the odds of being a robbery"
+          ci={<>95% CI <Num k={`${X}:post2019.robust_or_lo`} /> to <Num k={`${X}:post2019.robust_or_hi`} /> (cluster-robust)</>}
+          meaning="After 2019 a reported incident was much less likely to be a robbery, with hour, month, weekday and darkness held fixed."
+          notMean="It does not say robberies fell by that factor: the other crime types changed too."
+          sourceKey={`${X}:post2019`}
+          to="/explain"
         />
       </CardGrid>
 

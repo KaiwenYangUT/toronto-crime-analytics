@@ -147,7 +147,7 @@ export function paperFig4(d: PageResults): Spec {
     width: 200,
     height: { step: 26 },
     data: { values: inf },
-    encoding: { y: { field: 'label', type: 'nominal', sort: inf.map((r) => r.label), title: null, axis: { labelLimit: 150 } }, x: { field: 'share', type: 'quantitative', title: 'Share of terms', scale: { domain: [0, 1.25] }, axis: { format: '.0%', values: [0, 0.25, 0.5, 0.75, 1] } } },
+    encoding: { y: { field: 'label', type: 'nominal', sort: inf.map((r) => r.label), title: null, axis: { labelLimit: 150 } }, x: { field: 'share', type: 'quantitative', title: 'Share of terms', scale: { domain: [0, 1.25] }, axis: { format: '.0%', values: [0, 0.5, 1] } } },
     layer: [
       { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
       { mark: { type: 'text', style: 'ink', align: 'left', dx: 5, fontWeight: 600, fontSize: 12 }, encoding: { text: { field: 'text' } } },

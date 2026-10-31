@@ -153,7 +153,7 @@ export function ablationLadder(d: PageResults, metric: Metric): FigureData {
   const order = RUNGS.map((r) => `${r} ${RUNG_LABEL[r]}`)
   const seriesOrder = ['Grouped CV', 'Temporal holdout', 'Grouped CV, no premises', 'Temporal holdout, no premises']
   const xo = { field: 'series', type: 'nominal', sort: seriesOrder }
-  const common = { xOffset: xo, x: { field: 'rung', type: 'nominal', sort: order, title: null, axis: { labelAngle: 0, labelLimit: 160, labelPadding: 8 } } }
+  const common = { xOffset: xo, x: { field: 'rung', type: 'nominal', sort: order, title: null, axis: { labelAngle: 0, labelPadding: 8, labelExpr: "split(datum.value, ' ')[0]" } } }
   const y = { type: 'quantitative', title: METRIC_LABEL[metric], scale: { domain: metric === 'roc_auc' ? [0.45, 1] : [0, metric === 'pr_auc' ? 0.75 : 0.7] } }
   const baseA = num(d, `${ABL}:designs.${DESIGN_A}.prevalence`)
   const baseB = num(d, `${ABL}:designs.${DESIGN_B}.prevalence`)
@@ -202,7 +202,7 @@ export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN
     data: { values: rows },
     layer: [
       { data: { values: [{ v: prev }] }, mark: { type: 'rule', style: 'muted', strokeDash: [2, 4] }, encoding: { y: { field: 'v', type: 'quantitative' } } },
-      { mark: { type: 'line', interpolate: 'step-after' }, encoding: { x: { field: 'recall', type: 'quantitative', title: 'Recall', scale: { domain: [0, 1] } }, y: { field: 'precision', type: 'quantitative', title: 'Precision', scale: { domain: [0, 1] } }, color: { field: 'rung', type: 'ordinal', sort: order, title: null, scale: { domain: order } } } },
+      { mark: { type: 'line', interpolate: 'step-after' }, encoding: { x: { field: 'recall', type: 'quantitative', title: 'Recall', scale: { domain: [0, 1] }, axis: { values: [0, 0.2, 0.4, 0.6, 0.8, 1], format: '.1f' } }, y: { field: 'precision', type: 'quantitative', title: 'Precision', scale: { domain: [0, 1] } }, color: { field: 'rung', type: 'ordinal', sort: order, title: null, scale: { domain: order } }, strokeDash: { field: 'rung', type: 'ordinal', sort: order, legend: null, scale: { domain: order, range: [[1, 0], [6, 3], [2, 2], [8, 3, 2, 3], [4, 4]] } } } },
     ],
   }
   return {
@@ -224,7 +224,7 @@ export function blockImportance(d: PageResults): FigureData {
   const spec: Spec = {
     height: { step: 36 },
     data: { values: rows },
-    encoding: { y: { field: 'block', type: 'nominal', sort: '-x', title: null, axis: { labelLimit: 240 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost when the block is shuffled', scale: { domain: [0, 0.5] } } },
+    encoding: { y: { field: 'block', type: 'nominal', sort: '-x', title: null, axis: { labelLimit: 240 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost on shuffling', scale: { domain: [0, 0.5] }, axis: { tickCount: 5 } } },
     layer: [
       { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
       { mark: { type: 'text', style: 'ink', align: 'left', dx: 6, fontWeight: 600 }, encoding: { text: { field: 'label' } } },

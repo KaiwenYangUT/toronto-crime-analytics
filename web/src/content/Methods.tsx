@@ -41,7 +41,7 @@ export function Methods() {
         <nav className={ui.toc} aria-label="On this page">
           <ol>
             {TOC.map(([id, label]) => (
-              <li key={id}><a href={`#${id}`} data-pinned={id === 'limitations'}>{label}</a></li>
+              <li key={id}><a href={`#${id}`}>{label}</a></li>
             ))}
           </ol>
         </nav>

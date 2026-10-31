@@ -26,10 +26,10 @@ export function trendSpec(rows: TrendRow[]): Spec {
 
 export function categoryBars(categories: string[], counts: number[]): Spec {
   return {
-    height: 180,
+    height: { step: 28 },
     data: { values: categories.map((c, i) => ({ category: c, count: counts[i] })) },
     mark: { type: 'bar' },
-    encoding: { x: { field: 'category', type: 'nominal', title: null, axis: { labelAngle: -20, labelLimit: 100 } }, y: { field: 'count', type: 'quantitative', title: 'Records' }, color: colorField(false) },
+    encoding: { y: { field: 'category', type: 'nominal', title: null, axis: { labelLimit: 130 } }, x: { field: 'count', type: 'quantitative', title: 'Records' }, color: colorField(false) },
   }
 }
 
@@ -39,7 +39,7 @@ export function weekdayBars(counts: number[]): Spec {
     height: 180,
     data: { values: labels.map((d, i) => ({ day: d, count: counts[i] })) },
     mark: { type: 'bar', style: 'accent' },
-    encoding: { x: { field: 'day', type: 'ordinal', sort: labels, title: null, axis: { labelAngle: 0 } }, y: { field: 'count', type: 'quantitative', title: 'Records' } },
+    encoding: { x: { field: 'day', type: 'ordinal', sort: labels, title: null, axis: { labelAngle: 0, labelExpr: 'slice(datum.value, 0, 2)' } }, y: { field: 'count', type: 'quantitative', title: 'Records' } },
   }
 }
 
