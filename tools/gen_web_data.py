@@ -51,6 +51,8 @@ PAGES: dict[str, dict[str, list[str] | None]] = {
     "predict": {
         "predict.ablation": None,
         "predict.eda_corrections": ["year", "rows", "robberies"],
+        # not shown on the page; the paper's figure 4 reads it from this file
+        "predict.inference_vs_prediction": None,
     },
     "methods": {
         "explain.sta303_v2": [
