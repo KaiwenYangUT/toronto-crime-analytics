@@ -10,17 +10,17 @@ for(const scheme of ['light','dark']){
   for(const [n,p] of Object.entries(routes)){
    const pg=await ctx.newPage();
    const errs=[];pg.on('console',m=>{if(m.type()==='error')errs.push(m.text())});pg.on('pageerror',e=>errs.push(String(e)));
-   await pg.goto(base+p,{waitUntil:'networkidle'});
+   await pg.goto(base+p,{waitUntil:'load',timeout:30000});
    await pg.waitForTimeout(2500);
    const f=`reviews/shots/${n}-${w}-${scheme}`;
    await pg.screenshot({path:f+'-fold.png'});
    await pg.screenshot({path:f+'-full.png',fullPage:true});
    const m=await pg.evaluate(()=>({sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,h:document.documentElement.scrollHeight,h1:[...document.querySelectorAll('h1')].map(e=>e.textContent),small:[...document.querySelectorAll('a,button,input,select,[role=tab]')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.height<24||r.width<24)}).length}));
-   out.push({n,w,scheme,...m,errs});
+   out.push({n,w,scheme,...m,errs});console.log(JSON.stringify({n,w,scheme,...m,errs}));
    await pg.close();
   }
   await ctx.close();
  }
 }
-console.log(JSON.stringify(out));
+console.log('DONE');
 await b.close();

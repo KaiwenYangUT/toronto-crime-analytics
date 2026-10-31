@@ -1,0 +1,43 @@
+{"n":"home","w":375,"scheme":"light","sw":375,"cw":375,"h":3748,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":375,"scheme":"light","sw":375,"cw":375,"h":3753,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":4,"errs":[]}
+{"n":"explain","w":375,"scheme":"light","sw":375,"cw":375,"h":6018,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":375,"scheme":"light","sw":375,"cw":375,"h":6087,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":375,"scheme":"light","sw":375,"cw":375,"h":2090,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":375,"scheme":"light","sw":375,"cw":375,"h":4899,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":375,"scheme":"light","sw":375,"cw":375,"h":1594,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+{"n":"home","w":768,"scheme":"light","sw":768,"cw":768,"h":2849,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":768,"scheme":"light","sw":768,"cw":768,"h":3359,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":4,"errs":[]}
+{"n":"explain","w":768,"scheme":"light","sw":768,"cw":768,"h":4799,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":768,"scheme":"light","sw":768,"cw":768,"h":4647,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":768,"scheme":"light","sw":768,"cw":768,"h":1474,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":768,"scheme":"light","sw":768,"cw":768,"h":3327,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":768,"scheme":"light","sw":768,"cw":768,"h":1136,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+{"n":"home","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":2091,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":2423,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":20,"errs":[]}
+{"n":"explain","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":3685,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":4497,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":1451,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":3118,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":1280,"scheme":"light","sw":1280,"cw":1280,"h":1069,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+{"n":"home","w":375,"scheme":"dark","sw":375,"cw":375,"h":3748,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":375,"scheme":"dark","sw":375,"cw":375,"h":3753,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":4,"errs":[]}
+{"n":"explain","w":375,"scheme":"dark","sw":375,"cw":375,"h":6018,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":375,"scheme":"dark","sw":375,"cw":375,"h":6087,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":375,"scheme":"dark","sw":375,"cw":375,"h":2090,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":375,"scheme":"dark","sw":375,"cw":375,"h":4899,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":375,"scheme":"dark","sw":375,"cw":375,"h":1594,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+{"n":"home","w":768,"scheme":"dark","sw":768,"cw":768,"h":2849,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":768,"scheme":"dark","sw":768,"cw":768,"h":3359,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":4,"errs":[]}
+{"n":"explain","w":768,"scheme":"dark","sw":768,"cw":768,"h":4799,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":768,"scheme":"dark","sw":768,"cw":768,"h":4647,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":768,"scheme":"dark","sw":768,"cw":768,"h":1474,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":768,"scheme":"dark","sw":768,"cw":768,"h":3327,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":768,"scheme":"dark","sw":768,"cw":768,"h":1136,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+{"n":"home","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":2091,"h1":["Where a property-type crime happens says far more about whether it is a robbery than when."],"small":2,"errs":[]}
+{"n":"explore","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":2423,"h1":["Reported incidents differ by place, weekday and hour, and every filter changes the count."],"small":20,"errs":[]}
+{"n":"explain","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":3685,"h1":["After 2019 a reported property-type incident was much less likely to be a robbery."],"small":2,"errs":[]}
+{"n":"predict","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":4497,"h1":["Place separates robbery from other property crime; time and census context add little."],"small":2,"errs":[]}
+{"n":"paper","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":1451,"h1":["Many time effects are statistically clear, yet time alone predicts little."],"small":5,"errs":[]}
+{"n":"methods","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":3118,"h1":["Every result comes from one pipeline that reproduced the three course projects first."],"small":2,"errs":[]}
+{"n":"about","w":1280,"scheme":"dark","sw":1280,"cw":1280,"h":1069,"h1":["Three University of Toronto course projects, rebuilt as one checked analysis."],"small":3,"errs":[]}
+DONE
