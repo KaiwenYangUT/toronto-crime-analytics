@@ -54,6 +54,79 @@
   },
   "producer": "tca.predict.ablation_report"
  },
+ "predict.census_scatter": {
+  "description": "JSC370 Figure 1 data: one point per neighbourhood (job ratio, median income, 2020 robbery count) and the rank correlations behind the corrected caption",
+  "file": "results/predict/predict.census_scatter.json",
+  "formats": {
+   "axes.income_max": {
+    "decimals": 0
+   },
+   "axes.income_min": {
+    "decimals": 0
+   },
+   "axes.ratio_max": {
+    "decimals": 3
+   },
+   "axes.ratio_min": {
+    "decimals": 3
+   },
+   "axes.robberies_max": {
+    "decimals": 0
+   },
+   "points.*.income": {
+    "decimals": 0
+   },
+   "points.*.ratio": {
+    "decimals": 3
+   },
+   "points.*.robberies": {
+    "decimals": 0
+   },
+   "summary.max.robberies": {
+    "decimals": 0
+   },
+   "summary.n": {
+    "decimals": 0
+   },
+   "summary.rest.median_income": {
+    "decimals": 0
+   },
+   "summary.rest.median_ratio": {
+    "decimals": 3
+   },
+   "summary.rest.n": {
+    "decimals": 0
+   },
+   "summary.spearman_income.p": {
+    "p": true
+   },
+   "summary.spearman_income.rho": {
+    "decimals": 2
+   },
+   "summary.spearman_ratio.p": {
+    "p": true
+   },
+   "summary.spearman_ratio.rho": {
+    "decimals": 2
+   },
+   "summary.top_decile.median_income": {
+    "decimals": 0
+   },
+   "summary.top_decile.median_ratio": {
+    "decimals": 3
+   },
+   "summary.top_decile.n": {
+    "decimals": 0
+   },
+   "summary.top_decile.threshold": {
+    "decimals": 0
+   },
+   "summary.total_robberies": {
+    "decimals": 0
+   }
+  },
+  "producer": "tca.explain.census_scatter"
+ },
  "predict.eda_corrections": {
   "description": "Evidence behind corrected JSC370 chart captions (summer, weekend, darkness, hourly) and neighbourhood-level Figure 2 statistics",
   "file": "results/predict/predict.eda_corrections.json",

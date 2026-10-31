@@ -49,6 +49,9 @@ BLOCK_TAGS = {
     "figcaption",
 }
 SKIP_TAGS = {"svg", "script", "style", "code", "title", "noscript"}
+# Result subtrees that never render as prose: 158 small integers would let almost any small numeral pass.
+# The census points render only in the chart SVG and the click-only table (which the audit does not read).
+SKIP_REFS = {"predict.census_scatter:points"}
 
 
 def normal(s: str) -> str:
@@ -60,6 +63,8 @@ def result_strings() -> set[str]:
     out: set[str] = set()
 
     def walk(node: object, ref: str) -> None:
+        if ref in SKIP_REFS:
+            return
         if isinstance(node, dict):
             for k, v in node.items():
                 if not k.startswith("_"):
@@ -110,12 +115,23 @@ def site_texts() -> dict[str, str]:
     return texts
 
 
+def cut_references(text: str) -> str:
+    """Drop the bibliography: the first page (form-feed separated) that starts with "References" and
+    every page after it. After a \\clearpage the heading follows a form feed, not a newline. Without
+    such a page, cut at the last "References" heading line."""
+    pages = text.split("\f")
+    for i, page in enumerate(pages):
+        if page.lstrip().startswith("References"):
+            return "\f".join(pages[:i])
+    cut = text.rfind("\nReferences")
+    return text[:cut] if cut > 0 else text
+
+
 def paper_text() -> str:
     text = subprocess.run(
         ["pdftotext", str(PDF), "-"], capture_output=True, text=True, check=True
     ).stdout
-    cut = text.rfind("\nReferences")
-    text = text[:cut] if cut > 0 else text
+    text = cut_references(text)
     pages = []
     for number, page in enumerate(text.split("\f"), 1):
         rows = page.rstrip().splitlines()

@@ -40,10 +40,12 @@ PAGES: dict[str, dict[str, list[str] | None]] = {
         ],
         "predict.ablation": ABLATION_SUMMARY,
         "predict.inference_vs_prediction": None,
+        "predict.census_scatter": ["summary"],
     },
     "explain": {
         "explain.sta303_v2": None,
         "predict.eda_corrections": None,
+        "predict.census_scatter": None,
         "predict.inference_vs_prediction": None,
     },
     "predict": {

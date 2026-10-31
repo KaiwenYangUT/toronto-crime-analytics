@@ -28,7 +28,7 @@ parity:
 
 # Improvements and result files (about 70 minutes, mostly the ablation ladder), then hashes and RESULTS.md.
 analysis:
-	source tools/env.sh; export PYTHONPATH=pipeline/src; python -m tca.explain.sta303_v2; python -m tca.predict.ablation_run; python -m tca.predict.ablation_report; python -m tca.predict.eda_corrections; python -m tca.predict.inference_vs_prediction; python parity/compare/xgb_grid_fix.py; python parity/compare/jsc370_benchmark_results.py; python -m tca.explore.export; python tools/hash_outputs.py; python tools/gen_results_md.py
+	source tools/env.sh; export PYTHONPATH=pipeline/src; python -m tca.explain.sta303_v2; python -m tca.predict.ablation_run; python -m tca.predict.ablation_report; python -m tca.predict.eda_corrections; python -m tca.explain.census_scatter; python -m tca.predict.inference_vs_prediction; python parity/compare/xgb_grid_fix.py; python parity/compare/jsc370_benchmark_results.py; python -m tca.explore.export; python tools/hash_outputs.py; python tools/gen_results_md.py
 
 # Per-page results JSON the site and the paper figures read.
 pages:

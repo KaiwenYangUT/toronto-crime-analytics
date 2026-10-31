@@ -1,0 +1,1006 @@
+{
+ "_provenance": {
+  "code_dirty": true,
+  "created": "2026-10-31T21:56:45+00:00",
+  "git_sha": "8d62a684f49a113fd01fdcf3e571083dde78eb96",
+  "inputs": {
+   "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
+   "Bicycle_Thefts_Open_Data.csv": "ada41ff1eefc5ce5866a490e33790c79bb42904dabe87ff1132b03df61796f69",
+   "Break_and_Enter_Open_Data.csv": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b",
+   "Homicides_Open_Data_(ASR-RC-TBL-002).csv": "9e23c93cdeaf93a123d2d7e9ff65700810c38a49e2532d3d1a35033d6170590a",
+   "Income_Dataset.xlsx": "d9c60864972635e1a37fdbce55899ce02da4a4aff500301546ae9562205c3f2b",
+   "Robbery_Open_Data.csv": "214aaf0e5f3a34511c37e31d326659780285e6f00cac1a58cfe08acbe934086b",
+   "Shooting_and_Firearm_Discharges_Open_Data.csv": "c67b58896652198db970bf14a29a9d99cb523decb83040bbbb8544831b9a9b52",
+   "Theft_Over_Open_Data.csv": "cec58ac7aaa1def1a32827818a43c214ce0a52f8cfa5f4cc1772f30585aba5f5"
+  },
+  "key": "predict.census_scatter",
+  "producer": "tca.explain.census_scatter",
+  "seed": 303313
+ },
+ "values": {
+  "axes": {
+   "income_max": 74500.0,
+   "income_min": 28400.0,
+   "ratio_max": 0.7522066034651848,
+   "ratio_min": 0.48928974069898534,
+   "robberies_max": 135
+  },
+  "points": [
+   {
+    "income": 30000.0,
+    "name": "Agincourt North",
+    "ratio": 0.6585458698134754,
+    "robberies": 17
+   },
+   {
+    "income": 32000.0,
+    "name": "Agincourt South-Malvern West",
+    "ratio": 0.6650583031765179,
+    "robberies": 18
+   },
+   {
+    "income": 45200.0,
+    "name": "Alderwood",
+    "ratio": 0.7226224783861671,
+    "robberies": 12
+   },
+   {
+    "income": 51600.0,
+    "name": "Annex",
+    "ratio": 0.5955686065136145,
+    "robberies": 41
+   },
+   {
+    "income": 46400.0,
+    "name": "Avondale",
+    "ratio": 0.7141216991963261,
+    "robberies": 9
+   },
+   {
+    "income": 46400.0,
+    "name": "Banbury-Don Mills",
+    "ratio": 0.6356701779876498,
+    "robberies": 7
+   },
+   {
+    "income": 37600.0,
+    "name": "Bathurst Manor",
+    "ratio": 0.6661036036036037,
+    "robberies": 7
+   },
+   {
+    "income": 39600.0,
+    "name": "Bay-Cloverhill",
+    "ratio": 0.5734870317002881,
+    "robberies": 19
+   },
+   {
+    "income": 43200.0,
+    "name": "Bayview Village",
+    "ratio": 0.6432160804020101,
+    "robberies": 18
+   },
+   {
+    "income": 38000.0,
+    "name": "Bayview Woods-Steeles",
+    "ratio": 0.5967184801381693,
+    "robberies": 2
+   },
+   {
+    "income": 54000.0,
+    "name": "Bedford Park-Nortown",
+    "ratio": 0.5554083885209713,
+    "robberies": 18
+   },
+   {
+    "income": 34000.0,
+    "name": "Beechborough-Greenbrook",
+    "ratio": 0.702572347266881,
+    "robberies": 4
+   },
+   {
+    "income": 33200.0,
+    "name": "Bendale South",
+    "ratio": 0.6945996275605214,
+    "robberies": 3
+   },
+   {
+    "income": 34000.0,
+    "name": "Bendale-Glen Andrew",
+    "ratio": 0.696839850026781,
+    "robberies": 19
+   },
+   {
+    "income": 44000.0,
+    "name": "Birchcliffe-Cliffside",
+    "ratio": 0.6817239950269374,
+    "robberies": 21
+   },
+   {
+    "income": 29400.0,
+    "name": "Black Creek",
+    "ratio": 0.7059148700939746,
+    "robberies": 23
+   },
+   {
+    "income": 38400.0,
+    "name": "Blake-Jones",
+    "ratio": 0.6325,
+    "robberies": 5
+   },
+   {
+    "income": 37200.0,
+    "name": "Briar Hill-Belgravia",
+    "ratio": 0.7338563669281835,
+    "robberies": 8
+   },
+   {
+    "income": 72000.0,
+    "name": "Bridle Path-Sunnybrook-York Mills",
+    "ratio": 0.48928974069898534,
+    "robberies": 8
+   },
+   {
+    "income": 38800.0,
+    "name": "Broadview North",
+    "ratio": 0.6733386709367494,
+    "robberies": 3
+   },
+   {
+    "income": 34400.0,
+    "name": "Brookhaven-Amesbury",
+    "ratio": 0.7113341204250295,
+    "robberies": 16
+   },
+   {
+    "income": 46800.0,
+    "name": "Cabbagetown-South St.James Town",
+    "ratio": 0.6537900874635568,
+    "robberies": 19
+   },
+   {
+    "income": 37200.0,
+    "name": "Caledonia-Fairbank",
+    "ratio": 0.6980461811722913,
+    "robberies": 7
+   },
+   {
+    "income": 60000.0,
+    "name": "Casa Loma",
+    "ratio": 0.5839028094153379,
+    "robberies": 3
+   },
+   {
+    "income": 48800.0,
+    "name": "Centennial Scarborough",
+    "ratio": 0.712618526622903,
+    "robberies": 3
+   },
+   {
+    "income": 42800.0,
+    "name": "Church-Wellesley",
+    "ratio": 0.6470588235294118,
+    "robberies": 58
+   },
+   {
+    "income": 36800.0,
+    "name": "Clairlea-Birchmount",
+    "ratio": 0.7200999642984648,
+    "robberies": 31
+   },
+   {
+    "income": 42000.0,
+    "name": "Clanton Park",
+    "ratio": 0.681592039800995,
+    "robberies": 17
+   },
+   {
+    "income": 38000.0,
+    "name": "Cliffcrest",
+    "ratio": 0.6627835683629675,
+    "robberies": 23
+   },
+   {
+    "income": 41200.0,
+    "name": "Corso Italia-Davenport",
+    "ratio": 0.7006578947368421,
+    "robberies": 12
+   },
+   {
+    "income": 46400.0,
+    "name": "Danforth",
+    "ratio": 0.6923076923076923,
+    "robberies": 16
+   },
+   {
+    "income": 46400.0,
+    "name": "Danforth East York",
+    "ratio": 0.6979332273449921,
+    "robberies": 9
+   },
+   {
+    "income": 34800.0,
+    "name": "Don Valley Village",
+    "ratio": 0.6496792587312901,
+    "robberies": 23
+   },
+   {
+    "income": 33200.0,
+    "name": "Dorset Park",
+    "ratio": 0.7179171791717918,
+    "robberies": 24
+   },
+   {
+    "income": 38000.0,
+    "name": "Dovercourt Village",
+    "ratio": 0.6340482573726541,
+    "robberies": 15
+   },
+   {
+    "income": 37600.0,
+    "name": "Downsview",
+    "ratio": 0.735678391959799,
+    "robberies": 7
+   },
+   {
+    "income": 45200.0,
+    "name": "Downtown Yonge East",
+    "ratio": 0.6630971993410214,
+    "robberies": 87
+   },
+   {
+    "income": 40800.0,
+    "name": "Dufferin Grove",
+    "ratio": 0.6401137980085349,
+    "robberies": 20
+   },
+   {
+    "income": 46000.0,
+    "name": "East End-Danforth",
+    "ratio": 0.6839983877468763,
+    "robberies": 27
+   },
+   {
+    "income": 31000.0,
+    "name": "East L'Amoreaux",
+    "ratio": 0.6577799321376636,
+    "robberies": 11
+   },
+   {
+    "income": 36800.0,
+    "name": "East Willowdale",
+    "ratio": 0.570286475682878,
+    "robberies": 18
+   },
+   {
+    "income": 48400.0,
+    "name": "Edenbridge-Humber Valley",
+    "ratio": 0.6362515413070283,
+    "robberies": 9
+   },
+   {
+    "income": 33200.0,
+    "name": "Eglinton East",
+    "ratio": 0.6923076923076923,
+    "robberies": 21
+   },
+   {
+    "income": 34400.0,
+    "name": "Elms-Old Rexdale",
+    "ratio": 0.6802259887005649,
+    "robberies": 7
+   },
+   {
+    "income": 37200.0,
+    "name": "Englemount-Lawrence",
+    "ratio": 0.6640432857845548,
+    "robberies": 23
+   },
+   {
+    "income": 44400.0,
+    "name": "Eringate-Centennial-West Deane",
+    "ratio": 0.702661207778915,
+    "robberies": 19
+   },
+   {
+    "income": 46000.0,
+    "name": "Etobicoke City Centre",
+    "ratio": 0.7522066034651848,
+    "robberies": 19
+   },
+   {
+    "income": 39200.0,
+    "name": "Etobicoke West Mall",
+    "ratio": 0.7003081664098614,
+    "robberies": 9
+   },
+   {
+    "income": 36000.0,
+    "name": "Fenside-Parkwoods",
+    "ratio": 0.6879749664729549,
+    "robberies": 5
+   },
+   {
+    "income": 30400.0,
+    "name": "Flemingdon Park",
+    "ratio": 0.6644423260247855,
+    "robberies": 5
+   },
+   {
+    "income": 44400.0,
+    "name": "Forest Hill North",
+    "ratio": 0.6151685393258427,
+    "robberies": 16
+   },
+   {
+    "income": 61600.0,
+    "name": "Forest Hill South",
+    "ratio": 0.5362438220757826,
+    "robberies": 5
+   },
+   {
+    "income": 64500.0,
+    "name": "Fort York-Liberty Village",
+    "ratio": 0.7463008631319359,
+    "robberies": 14
+   },
+   {
+    "income": 30400.0,
+    "name": "Glenfield-Jane Heights",
+    "ratio": 0.7337016574585635,
+    "robberies": 50
+   },
+   {
+    "income": 31200.0,
+    "name": "Golfdale-Cedarbrae-Woburn",
+    "ratio": 0.6804407713498623,
+    "robberies": 28
+   },
+   {
+    "income": 44800.0,
+    "name": "Greenwood-Coxwell",
+    "ratio": 0.7048543689320388,
+    "robberies": 23
+   },
+   {
+    "income": 48000.0,
+    "name": "Guildwood",
+    "ratio": 0.6862745098039216,
+    "robberies": 3
+   },
+   {
+    "income": 58800.0,
+    "name": "Harbourfront-CityPlace",
+    "ratio": 0.7394382279059146,
+    "robberies": 16
+   },
+   {
+    "income": 38400.0,
+    "name": "Henry Farm",
+    "ratio": 0.7053682896379525,
+    "robberies": 6
+   },
+   {
+    "income": 48400.0,
+    "name": "High Park North",
+    "ratio": 0.6619307832422586,
+    "robberies": 17
+   },
+   {
+    "income": 56400.0,
+    "name": "High Park-Swansea",
+    "ratio": 0.6399556868537666,
+    "robberies": 10
+   },
+   {
+    "income": 36400.0,
+    "name": "Highland Creek",
+    "ratio": 0.6324981017463933,
+    "robberies": 2
+   },
+   {
+    "income": 34400.0,
+    "name": "Hillcrest Village",
+    "ratio": 0.6403973509933775,
+    "robberies": 14
+   },
+   {
+    "income": 53200.0,
+    "name": "Humber Bay Shores",
+    "ratio": 0.7005503399158304,
+    "robberies": 8
+   },
+   {
+    "income": 40400.0,
+    "name": "Humber Heights-Westmount",
+    "ratio": 0.6936936936936937,
+    "robberies": 2
+   },
+   {
+    "income": 31200.0,
+    "name": "Humber Summit",
+    "ratio": 0.6984402079722704,
+    "robberies": 24
+   },
+   {
+    "income": 32400.0,
+    "name": "Humbermede",
+    "ratio": 0.7110705596107056,
+    "robberies": 14
+   },
+   {
+    "income": 45200.0,
+    "name": "Humewood-Cedarvale",
+    "ratio": 0.6422128683102826,
+    "robberies": 6
+   },
+   {
+    "income": 34000.0,
+    "name": "Ionview",
+    "ratio": 0.7157738095238095,
+    "robberies": 2
+   },
+   {
+    "income": 45600.0,
+    "name": "Islington",
+    "ratio": 0.6624355414518048,
+    "robberies": 16
+   },
+   {
+    "income": 47200.0,
+    "name": "Junction Area",
+    "ratio": 0.6793103448275862,
+    "robberies": 12
+   },
+   {
+    "income": 41200.0,
+    "name": "Junction-Wallace Emerson",
+    "ratio": 0.7054843304843305,
+    "robberies": 22
+   },
+   {
+    "income": 33200.0,
+    "name": "Keelesdale-Eglinton West",
+    "ratio": 0.7178175618073316,
+    "robberies": 11
+   },
+   {
+    "income": 32000.0,
+    "name": "Kennedy Park",
+    "ratio": 0.6672782874617736,
+    "robberies": 27
+   },
+   {
+    "income": 32400.0,
+    "name": "Kensington-Chinatown",
+    "ratio": 0.5947094945677845,
+    "robberies": 43
+   },
+   {
+    "income": 34400.0,
+    "name": "Kingsview Village-The Westway",
+    "ratio": 0.6780626780626781,
+    "robberies": 6
+   },
+   {
+    "income": 74500.0,
+    "name": "Kingsway South",
+    "ratio": 0.6082698585418934,
+    "robberies": 5
+   },
+   {
+    "income": 31400.0,
+    "name": "L'Amoreaux West",
+    "ratio": 0.6768172888015717,
+    "robberies": 16
+   },
+   {
+    "income": 48800.0,
+    "name": "Lambton Baby Point",
+    "ratio": 0.6442307692307693,
+    "robberies": 1
+   },
+   {
+    "income": 45200.0,
+    "name": "Lansing-Westgate",
+    "ratio": 0.6274617067833698,
+    "robberies": 11
+   },
+   {
+    "income": 68000.0,
+    "name": "Lawrence Park North",
+    "ratio": 0.632446134347275,
+    "robberies": 12
+   },
+   {
+    "income": 67500.0,
+    "name": "Lawrence Park South",
+    "ratio": 0.5587680703959774,
+    "robberies": 12
+   },
+   {
+    "income": 64000.0,
+    "name": "Leaside-Bennington",
+    "ratio": 0.620380739081747,
+    "robberies": 8
+   },
+   {
+    "income": 46000.0,
+    "name": "Little Portugal",
+    "ratio": 0.6746704331450094,
+    "robberies": 9
+   },
+   {
+    "income": 46000.0,
+    "name": "Long Branch",
+    "ratio": 0.7225092250922509,
+    "robberies": 16
+   },
+   {
+    "income": 33200.0,
+    "name": "Malvern East",
+    "ratio": 0.7196652719665272,
+    "robberies": 18
+   },
+   {
+    "income": 31600.0,
+    "name": "Malvern West",
+    "ratio": 0.708169014084507,
+    "robberies": 7
+   },
+   {
+    "income": 37200.0,
+    "name": "Maple Leaf",
+    "ratio": 0.7068273092369478,
+    "robberies": 2
+   },
+   {
+    "income": 46800.0,
+    "name": "Markland Wood",
+    "ratio": 0.6816874400767018,
+    "robberies": 16
+   },
+   {
+    "income": 28400.0,
+    "name": "Milliken",
+    "ratio": 0.6234132581100141,
+    "robberies": 32
+   },
+   {
+    "income": 45200.0,
+    "name": "Mimico-Queensway",
+    "ratio": 0.7071357779980179,
+    "robberies": 3
+   },
+   {
+    "income": 34400.0,
+    "name": "Morningside",
+    "ratio": 0.6736425339366516,
+    "robberies": 8
+   },
+   {
+    "income": 34800.0,
+    "name": "Morningside Heights",
+    "ratio": 0.7070401211203634,
+    "robberies": 16
+   },
+   {
+    "income": 42800.0,
+    "name": "Moss Park",
+    "ratio": 0.6732638888888889,
+    "robberies": 135
+   },
+   {
+    "income": 34800.0,
+    "name": "Mount Dennis",
+    "ratio": 0.7178916109873794,
+    "robberies": 19
+   },
+   {
+    "income": 29600.0,
+    "name": "Mount Olive-Silverstone-Jamestown",
+    "ratio": 0.6949860724233984,
+    "robberies": 31
+   },
+   {
+    "income": 58400.0,
+    "name": "Mount Pleasant East",
+    "ratio": 0.6529191215854312,
+    "robberies": 15
+   },
+   {
+    "income": 37600.0,
+    "name": "New Toronto",
+    "ratio": 0.6865912762520194,
+    "robberies": 11
+   },
+   {
+    "income": 34000.0,
+    "name": "Newtonbrook East",
+    "ratio": 0.5938069216757741,
+    "robberies": 15
+   },
+   {
+    "income": 32800.0,
+    "name": "Newtonbrook West",
+    "ratio": 0.6514111365369947,
+    "robberies": 23
+   },
+   {
+    "income": 54400.0,
+    "name": "North Riverdale",
+    "ratio": 0.5925925925925926,
+    "robberies": 15
+   },
+   {
+    "income": 33600.0,
+    "name": "North St.James Town",
+    "ratio": 0.6741316270566727,
+    "robberies": 34
+   },
+   {
+    "income": 46000.0,
+    "name": "North Toronto",
+    "ratio": 0.6910344827586207,
+    "robberies": 3
+   },
+   {
+    "income": 37600.0,
+    "name": "O'Connor-Parkview",
+    "ratio": 0.6741935483870968,
+    "robberies": 18
+   },
+   {
+    "income": 33600.0,
+    "name": "Oakdale-Beverley Heights",
+    "ratio": 0.7160092807424594,
+    "robberies": 51
+   },
+   {
+    "income": 29400.0,
+    "name": "Oakridge",
+    "ratio": 0.6238683127572017,
+    "robberies": 26
+   },
+   {
+    "income": 37600.0,
+    "name": "Oakwood Village",
+    "ratio": 0.6837046745303627,
+    "robberies": 25
+   },
+   {
+    "income": 44400.0,
+    "name": "Old East York",
+    "ratio": 0.6807653575025177,
+    "robberies": 5
+   },
+   {
+    "income": 43200.0,
+    "name": "Palmerston-Little Italy",
+    "ratio": 0.5990648743424898,
+    "robberies": 8
+   },
+   {
+    "income": 39200.0,
+    "name": "Parkwoods-O'Connor Hills",
+    "ratio": 0.6616126809097175,
+    "robberies": 4
+   },
+   {
+    "income": 39600.0,
+    "name": "Pelmo Park-Humberlea",
+    "ratio": 0.7359597652975691,
+    "robberies": 7
+   },
+   {
+    "income": 49200.0,
+    "name": "Playter Estates-Danforth",
+    "ratio": 0.6139747995418099,
+    "robberies": 7
+   },
+   {
+    "income": 34400.0,
+    "name": "Pleasant View",
+    "ratio": 0.648124191461837,
+    "robberies": 10
+   },
+   {
+    "income": 58800.0,
+    "name": "Princess-Rosethorn",
+    "ratio": 0.5969387755102041,
+    "robberies": 10
+   },
+   {
+    "income": 33200.0,
+    "name": "Regent Park",
+    "ratio": 0.677443056576047,
+    "robberies": 13
+   },
+   {
+    "income": 33600.0,
+    "name": "Rexdale-Kipling",
+    "ratio": 0.6946277097078228,
+    "robberies": 14
+   },
+   {
+    "income": 34400.0,
+    "name": "Rockcliffe-Smythe",
+    "ratio": 0.711493718008376,
+    "robberies": 14
+   },
+   {
+    "income": 45600.0,
+    "name": "Roncesvalles",
+    "ratio": 0.6316685584562997,
+    "robberies": 22
+   },
+   {
+    "income": 67500.0,
+    "name": "Rosedale-Moore Park",
+    "ratio": 0.5588516746411484,
+    "robberies": 22
+   },
+   {
+    "income": 60400.0,
+    "name": "Runnymede-Bloor West Village",
+    "ratio": 0.6695880806310254,
+    "robberies": 8
+   },
+   {
+    "income": 31400.0,
+    "name": "Rustic",
+    "ratio": 0.6594202898550725,
+    "robberies": 8
+   },
+   {
+    "income": 32400.0,
+    "name": "Scarborough Village",
+    "ratio": 0.652230971128609,
+    "robberies": 17
+   },
+   {
+    "income": 52400.0,
+    "name": "South Eglinton-Davisville",
+    "ratio": 0.7087893864013267,
+    "robberies": 16
+   },
+   {
+    "income": 35200.0,
+    "name": "South Parkdale",
+    "ratio": 0.6755173760249903,
+    "robberies": 20
+   },
+   {
+    "income": 48800.0,
+    "name": "South Riverdale",
+    "ratio": 0.6760806916426513,
+    "robberies": 36
+   },
+   {
+    "income": 58000.0,
+    "name": "St Lawrence-East Bayfront-The Islands",
+    "ratio": 0.714545868427043,
+    "robberies": 45
+   },
+   {
+    "income": 46400.0,
+    "name": "St.Andrew-Windfields",
+    "ratio": 0.5650921658986175,
+    "robberies": 9
+   },
+   {
+    "income": 29200.0,
+    "name": "Steeles",
+    "ratio": 0.6346153846153846,
+    "robberies": 6
+   },
+   {
+    "income": 48400.0,
+    "name": "Stonegate-Queensway",
+    "ratio": 0.6741452991452992,
+    "robberies": 20
+   },
+   {
+    "income": 32800.0,
+    "name": "Tam O'Shanter-Sullivan",
+    "ratio": 0.6813559322033899,
+    "robberies": 20
+   },
+   {
+    "income": 32400.0,
+    "name": "Taylor-Massey",
+    "ratio": 0.6385696040868455,
+    "robberies": 27
+   },
+   {
+    "income": 61200.0,
+    "name": "The Beaches",
+    "ratio": 0.6172738436348751,
+    "robberies": 7
+   },
+   {
+    "income": 32800.0,
+    "name": "Thistletown-Beaumond Heights",
+    "ratio": 0.6756756756756757,
+    "robberies": 9
+   },
+   {
+    "income": 29400.0,
+    "name": "Thorncliffe Park",
+    "ratio": 0.5793103448275863,
+    "robberies": 5
+   },
+   {
+    "income": 40400.0,
+    "name": "Trinity-Bellwoods",
+    "ratio": 0.6252631578947369,
+    "robberies": 23
+   },
+   {
+    "income": 43200.0,
+    "name": "University",
+    "ratio": 0.5506715506715507,
+    "robberies": 9
+   },
+   {
+    "income": 34000.0,
+    "name": "Victoria Village",
+    "ratio": 0.6911421911421911,
+    "robberies": 11
+   },
+   {
+    "income": 67000.0,
+    "name": "Wellington Place",
+    "ratio": 0.7357075913776945,
+    "robberies": 24
+   },
+   {
+    "income": 33200.0,
+    "name": "West Hill",
+    "ratio": 0.6921662375873483,
+    "robberies": 36
+   },
+   {
+    "income": 33600.0,
+    "name": "West Humber-Clairville",
+    "ratio": 0.7104047813094267,
+    "robberies": 76
+   },
+   {
+    "income": 65500.0,
+    "name": "West Queen West",
+    "ratio": 0.7389761784085149,
+    "robberies": 8
+   },
+   {
+    "income": 42000.0,
+    "name": "West Rouge",
+    "ratio": 0.7172995780590717,
+    "robberies": 26
+   },
+   {
+    "income": 33600.0,
+    "name": "Westminster-Branson",
+    "ratio": 0.6746235769372017,
+    "robberies": 17
+   },
+   {
+    "income": 34800.0,
+    "name": "Weston",
+    "ratio": 0.7060085836909872,
+    "robberies": 27
+   },
+   {
+    "income": 35600.0,
+    "name": "Weston-Pelham Park",
+    "ratio": 0.7109723461195361,
+    "robberies": 4
+   },
+   {
+    "income": 35200.0,
+    "name": "Wexford/Maryvale",
+    "ratio": 0.688026981450253,
+    "robberies": 29
+   },
+   {
+    "income": 37600.0,
+    "name": "Willowdale West",
+    "ratio": 0.6272094268880557,
+    "robberies": 25
+   },
+   {
+    "income": 40800.0,
+    "name": "Willowridge-Martingrove-Richview",
+    "ratio": 0.697463768115942,
+    "robberies": 16
+   },
+   {
+    "income": 32400.0,
+    "name": "Woburn North",
+    "ratio": 0.6972713864306784,
+    "robberies": 26
+   },
+   {
+    "income": 50000.0,
+    "name": "Woodbine Corridor",
+    "ratio": 0.6884272997032641,
+    "robberies": 6
+   },
+   {
+    "income": 46400.0,
+    "name": "Woodbine-Lumsden",
+    "ratio": 0.7123442808607021,
+    "robberies": 6
+   },
+   {
+    "income": 43600.0,
+    "name": "Wychwood",
+    "ratio": 0.6362397820163488,
+    "robberies": 19
+   },
+   {
+    "income": 44000.0,
+    "name": "Yonge-Bay Corridor",
+    "ratio": 0.5986078886310905,
+    "robberies": 55
+   },
+   {
+    "income": 36400.0,
+    "name": "Yonge-Doris",
+    "ratio": 0.6726872246696035,
+    "robberies": 12
+   },
+   {
+    "income": 55200.0,
+    "name": "Yonge-Eglinton",
+    "ratio": 0.6519446275543836,
+    "robberies": 9
+   },
+   {
+    "income": 62400.0,
+    "name": "Yonge-St.Clair",
+    "ratio": 0.6170076726342711,
+    "robberies": 4
+   },
+   {
+    "income": 32400.0,
+    "name": "York University Heights",
+    "ratio": 0.7002334111370457,
+    "robberies": 47
+   },
+   {
+    "income": 36400.0,
+    "name": "Yorkdale-Glen Park",
+    "ratio": 0.7174157303370786,
+    "robberies": 40
+   }
+  ],
+  "summary": {
+   "max": {
+    "name": "Moss Park",
+    "robberies": 135
+   },
+   "n": 158,
+   "rest": {
+    "median_income": 39200.0,
+    "median_ratio": 0.6762464822386236,
+    "n": 142
+   },
+   "spearman_income": {
+    "p": 0.0035565375226008365,
+    "rho": -0.23060443928409266
+   },
+   "spearman_ratio": {
+    "p": 0.35476928475337294,
+    "rho": 0.07410626655944406
+   },
+   "top_decile": {
+    "median_income": 35000.0,
+    "median_ratio": 0.675106159349662,
+    "n": 16,
+    "threshold": 32
+   },
+   "total_robberies": 2779
+  }
+ }
+}

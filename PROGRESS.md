@@ -157,7 +157,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] Approved by the user 2026-10-31, including AGENTS.md wording §0 (a)-(c) and the site-section removals in §3; Q5 covers installing plotly.js-gl3d-dist-min@4.2.0 into web/
 - [x] R0: tree reconciled (review scripts and `.claude/launch.json` committed; `paper.pdf` timestamp diff left to the rebuild); §0 applied to AGENTS.md, PLAN.md, DESIGN.md, PROGRESS.md
 - [ ] R1a Foundations: tokens (type scale, layout, magnitude ramp, paper theme block), shared components, theme switch, Gate A
-- [ ] R1b Census pipeline: `predict.census_scatter`, removal of `jsc370_benchmark` / `xgb_grid_fix` from site PAGES, audit points exclusion, PARITY/CHANGES entries
+- [x] R1b Census pipeline: `predict.census_scatter` (n 158; Spearman income rho -0.23, job ratio 0.07), 5 tests, wired into explain/overview pages, audit skips the points and cuts References after a form feed (0 unmatched), PARITY/CHANGES C1. Removal of `jsc370_benchmark` / `xgb_grid_fix` from PAGES deferred until Predict/Methods are rewritten (R2b/R3a)
 - [x] R1c Paper rule: `\clearpage` before the bibliography, `check_page_count.py` counts content pages (limit 7, warn above 6, fails without a References page), 7 tests; `make paper` = 6 content pages + references on page 7. The audit `\f` cut is R1b's
 - [ ] Code review (high) at the end of R1, then Gate A (design lead, Predict at 375/1280/1440, light and dark)
 - [ ] R2a Explore dashboard; R2b Explain and Predict; R2c 3D scatter (plotly chunk, bundle rule); Gate B
