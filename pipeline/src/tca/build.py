@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import locale
 import re
 from pathlib import Path
 
@@ -305,36 +304,12 @@ def jsc370_census(path: Path | None = None) -> pd.DataFrame:
     return inc
 
 
-R_COLLATION_LOCALE = "en_CA.UTF-8"
-
-
-def r_collation_available() -> bool:
-    """True if the process C library offers the locale R's order() used for the reference run."""
-    previous = locale.setlocale(locale.LC_COLLATE)
-    try:
-        locale.setlocale(locale.LC_COLLATE, R_COLLATION_LOCALE)
-    except locale.Error:
-        return False
-    finally:
-        locale.setlocale(locale.LC_COLLATE, previous)
-    return True
-
-
 def _r_sorted(order: list[int], names: list[str]) -> list[int]:
-    """Stable sort of row positions by name under R's collation. The locale is switched only for
-    the duration of the sort; a missing locale is an error, not a silent byte-order fallback."""
-    previous = locale.setlocale(locale.LC_COLLATE)
-    try:
-        locale.setlocale(locale.LC_COLLATE, R_COLLATION_LOCALE)
-    except locale.Error as err:
-        raise RuntimeError(
-            f"locale {R_COLLATION_LOCALE} is needed to reproduce R's row order; "
-            "install it or sort by key yourself"
-        ) from err
-    try:
-        return sorted(order, key=lambda i: locale.strxfrm(names[i]))
-    finally:
-        locale.setlocale(locale.LC_COLLATE, previous)
+    """Stable sort of row positions by name in code-point order. R's order() ran under
+    en_CA.UTF-8 on the reference machine, where that locale sorts these names exactly like code
+    points (the reference re-run gives the same table under LC_COLLATE=C, parity/PARITY.md), so
+    the result does not depend on the C library's locale data."""
+    return sorted(order, key=lambda i: names[i])
 
 
 def _isort_with_index(codes: list[int], index: list[int]) -> None:

@@ -9,7 +9,6 @@ from tca.build import (
     NEIGHBOURHOOD_FIXES,
     jsc370_census,
     jsc370_legacy,
-    r_collation_available,
     r_left_merge_order,
 )
 from tca.io import read_census
@@ -35,7 +34,6 @@ def test_matches_r_final_data(report):
     assert report["neighbourhoods_matched"] == 158
 
 
-@pytest.mark.skipif(not r_collation_available(), reason="needs the en_CA.UTF-8 locale")
 def test_row_order_matches_r(report):
     assert report["row_order_equal"]
 
