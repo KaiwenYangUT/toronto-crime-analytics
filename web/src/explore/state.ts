@@ -76,7 +76,7 @@ export function fromParams(p: URLSearchParams, d: ExploreState, validPlaces: str
   const cats = p.get('cats')
   if (cats !== null) s.cats = cats.split(',').filter((c) => validCats.includes(c))
   const days = p.get('days')
-  if (days !== null) s.weekdays = days.split(',').map(Number).filter((n) => n >= 1 && n <= 7)
+  if (days !== null) s.weekdays = days.split(',').map(Number).filter((n) => Number.isInteger(n) && n >= 1 && n <= 7)
   const hours = /^(\d{1,2})-(\d{1,2})$/.exec(p.get('hours') ?? '')
   if (hours && Number(hours[1]) <= Number(hours[2]) && Number(hours[2]) <= 23) s.hours = [Number(hours[1]), Number(hours[2])]
   for (const k of ['from', 'to'] as const) {

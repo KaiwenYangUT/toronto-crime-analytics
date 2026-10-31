@@ -3,7 +3,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { readFileSync } from 'node:fs'
 import { gzipSync } from 'node:zlib'
-import { extname, join, normalize } from 'node:path'
+import { extname, join, normalize, sep } from 'node:path'
 
 const root = join(process.cwd(), 'site')
 const base = '/toronto-crime-analytics'
@@ -16,8 +16,14 @@ createServer((req, res) => {
     res.writeHead(404).end('not found')
     return
   }
-  let file = normalize(join(root, decodeURIComponent(url.pathname.slice(base.length))))
-  if (!file.startsWith(root)) {
+  let file
+  try {
+    file = normalize(join(root, decodeURIComponent(url.pathname.slice(base.length))))
+  } catch {
+    res.writeHead(400).end('bad request')
+    return
+  }
+  if (file !== root && !file.startsWith(root + sep)) {
     res.writeHead(403).end()
     return
   }
