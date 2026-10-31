@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { createRequire } from 'module'; const require=createRequire(process.cwd()+'/package.json'); const { chromium } = require('playwright');
 const base='http://localhost:4173/toronto-crime-analytics';
 const routes={home:'/',explore:'/explore',explain:'/explain',predict:'/predict',paper:'/paper',methods:'/methods',about:'/about'};
 const sizes=[[375,812],[768,1024],[1280,800]];

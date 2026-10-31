@@ -32,7 +32,7 @@ web:
 
 # Paper: numbers, tables and figures from results/, then LaTeX (needs `make env`; fonts in .cache/fonts).
 paper:
-	source tools/env.sh; python tools/gen_web_data.py; python tools/gen_paper.py all
+	source tools/env.sh; python tools/spikes/fetch_assets.py; python tools/gen_web_data.py; python tools/gen_paper.py all
 	source tools/env.sh; python tools/check_paper_numerals.py
 	source tools/env.sh; cd paper; tectonic --outdir build --keep-logs paper.tex
 	source tools/env.sh; python tools/check_paper_pdf.py paper/build/paper.pdf 7
