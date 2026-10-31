@@ -19,13 +19,26 @@ jobs:
       - run: python -m venv .venv && .venv/bin/python -m pip install -r requirements.lock
       - run: cd web && npm ci
       - run: make data
-      - name: Tests, lint and parity against the committed R outputs
-        run: |
-          source .venv/bin/activate
-          ruff check .
-          python -m pytest -q
-          python -m pytest tools/tests -q
-          PYTHONPATH=pipeline/src bash -c 'for s in compare_sta303 compare_sta303_model compare_jsc370 compare_jsc370_models compare_explore compare_charts unified_ledger; do python parity/compare/$s.py; done'
+      - name: Lint
+        run: .venv/bin/ruff check .
+      - name: Pipeline tests
+        run: .venv/bin/python -m pytest -q
+      - name: Tool tests
+        run: .venv/bin/python -m pytest tools/tests -q
+      - name: Parity compare_sta303
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_sta303.py
+      - name: Parity compare_sta303_model
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_sta303_model.py
+      - name: Parity compare_jsc370
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_jsc370.py
+      - name: Parity compare_jsc370_models
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_jsc370_models.py
+      - name: Parity compare_explore
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_explore.py
+      - name: Parity compare_charts
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/compare_charts.py
+      - name: Parity unified_ledger
+        run: PYTHONPATH=pipeline/src .venv/bin/python parity/compare/unified_ledger.py
 
   web:
     runs-on: ubuntu-latest
