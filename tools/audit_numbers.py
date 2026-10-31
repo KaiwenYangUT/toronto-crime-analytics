@@ -32,6 +32,22 @@ TOKEN = re.compile(r"(?<![\w.])(?:(?<=[\s(\[])[-−])?\d[\d,]*(?:\.\d+)?%?(?![\w
 LABELLED = re.compile(
     r"\b(?:Figure|Fig\.|Table|Section|Step)\s*~?\d+(?:\.\d+)?|§\s*\d+|\bP[0-9]\b|\bQ[0-9]\b"
 )
+BLOCK_TAGS = {
+    "br",
+    "p",
+    "li",
+    "tr",
+    "td",
+    "th",
+    "dt",
+    "dd",
+    "div",
+    "h1",
+    "h2",
+    "h3",
+    "section",
+    "figcaption",
+}
 SKIP_TAGS = {"svg", "script", "style", "code", "title", "noscript"}
 
 
@@ -69,22 +85,7 @@ class Text(HTMLParser):
         self.chunks: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list) -> None:
-        if tag in (
-            "br",
-            "p",
-            "li",
-            "tr",
-            "td",
-            "th",
-            "dt",
-            "dd",
-            "div",
-            "h1",
-            "h2",
-            "h3",
-            "section",
-            "figcaption",
-        ):
+        if tag in BLOCK_TAGS:
             self.chunks.append("\n")
         if tag in SKIP_TAGS:
             self.depth.append(tag)

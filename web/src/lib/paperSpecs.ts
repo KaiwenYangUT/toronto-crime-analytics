@@ -142,28 +142,19 @@ export function paperFig4(d: PageResults): Spec {
   }))
   const P = `predict.ablation:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop`
   const imp = IMPORTANCE_BLOCKS.map(([k, label]) => ({ label, drop: num(d, `${P}.${k}`), text: fmt(d, `${P}.${k}`) }))
-  const left: Spec = {
-    title: { text: 'Inference: clear time terms', fontSize: 13, anchor: 'start' },
+  const panel = (title: string, rows: { label: string; value: number; text: string }[], x: Spec, labelLimit: number): Spec => ({
+    title: { text: title, fontSize: 13, anchor: 'start' },
     width: 200,
     height: { step: 26 },
-    data: { values: inf },
-    encoding: { y: { field: 'label', type: 'nominal', sort: inf.map((r) => r.label), title: null, axis: { labelLimit: 150 } }, x: { field: 'share', type: 'quantitative', title: 'Share of terms', scale: { domain: [0, 1.25] }, axis: { format: '.0%', values: [0, 0.5, 1] } } },
+    data: { values: rows },
+    encoding: { y: { field: 'label', type: 'nominal', sort: rows.map((r) => r.label), title: null, axis: { labelLimit } }, x: { field: 'value', type: 'quantitative', ...x } },
     layer: [
       { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
       { mark: { type: 'text', style: 'ink', align: 'left', dx: 5, fontWeight: 600, fontSize: 12 }, encoding: { text: { field: 'text' } } },
     ],
-  }
-  const right: Spec = {
-    title: { text: 'Prediction: PR-AUC lost on shuffling', fontSize: 13, anchor: 'start' },
-    width: 200,
-    height: { step: 26 },
-    data: { values: imp },
-    encoding: { y: { field: 'label', type: 'nominal', sort: imp.map((r) => r.label), title: null, axis: { labelLimit: 170 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost', scale: { domain: [0, 0.55] }, axis: { values: [0, 0.1, 0.2, 0.3, 0.4, 0.5] } } },
-    layer: [
-      { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
-      { mark: { type: 'text', style: 'ink', align: 'left', dx: 5, fontWeight: 600, fontSize: 12 }, encoding: { text: { field: 'text' } } },
-    ],
-  }
+  })
+  const left = panel('Inference: clear time terms', inf.map((r) => ({ label: r.label, value: r.share, text: r.text })), { title: 'Share of terms', scale: { domain: [0, 1.25] }, axis: { format: '.0%', values: [0, 0.5, 1] } }, 150)
+  const right = panel('Prediction: PR-AUC lost on shuffling', imp.map((r) => ({ label: r.label, value: r.drop, text: r.text })), { title: 'PR-AUC lost', scale: { domain: [0, 0.55] }, axis: { values: [0, 0.1, 0.2, 0.3, 0.4, 0.5] } }, 170)
   return { hconcat: [left, right], spacing: 28 }
 }
 
