@@ -36,6 +36,13 @@ def prepare() -> tuple[pd.DataFrame, dict]:
     outside_window = (
         source_rows - steps[next(k for k in steps if k.startswith("valid calendar date"))]
     )
+
+    def dropped(prefix: str) -> int:
+        """Rows removed by the first ledger step whose name starts with ``prefix``."""
+        names = [s["step"] for s in ledger["steps"]]
+        i = next(i for i, name in enumerate(names) if name.startswith(prefix))
+        return ledger["steps"][i - 1]["rows"] - ledger["steps"][i]["rows"]
+
     n_before = len(df)
     df = df[df["neighbourhood"] != NSA].copy()
     dark, dst = solar_darkness(df["date"], df["hour"])
@@ -44,6 +51,9 @@ def prepare() -> tuple[pd.DataFrame, dict]:
     log = {
         "source_rows": source_rows,
         "rows_outside_2014_2023_or_invalid_date": outside_window,
+        "rows_outside_toronto_box": dropped("coordinates inside"),
+        "exact_duplicate_rows_dropped": dropped("exact duplicates"),
+        "cross_category_conflict_rows_dropped": dropped("cross-category rule"),
         "ledger_final_rows": n_before,
         "nsa_rows_dropped": n_before - len(df),
         "cross_category_conflict_events_dropped": ledger["cross_category"][

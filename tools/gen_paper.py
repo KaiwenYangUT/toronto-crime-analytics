@@ -163,6 +163,12 @@ def write_tables() -> None:
             "Removed: occurrence outside 2014 to 2023, or invalid date",
             f"{log}.rows_outside_2014_2023_or_invalid_date",
         ),
+        ("Removed: coordinates outside the Toronto box", f"{log}.rows_outside_toronto_box"),
+        ("Removed: exact duplicates within a category", f"{log}.exact_duplicate_rows_dropped"),
+        (
+            "Removed: events labelled robbery and another type",
+            f"{log}.cross_category_conflict_rows_dropped",
+        ),
         ("Rows in the unified table", f"{log}.ledger_final_rows"),
         ("Removed: no neighbourhood (NSA)", f"{log}.nsa_rows_dropped"),
         ("Rows used by the models", f"{log}.model_rows"),

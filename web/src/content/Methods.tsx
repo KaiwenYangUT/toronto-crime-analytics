@@ -19,7 +19,9 @@ const TOC = [
 const STEPS = [
   ['log.source_rows', 'Rows in the four Toronto Police files'],
   ['log.rows_outside_2014_2023_or_invalid_date', 'Removed: occurrence outside 2014 to 2023, or an invalid date'],
-  ['log.cross_category_conflict_events_dropped', 'Events removed because the same event is labelled robbery and another type'],
+  ['log.rows_outside_toronto_box', 'Removed: coordinates outside the Toronto box'],
+  ['log.exact_duplicate_rows_dropped', 'Removed: exact duplicates within a category'],
+  ['log.cross_category_conflict_rows_dropped', 'Removed: rows of events labelled both robbery and another type'],
   ['log.ledger_final_rows', 'Rows in the unified table'],
   ['log.nsa_rows_dropped', 'Removed from the model: no neighbourhood (NSA)'],
   ['log.model_rows', 'Rows used by the inference model'],
@@ -71,7 +73,7 @@ export function Methods() {
               />
             </div>
             <p className="prose" style={{ marginTop: 'var(--space-3)' }}>
-              Other rules in the table: exact duplicate rows are removed, and coordinates outside Toronto are dropped. Robberies are <Num k={`${X}:robbery`} /> of the model rows, a share of{' '}
+              The last removal covers <Num k={`${X}:log.cross_category_conflict_events_dropped`} /> events that carry more than one crime type. Robberies are <Num k={`${X}:robbery`} /> of the model rows, a share of{' '}
               <Num k={`${X}:robbery_share`} />.
             </p>
           </Section>

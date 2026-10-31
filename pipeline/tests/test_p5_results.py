@@ -158,3 +158,19 @@ def test_weekend_verdict_requires_both_parts_and_hour_verdict_either():
 def test_the_headline_message_is_issued_only_when_its_criteria_hold():
     iv = _values("predict.inference_vs_prediction")
     assert all(iv["message_criteria"].values()) == iv["message"].startswith("Many time terms")
+
+
+def test_identity_hash_ignores_wall_clock_timings():
+    a = {
+        "_provenance": {"seed": 1},
+        "values": {"v": 1, "variants": {"L1": {"fit_seconds": 5.1, "x": 2}}},
+    }
+    b = {
+        "_provenance": {"seed": 1},
+        "values": {"v": 1, "variants": {"L1": {"fit_seconds": 9.9, "x": 2}}},
+    }
+    c = {
+        "_provenance": {"seed": 1},
+        "values": {"v": 1, "variants": {"L1": {"fit_seconds": 5.1, "x": 3}}},
+    }
+    assert results.canonical(a) == results.canonical(b) != results.canonical(c)

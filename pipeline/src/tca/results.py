@@ -20,6 +20,9 @@ RESULTS_DIR = ROOT / "results"
 INDEX = RESULTS_DIR / "index.json"
 # Provenance fields that describe the run, not the values; excluded when hashing for identity.
 VOLATILE = ("created", "git_sha", "code_dirty")
+TIMING_KEYS = (
+    "fit_seconds",
+)  # wall-clock times vary between runs and are left out of identity hashes
 
 
 def git_sha() -> str:
@@ -61,11 +64,23 @@ def input_hashes(names: list[str]) -> dict[str, str]:
     return {n: files[n] for n in names}
 
 
+def _drop_timing(node: object) -> None:
+    if isinstance(node, dict):
+        for key in TIMING_KEYS:
+            node.pop(key, None)
+        for child in node.values():
+            _drop_timing(child)
+    elif isinstance(node, list):
+        for child in node:
+            _drop_timing(child)
+
+
 def canonical(payload: dict) -> str:
     """The JSON text that identity hashing uses: volatile provenance removed, keys sorted."""
     clean = json.loads(json.dumps(payload))
     for key in VOLATILE:
         clean["_provenance"].pop(key, None)
+    _drop_timing(clean)
     return json.dumps(clean, sort_keys=True, indent=1, ensure_ascii=False) + "\n"
 
 
