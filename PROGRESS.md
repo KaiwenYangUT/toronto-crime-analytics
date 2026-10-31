@@ -7,7 +7,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P9 prepared locally; waiting for the user's decisions before any push or deploy |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Ask the user: Q1 (repository, visibility), Q3 (licence), Q6 (author line), basemap hosting, Explorer rights note; then, with explicit OK for each, push and deploy |
+| Next action | Check the CI run on GitHub (Actions tab) and fix failures; then, with the user's OK, enable Pages (Settings > Pages > Source: GitHub Actions) and run the `pages` workflow manually |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -146,7 +146,7 @@ Add a row whenever work moves to a different machine or app.
 ### P9 Release (ask before each step)
 - [x] README (with four screenshots in `docs/screenshots/`), `LICENSE` (MIT with "Kaiwen Yang" as holder: the plan's defaults for Q3 and Q6, not yet confirmed by the user), `DATA_LICENSE.md` (existing)
 - [x] `.github/workflows/ci.yml` and `pages.yml` written locally; never run, third-party action `wtfjoke/setup-tectonic@v3` unverified; `pages.yml` is `workflow_dispatch` only
-- [ ] Ask → git push (blocked on Q1: repository name and visibility; free Pages needs a public repo)
+- [x] git push done 2026-10-31 with the user's OK: `main` (66d464c) and tag `parity-pass` to https://github.com/KaiwenYangUT/toronto-crime-analytics (the CI workflow will have started on that push; its result has not been checked)
 - [ ] Ask → enable and deploy GitHub Pages (the user sets Settings > Pages > Source to "GitHub Actions", then runs `pages` manually)
 - [x] Suggested old-repo pointer READMEs listed in `docs/old-repo-pointers.md` (not done), with the Q2 rights note for the Explorer
 - Before the first push also: replace `[link added at release]` in `paper/sections/availability.tex`, check `skogan1977dark` and the portal URL, confirm the author line, decide on the scaffold-file deletion and the committed review scratch files (`reviews/shots*`)
