@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P9: pushed, CI green; local preview before the Pages deploy |
+| Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
 | In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | Review the local preview (`cd web && npm run serve`), apply edits, then the user runs the `pages` workflow from the Actions tab (Pages source is already set to GitHub Actions) |
+| Next action | P10 R1: three parallel subagents (R1a foundations, R1b census pipeline, R1c paper rule), then code-review, then Gate A. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -47,7 +47,7 @@ Add a row whenever work moves to a different machine or app.
 - [ ] Q1 Remote repo visibility (404 publicly) and Pages plan
 - [x] Q2 answered 2026-10-29: no team credit on the site or paper; the project is presented as the user's own work. The Explore engine is a clean reimplementation of the logic (no original code, text or screenshots copied). At P9, re-check this: the Explorer repo has no licence and omitting credit does not transfer co-authors' rights.
 - [ ] Q3 Licence (MIT default)
-- [ ] Q4 JSC370 Fig 1: 3D scatter becomes a 2D scatter with colour and size
+- [x] Q4 answered 2026-10-31: real interactive 3D on the site (Explain, plotly gl3d, lazy chunk), 2D Vega-Lite fallback/print, one paper sentence
 - [x] Q5 Project-local installs approved 2026-10-29 (R/tectonic system setup separately approved; other system installations need approval)
 - [ ] Q6 Author line; STA303 term and year
 - [ ] Q7 Pointer READMEs in the old repos (outside this folder)
@@ -153,6 +153,17 @@ Add a row whenever work moves to a different machine or app.
 - [x] Suggested old-repo pointer READMEs listed in `docs/old-repo-pointers.md` (not done), with the Q2 rights note for the Explorer
 - Before the first push also: replace `[link added at release]` in `paper/sections/availability.tex`, check `skogan1977dark` and the portal URL, confirm the author line, decide on the scaffold-file deletion and the committed review scratch files (`reviews/shots*`)
 
+### P10 Redesign (spec: PLAN.md §5 P10; deploy only after it, the user runs `pages`)
+- [x] Approved by the user 2026-10-31, including AGENTS.md wording §0 (a)-(c) and the site-section removals in §3; Q5 covers installing plotly.js-gl3d-dist-min@4.2.0 into web/
+- [x] R0: tree reconciled (review scripts and `.claude/launch.json` committed; `paper.pdf` timestamp diff left to the rebuild); §0 applied to AGENTS.md, PLAN.md, DESIGN.md, PROGRESS.md
+- [ ] R1a Foundations: tokens (type scale, layout, magnitude ramp, paper theme block), shared components, theme switch, Gate A
+- [ ] R1b Census pipeline: `predict.census_scatter`, removal of `jsc370_benchmark` / `xgb_grid_fix` from site PAGES, audit points exclusion, PARITY/CHANGES entries
+- [ ] R1c Paper rule: references on a new page, content-page count, audit `\f` cut
+- [ ] Code review (high) at the end of R1, then Gate A (design lead, Predict at 375/1280/1440, light and dark)
+- [ ] R2a Explore dashboard; R2b Explain and Predict; R2c 3D scatter (plotly chunk, bundle rule); Gate B
+- [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
+- [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`
+
 ## Sitting log
 | Date | Phase | Done | Next |
 |---|---|---|---|
@@ -164,6 +175,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | P4 | 4a Explain port (all numeric outputs vs R), 4b Predict port (5 of 6 models within tolerance or documented, tier partition identical), 4d tokens + palette validation; PARITY.md sections 1.5, 2.1, 3.1, 5-7 | user decisions on D1-D3 and Q2, then chart aggregates and 4c |
 | 2026-10-29 | P4 (close) | chart checklist 81/81 from unmodified R widgets, Python-tuned row, TypeScript Explore engine + bundle, code review fixed, `parity-pass` tagged locally | P5 |
 | 2026-10-29 | P5 | STA303 v2; ablation ladder (18 variants, 1,000-replicate cluster bootstrap); XGBoost grid fix; caption evidence; inference vs prediction; CHANGES/RESULTS; determinism checks; code review (9 findings fixed: cache signature, verdict logic, dirty flag, DST reading, message criteria, bootstrap memory) | P6 |
+| 2026-10-31 | P10 R0 | Approved redesign plan copied into PLAN.md §5 P10; AGENTS.md rule 4 and paper limit amended; DESIGN.md and PROGRESS.md updated; review tooling committed | R1 |
 
 ## P1 verification notes
 

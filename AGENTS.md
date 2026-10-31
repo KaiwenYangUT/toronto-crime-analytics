@@ -22,7 +22,7 @@ This repository combines three Toronto Police open-data course projects into one
 The product has three parts:
 1. One validated Python analysis pipeline.
 2. A static React + TypeScript (Vite) site on GitHub Pages: Overview, Explore, Explain, Predict, Paper, Methods, About.
-3. A LaTeX research paper of at most 7 pages total.
+3. A LaTeX research paper of at most 7 content pages (6 preferred); the references start on a new page and are not counted.
 
 The Explorer is a site extension and is not in the paper.
 
@@ -62,8 +62,8 @@ Parity has passed when the `parity-pass` tag exists, or the user has accepted ea
 - Round by the display format stored in `results/index.json`. Never round up for effect, and never drop a CI that exists.
 
 ### 4. Design like a senior UI designer
-- **One design system** across all pages and the paper's figures: 16 px body text, ~70-character line length (68ch), a clear type scale, a colourblind-safe palette, accessible contrast, light and dark mode, responsive down to mobile.
-- **One chart library** (Vega-Lite) and **one map library** (MapLibre GL). Reasons are in PLAN.md §6.1. Do not add others.
+- **One design system** across all pages and the paper's figures: 18 px body text (17 px under 768 px), ~70-character line length (68ch), a clear type scale, a colourblind-safe palette, accessible contrast, light and dark mode, responsive down to mobile.
+- **One chart library** (Vega-Lite) and **one map library** (MapLibre GL), plus **one 3D library** (plotly.js `gl3d` partial bundle) used only for the neighbourhood 3D scatter on Explain. It is lazy-loaded in its own chunk on that page only, never in the main bundle, and a prerendered Vega-Lite 2D version of the same data is its fallback and print view. Reasons are in PLAN.md §6.1. Do not add others.
 - **Tokens live only in `design/tokens.json`.** CSS variables, the Vega theme and LaTeX colours are generated from it.
 - **Readers must grasp each page's main finding within 10 seconds.** The H1 is the finding in one sentence, and the main visual is above the fold at 1280×800 and 375×812.
 
@@ -106,7 +106,7 @@ make rref       # R reference re-runs → parity/r_outputs
 make parity     # Python/TS ports vs R outputs → parity/reports, PARITY.md
 make analysis   # improvements → results/
 make web        # build site → web/dist
-make paper      # LaTeX → paper/build/paper.pdf (≤ 7 pages enforced)
+make paper      # LaTeX → paper/build/paper.pdf (≤ 7 content pages enforced; references on their own page)
 make audit      # honesty audit + bundle-size + page-count checks
 make all
 ```

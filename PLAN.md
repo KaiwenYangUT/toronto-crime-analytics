@@ -15,7 +15,7 @@ Three Toronto crime course projects use the same Toronto Police Service (TPS) op
 This project combines them into one portfolio product:
 - one validated Python pipeline with one definition: **robbery vs other major property crime**;
 - a static React + TypeScript site on GitHub Pages;
-- a research paper of at most 7 pages.
+- a research paper of at most 7 content pages (6 preferred; references on their own page, not counted).
 
 Each original is ported **faithfully first** and checked for parity against R re-runs. Improvements come only after that.
 
@@ -117,12 +117,12 @@ toronto-crime-analytics/
 | Original | Logic → | Charts and content → |
 |---|---|---|
 | **JSC370** `Final_Project.Rmd` L37–295 (load, clean, census, 7 name fixes, merge) | `tca/build.py::jsc370_legacy`, `features.py` | Methods › Data |
-| `Final_Project.Rmd` L392–891 (split, 6 models, metrics) | `predict/jsc370_port.py` | Predict › "Original benchmark" table |
-| `Final_Project.Rmd` L303–367 (summary table, 4 count bars) | `results/data/variable_stats.json` | Methods › Variables (table + 4-panel counts) |
-| `Final_Project.Rmd` L456 ROC, L476–491 trees, L555/618/649 importance | port | Predict › Original benchmark (ROC; RF importance restyled; trees as a static figure in a disclosure) |
+| `Final_Project.Rmd` L392–891 (split, 6 models, metrics) | `predict/jsc370_port.py` | README and PARITY.md, not the site (P10) |
+| `Final_Project.Rmd` L303–367 (summary table, 4 count bars) | `results/data/variable_stats.json` | Methods › Variables (table + 4-panel counts); not on the site after P10 (out of scope, open in PROGRESS.md) |
+| `Final_Project.Rmd` L456 ROC, L476–491 trees, L555/618/649 importance | port | README and PARITY.md, not the site (P10) |
 | `index.Rmd` (Description: background, RQ, variables, sources, insight cards, references) | — | Overview (question, cards) + Methods (background, variables, sources, references) |
 | `variable.Rmd` (Key Variable Statistics) | — | Methods › Variables |
-| `visual.Rmd` + `scripts/build_visual_widgets.R` Fig 1 (3D scatter: census) | aggregates in `results/predict/census_scatter.json` | Predict › Census features. **2D scatter with colour + size** (Q4: z duplicated colour) |
+| `visual.Rmd` + `scripts/build_visual_widgets.R` Fig 1 (3D scatter: census) | aggregates in `results/predict/predict.census_scatter.json` → Explain › Neighbourhoods; 3D (plotly gl3d) with 2D Vega-Lite fallback. |
 | Fig 2 (box: darkness × premises) | `results/explain/darkness_box.json` | Explain › Patterns |
 | Fig 3 ×4 (lines: robbery count by premises over season/month/day/hour) | `results/explain/premises_time.json` | Explain › Patterns (one chart, segmented control season/month/day/hour) |
 | Fig 4 ×4 (overlaid bars: total vs robbery, % hover) | `results/explain/total_vs_robbery.json` | Explain › Patterns (same segmented control) |
@@ -469,7 +469,7 @@ The message: statistically clear is not the same as predictive.
 - Draft target: **6.3 pages**, keeping 0.7 page of slack under the hard 7-page cap.
 
 **Acceptance**
-- `tools/check_page_count.py` reports ≤ 7 pages total.
+- `tools/check_page_count.py` reports ≤ 7 content pages (references on their own page are not counted; amended in P10).
 - No literal numerals in `sections/*.tex` outside citations, years and section refs (lint).
 - Compiles warning-free (no overfull boxes > 1pt).
 - The PDF is copied to `web/public/paper/`.
@@ -485,6 +485,617 @@ The message: statistically clear is not the same as predictive.
 - Ask before any deletion.
 - Suggested old-repo pointer READMEs are **listed, not done** (they sit outside this folder).
 
+### P10. Redesign · results-first site, Explore dashboard, 3D census scatter
+
+Approved by the user 2026-10-31. Phases R0 (docs), R1 (foundations, census pipeline, paper rule), Gate A, R2 (Explore, Explain/Predict, 3D scatter), Gate B, R3 (Overview, Paper, Methods, About), R4 (verification and review loop). The spec below is the approved plan copied verbatim (heading levels demoted); decisions in it are not re-planned. Deploy only after the user approves a push and runs `pages`.
+
+##### Context
+The site works but reads like a report. It has too much prose, small type, five different content widths, and an Explore page that scrolls through separate pieces. The JSC370 3D neighbourhood scatter is also missing.
+
+Goal: a clean results site for a general audience, where each page shows a headline, a visual and 2–4 bullets, and details sit behind disclosures. The PDF stays the long-form read. The paper keeps its content; only its page rule changes (bibliography on its own page, not counted).
+
+Constraints are AGENTS.md rules 1–5:
+- `<Num>` / `\res{}` only;
+- tokens only in `design/tokens.json`;
+- ask before push, deploy or deletion;
+- PROGRESS.md checkpoints;
+- CI green;
+- "reported incidents, not risk" wording.
+
+Decisions already made by the user (2026-10-31):
+- **Deploy after the redesign.** The current site stays unpublished. The user runs `pages` at the end.
+- **3D library: `plotly.js-gl3d-dist-min`** (4.2.0, the library the original used). It is lazy-loaded in its own chunk on Explain only, with a prerendered Vega-Lite 2D fallback.
+- **3D placement: Explain**, as section 2.
+- **Paper: one Discussion sentence** with `\res{}` statistics and a pointer to the interactive 3D. No figure.
+- **JS budget:** if needed, split the accounting. Shared entry chunks stay ≤ 180 KB gz, and each route chunk gets its own budget (40 KB gz). The 3D chunk gets its own line.
+
+Facts verified during planning:
+- The census claim **partly fails**. Spearman ρ between robbery count and median income is about −0.23 (p ≈ 0.004). Against the job ratio it is about 0.07 (p ≈ 0.35). The top-decile neighbourhoods have median income 35.0k vs 39.2k, and the same job ratio (0.675 vs 0.676). The top counts are in downtown, mid-income areas.
+- Core JS is 177.9 / 180 KB gz.
+- The paper has 6 pages, and References start mid-page 6. `check_page_count.py` counts total pages.
+- The results path rule is `results/<area>/<key>.json`. The new key `predict.census_scatter` → `results/predict/predict.census_scatter.json`. PLAN.md's `results/predict/census_scatter.json` is wrong; fix the text.
+- `build.jsc370_legacy(...)` + `figures.aggregates.figure1()` already produce the exact R arrays (`compare_charts.py:29-31`).
+- The working tree has uncommitted review-script changes (`reviews/shots.mjs`, `_metrics.txt`, untracked `interact.mjs`, `targets.mjs`, `.claude/`) and a timestamp-only `paper.pdf` diff.
+
+---
+
+##### 0. Rule and doc amendments (approved by the user 2026-10-31 and applied in R0)
+
+Four AGENTS.md edits are needed. The redesign conflicts with the current text in four places (feasibility check, 2026-10-31).
+
+**(a) Rule 4, chart-library bullet.** Replace it with:
+> - **One chart library** (Vega-Lite) and **one map library** (MapLibre GL), plus **one 3D library** (plotly.js `gl3d` partial bundle) used only for the neighbourhood 3D scatter on Explain. It is lazy-loaded in its own chunk on that page only, never in the main bundle, and a prerendered Vega-Lite 2D version of the same data is its fallback and print view. Reasons are in PLAN.md §6.1. Do not add others.
+
+**(b) Rule 4, design-system bullet.** Change "16 px body text" to:
+> 18 px body text (17 px under 768 px)
+
+**(c) Paper limit.** In "Project in one paragraph", change "A LaTeX research paper of at most 7 pages total" to:
+> A LaTeX research paper of at most 7 content pages (6 preferred); the references start on a new page and are not counted
+
+In the Commands block, change `# LaTeX → paper/build/paper.pdf (≤ 7 pages enforced)` to:
+> `(≤ 7 content pages enforced; references on their own page)`
+
+**(d) No AGENTS.md wording change is needed for removing the JSC370 R-vs-Python table and the Reproducibility section.** Rule 1's parity records stay in PARITY.md, README and `results/`, and rule 1 governs ports and visualizations, not this table. The PLAN.md text that required them on the site (PLAN.md:578, :622, :635, :661) is amended to "README and PARITY.md, not the site".
+
+**PLAN.md**
+- **§6.1:** add the line
+  > *3D exception (2026-10-31, user decision): plotly.js-gl3d-dist-min for the census 3D scatter only, own lazy chunk with its own budget line in `tools/check_bundle_size.mjs`; Plotly remains rejected for all other charts (size, print).*
+- **Q4:** mark it answered:
+  > *real interactive 3D on the site (Explain), 2D Vega-Lite fallback/print, paper gets one sentence.*
+- **Line 125:** change it to
+  > *`results/predict/predict.census_scatter.json` → Explain › Neighbourhoods; 3D (plotly gl3d) with 2D Vega-Lite fallback.*
+- Add a new **§5 P10 Redesign** that points to this plan.
+
+**DESIGN.md**: new type scale, the layout templates (§2), the 3D exception, the magnitude ramp, and the theme switch.
+
+**PROGRESS.md**: new phase P10 checklist. Mark Q4 answered.
+
+---
+
+##### 1. Type scale and tokens (`design/tokens.json` → `tools/gen_tokens.py`)
+
+| Token | Now | New (≥ 768 px) | Use |
+|---|---|---|---|
+| xs | 12.8 | **14** | chart footnotes only |
+| sm | 14 | **16** | captions, sources, table text, labels |
+| base | 16 | **18** (17 under 768 via `--text-base-mobile`) | body |
+| lg | 20 | **22** | section dek, card text |
+| xl | 25 | **28** | h2 |
+| 2xl | 31 | **34** | h1 on mobile |
+| 3xl | 39 | **44** | h1 on desktop |
+| display | 48 | **56** | Overview stat numbers |
+
+**New layout tokens**
+- `layout.page_max` 1280 px
+- `layout.gutter` 32 px (16 under 768)
+- `layout.measure` stays 68ch (now about 760 px at 18 px)
+- `layout.aside` 360 px
+- `layout.target` 44 px (minimum touch target)
+
+**New colour tokens: `ramp.magnitude` per theme**, for counts on a background:
+- light: reversed viridis, from `#FDE725` (low) to `#440154` (high), so high counts are dark on white. This is the original's direction.
+- dark: viridis forward, from `#440154` to `#FDE725`, so high counts are bright on dark.
+- Validate with `tools/check_palette.py` and the dataviz skill's `validate_palette.js` (CVD and contrast of the end stops against `bg`). Record the result in `design/palette-validation.md`.
+
+**Chart text (`pipeline/src/tca/figures/theme.py` → `design/vega-theme.json`)**
+
+| Element | Now | New |
+|---|---|---|
+| axis labels | 12.8 | 14 |
+| axis titles | 14 | 15 |
+| legend | 14 | 15 |
+| title | 20 | 20 |
+| text marks | 12.8 | 14 |
+
+- **Hard-coded sizes to replace:**
+  - `specs.ts:48` and `:111` (`fontSize: 13`) take the theme `text` value.
+  - `explore/specs.ts` `labelLimit 130` and `step 28` are re-checked.
+  - `explore.module.css:14` `top: -26px` is re-checked.
+- **Chart sizes get their own token blocks.** `tokens.json` gains `chart` sizes for the site and a pinned `paper` block holding today's values. `theme.py` emits `{light, dark, paper}`.
+  - **The paper is unchanged.** `tools/gen_paper.py` `write_figures` reads `paper` instead of `light`.
+  - `paperSpecs.ts` keeps its literal sizes. Because `paperFig1` reuses `shareByYear`, it pins its label size, so paper figures do not move.
+  - `pipeline/tests/test_design_tokens.py` is updated.
+- **Mobile body size:** `gen_tokens.py` gains `scale_mobile`, emitted as an `@media` block in `tokens.css`. Never hand-edit the output.
+- **Small screens:** `lib/vegaServer.ts` `one(spec, mode, width)` prerenders **only each page's main chart** a second time at 360 px, as `lightNarrow` / `darkNarrow` on `ChartSvgs`. `chart.module.css` picks the variant by width media query next to the theme selectors.
+  - Narrowing every chart would double the inlined SVG (predict HTML is already 105 KB gz).
+  - The live chart then mounts at container width.
+
+**Base CSS** (`styles/base.css`)
+- h1 uses `text-wrap: pretty` and fills the header width, which fixes the early break.
+- h2 and h3 keep `balance`.
+- `p` and `li` inside `.prose` keep `max-width: var(--measure)`.
+- Interactive controls get `min-height: var(--target)`.
+
+---
+
+##### 2. Shared layout system (one grid, three templates)
+
+All pages use one container: `max-width: var(--page-max)`, with the gutter on both sides, and a 12-column CSS grid from 1024 px. Most of the new pieces live in `components/ui.module.css`, which is rewritten.
+
+**Components to add or change**
+
+| Component | Change |
+|---|---|
+| `PageHeader` (change) | Props become `eyebrow, title, dek?, question?`. Remove `sources` and the chip. The header spans the full container width. The H1 must be ≤ ~75 characters, so it takes 1–2 lines at 1280. |
+| `ResultSection` (new, replaces most uses of `Section`) | `title` is the takeaway as an h2. `figure` spans 8 columns, and the `aside` slot spans 4 columns (stat cards, 2–4 bullets, the caveat). Below 1024 px it stacks, figure first. `Section` stays for plain blocks. |
+| `StatCard` (new; `FindingCard` slimmed into it) | Label, big `<Num>`, unit, CI line, one-line meaning. "What this does not mean" moves into an optional `Details` toggle. Source `code` lines are removed from cards; provenance stays in the `<Num title>` tooltip. |
+| `KeyPoints` (new) | 2–4 bullets, each with an optional inline stat. Prose comes from content files and goes through the numerals lint. |
+| `Figure` (change) | Larger title, caption ≤ 2 lines. Actions collapse into one "Data ▾" menu: table, CSV, SVG, each with a ≥ 44 px target. |
+| `Disclosure` | Reused for every "Details" block. |
+| `ThemeToggle` (rewrite) | See §6. |
+| `AppShell` (change) | Footer link "Code and README" → `https://github.com/KaiwenYangUT/toronto-crime-analytics#readme`, replacing "Reproducibility". Header and footer use `--page-max`. |
+
+**Layout plumbing**
+- `AppShell` `.main` gains a full-width variant (a route-level class), so Explore can use the whole viewport. The other pages use `--page-max`.
+- A `--nav-h` CSS variable is set from the header's real height.
+
+**Templates**
+1. **Results page** (Predict-style; used by Explain, Predict, Methods, About): header → `ResultSection` × n → a short caveat callout. Figures are large and the text column is readable, with no empty right side.
+2. **Landing** (Overview): header, plus a 5/7 split of answer and visual (§3.1).
+3. **Dashboard** (Explore): full-height grid (§4).
+
+**Widths after the change**
+- One container: 1280.
+- Prose is capped at 68ch only inside text blocks.
+- Callouts span the aside or 8 columns.
+- No 900 px header and no 900 px callouts.
+- The Methods table of contents becomes a sticky "On this page" list in the 4-column aside, so there is no separate 220 px column.
+
+---
+
+##### 3. Page by page (wireframe level)
+
+Number keys: X = `explain.sta303_v2`, A = `predict.ablation`, V = `predict.inference_vs_prediction`, E = `predict.eda_corrections`, C = `predict.census_scatter` (new).
+
+###### 3.1 Overview (`content/Overview.tsx`, `routes/overview.tsx`)
+
+**Above the fold at 1280×800**
+- **Left 5 columns:**
+  - eyebrow "Toronto Police open data · 2014 to 2023";
+  - H1 (question plus answer, ≈ 70 characters): *"Robbery or other property crime? The premises tell you far more than the time."*
+  - `KeyPoints`, 4 bullets, one stat each:
+    1. Robbery is a minority of these reports: `X:robbery_share` of `X:n` incidents.
+    2. Knowing only when it happened, a model barely beats guessing: score `A…L1.pr_auc` vs `A:designs.A.prevalence`. Adding the premises and location type lifts it to `A…L5.pr_auc`.
+    3. After 2019 a reported incident was less likely to be a robbery: odds × `X:post2019.or`.
+    4. Neighbourhood income lines up only weakly with robbery counts: `C:summary.spearman_income.rho` (links to Explain).
+- **Right 7 columns:** the main visual, **"What tells robbery apart"**. It is a new `stepChart` spec with horizontal bars of PR-AUC with CIs for Time only (L1), + premises and location (L2), Full model (L5), and Full without premises (L5-nopremises), plus a dotted baseline at the robbery share. It uses grouped CV.
+- At 375 the H1, then the chart, then the bullets, so the chart sits above the fold.
+
+**Below the fold**
+- "The robbery share fell after 2019": the existing `shareByYear` figure, full width.
+- Three lens cards (Explore / Explain / Predict), each with a one-line promise.
+- The paper CTA.
+- A one-line caveat.
+
+**Remove:** the three dense FindingCards, the Source chip, and the long caveat paragraph.
+
+###### 3.2 Explore (`web/src/explore/*`): see §4.
+
+###### 3.3 Explain (`content/Explain.tsx`, `routes/explain.tsx`)
+
+**Header**
+- H1: *"After 2019, a reported incident was much less likely to be a robbery."*
+- Dek: one sentence.
+
+**Section 1 (above the fold): "The hour of day moves the odds most; month and weekday barely do."**
+- The figure is a new `oddsByTime` spec: three small multiples (hour 0–23, month, weekday) of odds ratios with cluster-robust CIs on one shared log axis, with a reference line at 1. Keys: `X:hour_or_vs_12.*`, `month_or_vs_jan.*`, `weekday_or_vs_mon.*`.
+- The aside has two StatCards: After 2019 (`X:post2019.or`, robust CI) and After dark (`X:dark.or`, robust CI). It also has one bullet: "15:00 vs noon ×`X:hour_or_vs_12.15.or`".
+- The full forest plot moves into a "Show all model terms" Disclosure. `forestRows` stays unchanged for the paper.
+
+**Section 2: "Neighbourhoods with lower median income reported somewhat more robberies in 2020; the job ratio shows no pattern."** This is the 3D scatter (§5).
+- The aside has 3 bullets with `C:summary.*` (ρ income, ρ job ratio, top-decile medians).
+- It includes a "What the original caption said" note: the low-income part holds weakly, the high-job-ratio part is not supported.
+- Caveat: these are counts, not per resident, not risk.
+
+**Section 3: "Four patterns from the course report, checked."**
+- A compact table: Pattern | Verdict chip (Holds / Partly / Does not hold) | one-line evidence with `<Num>` from E.
+- Then the existing weekday/hour share chart (`patternChart`) with the Segmented control.
+
+**Details (Disclosure):** model fit and calibration (the existing `calibrationChart` plus 2 lines).
+
+**Caveat callout:** 2 sentences.
+
+**Remove:**
+- the "Original model vs corrected model" table (the corrections stay in Methods "Model" as 3 bullets, and in CHANGES.md);
+- the parity-report caption (`Explain.tsx:182`);
+- the Source chip;
+- long paragraphs, cut to ≤ 2 sentences per block.
+
+###### 3.4 Predict (`content/Predict.tsx`, `routes/predict.tsx`)
+
+**Header**
+- H1: *"The premises, not the time, separate robbery from other property crime."*
+
+**Section 1 (above the fold): "Adding premises and location type triples the score; time alone barely beats guessing."**
+- The figure is a new `rungSteps` spec. It shows 4 rungs (Time only L1, + premises and location L2, Full model L5 XGBoost, Full without premises L5-nopremises) × 2 designs: grouped CV is filled, the temporal holdout is hollow, and each design has a baseline line. Metric is PR-AUC with 95% CI.
+- The Segmented control keeps PR-AUC / ROC-AUC.
+
+**Aside: the headline model per design**, the full model (L5 XGBoost), as 2 StatCards:
+- grouped CV: PR-AUC and CI, ROC-AUC;
+- temporal holdout 2022–23: PR-AUC and CI, ROC-AUC.
+
+**Compact table "Two ways to test the model"**
+
+| Design | Robbery share (baseline) | Time only, PR-AUC | Full model, PR-AUC | Full model, ROC-AUC | F1 at tuned threshold |
+|---|---|---|---|---|---|
+| Grouped CV | | | | | |
+| Temporal holdout | | | | | |
+
+- Caption, one line: "The holdout is harder and its baseline is lower, so compare within a row."
+
+**Section 2: "Premises and location type are the information the model leans on."** The existing `blockImportance` figure, plus 2 bullets.
+
+**Details (Disclosures)**
+- "All models and both designs": the existing 18-row table, kept for completeness but collapsed.
+- "Precision–recall curves": the existing `prCurves`.
+
+**Caveat:** "Premises partly define the crime type…", shortened to 2 sentences, with the existing `<Num>` pair.
+
+**Remove**
+- The "What each step adds" table: its message is in Section 1. The pipeline keys stay.
+- The temporal prose section (now the table caption).
+- **The whole "Original JSC370 benchmark" section and its R-vs-Python table.**
+- **The XGBoost-grid callout.** It is a course-code bug fix, not a finding for site readers, and it stays in CHANGES.md and README.
+- `J`, `MODEL_KEYS` and `MODEL_LABEL`.
+- `predict.jsc370_benchmark` and `predict.xgb_grid_fix` from `gen_web_data.py` PAGES (predict and methods). Both stay in `results/` and `index.json`.
+
+###### 3.5 Paper (`content/Paper.tsx`)
+
+- **Header**
+  - H1: *"Many time effects are statistically clear, yet time alone predicts little."* (kept; 70 characters)
+- **Above the fold, two columns from 1024 px:**
+  - **Left 7 columns:** "In brief" has 3 `KeyPoints`, merging "In brief" and "What the paper covers". Then a 4-row "Inside the paper" list (Question · Data · Models · Findings), one line each.
+  - **Right 5 columns:** a download card (title, author, "PDF"; no page count or size numerals). It has a "Download PDF" primary button and "Open in browser". From 1024 px a lazy `<iframe>` preview of the PDF (`loading="lazy"`, title attribute) sits under it. On mobile only the card shows.
+- **Remove**
+  - the outer `.prose` wrapper (`Paper.tsx:24`);
+  - the "Where the numbers come from" callout (`:56-65`);
+  - the Source chip.
+
+###### 3.6 Methods (`content/Methods.tsx`)
+
+- **H1:** *"One cleaned dataset of reported incidents feeds every result on this site."*
+- **Sections:**
+  1. Data and sample flow: the existing `log.*` table plus 2 sentences.
+  2. Task definition and variables: bullets.
+  3. Models and evaluation: bullets, plus the three course-model corrections as bullets.
+  4. Explore counts.
+  5. Limitations: callout.
+- The aside is a sticky "On this page" list.
+- **Remove the Reproducibility section** (`:127-153`), the TOC entry, the `#reproducibility` anchor, and the `xgb_grid_fix` data.
+
+###### 3.7 About (`content/About.tsx`)
+
+- Results-page template: the main column holds the credits, and the aside holds the licences.
+- The credit sentence drops "re-checked against the original R results" and the `/methods#reproducibility` link, and gains "Code and README on GitHub".
+- Remove the outer `.prose` wrapper.
+
+---
+
+##### 4. Explore dashboard (`ExplorePage.tsx`, `explore.module.css`, `FilterPanel.tsx`, `MapView.tsx`, `explore/specs.ts`)
+
+**Header:** compact, eyebrow plus a one-line H1 (≤ 60 characters, 34 px), for example *"Reported incidents concentrate downtown and peak in the evening."* The wording is verified against the default-filter counts from the engine fixture before it ships. If it does not hold, use a neutral finding the counts support. The dek is one line, ending "Counts are reported incidents, not risk."
+
+**≥ 1280 px: one screen, no page scroll**
+
+```
+┌ filters 280px ┬──────── map 1fr ────────┬─ charts 400px ─┐
+│ (own scroll,  │ totals strip (records,   │ Records over   │
+│  fade cue,    │  event IDs, mode chip)   │ time (brush)   │
+│  Reset at     │                          │ ~200px         │
+│  bottom)      │      MapLibre map        ├────────────────┤
+│               │      (fills cell)        │ By crime type  │
+│               │                          │ horizontal ~130│
+│               │                          ├────────────────┤
+│               │ legend · cluster key     │ [Weekday|Hour] │
+│               │                          │ bars ~170      │
+└───────────────┴──────────────────────────┴────────────────┘
+```
+
+- Explore uses the full-width `.main` variant, so the map is not squeezed by the 1200 cap.
+- Grid height: `calc(100dvh - var(--nav-h) - header height - main padding)`, min 600 px. Every grid cell gets `min-height: 0`.
+- The charts column has `overflow-y: auto` as a safety valve.
+- The map gets `height: 100%` instead of 60vh. MapLibre 4.7 already observes container resizes.
+- Charts use `width: 'container'` with **numeric** heights. Do not use `height: 'container'`.
+- The weekday/hour switch renders only the active chart.
+- The totals become a grid row on desktop and stay `sticky` only when stacked.
+- **Brush fix:** apply the brush to `from`/`to` on pointer-up or debounced, not on every signal. The trend always shows the full date range, so the chart does not re-embed mid-drag (`VegaChart` `specKey` re-embeds on data change).
+- Interval Segmented (D/W/M) sits in the trend card header.
+- The data-table and CSV actions go in each card's "Data ▾" menu.
+- The long caveat callout becomes a one-line note under the map, with a Details toggle.
+
+**1024–1279 px:** a two-column grid (map 1fr | charts 360). Filters open from a "Filters (n active)" button as a left drawer, reusing the bottom-sheet code with a side variant.
+
+**Under 1024 px:**
+- A sticky bar holds the Filters button and the totals.
+- The map comes directly under it, at 55svh. This fixes "map below the fold".
+- Then trend, crime type, and weekday/hour.
+
+**Kept:** URL state, brush to dates, near-destination and station modes, the v2 lazy load, the in-browser engine.
+
+**Unchanged:** vitest and the explore fixtures.
+
+---
+
+##### 5. 3D census scatter (Explain, section 2)
+
+###### Pipeline
+- New module `pipeline/src/tca/explain/census_scatter.py` with `run()`.
+- It calls `build.jsc370_legacy(keep_neighbourhood=True, na_omit_before_merge=False)` and `figures.aggregates.figure1()`.
+- It calls `write_result("predict.census_scatter", "predict", values, producer=…, formats=…, inputs=…)`.
+- Inputs are listed as in `eda_corrections.py:146-155`.
+- Values shape:
+  - `points`: a **list**, in figure1's order, of `{name, ratio, income, robberies}`.
+    - `results.ts`, `gen_paper` and the audit all handle list indices.
+    - Do not key by name: names can contain dots (`St.Andrew-Windfields`), which breaks `splitKey`.
+    - `gen_web_data` `prune` drops lists under a pattern, so the page entry is `"predict.census_scatter": None` (the whole file).
+    - `tools/audit_numbers.py` `result_strings` skips `predict.census_scatter:points`. Otherwise 158 small integers would make almost every small numeral pass. This is justified because points render only in SVG and the click-only table. Add a `tools/tests` case for it.
+  - `summary`:
+    - `n`, `total_robberies`
+    - `spearman_income{rho,p}`, `spearman_ratio{rho,p}` (`scipy.stats.spearmanr`; scipy 1.18.1 is already pinned and used)
+    - `top_decile{threshold, n, median_income, median_ratio}`
+    - `rest{n, median_income, median_ratio}`
+    - `max{name, robberies}`
+  - `axes`: `{ratio_min, ratio_max, income_min, income_max, robberies_max}`.
+- Formats:
+
+| Field | Display |
+|---|---|
+| ratio | 3 decimals |
+| income | 0 decimals, grouped |
+| robberies | 0 decimals |
+| rho | 2 decimals |
+| p | `p` |
+| medians | income 0 decimals, ratio 3 decimals |
+
+- Wire it into the Makefile `analysis` target and regenerate CHECKSUMS / RESULTS.md.
+- In `gen_web_data.py`, add `predict.census_scatter` to `explain` (all) and `overview` (`summary` only).
+- **Tests:**
+  - `pipeline/tests/test_census_scatter.py`: values equal the R `figure1.html` arrays (x, y, z, text order) from `chart_data.json.xz`; identity hash is stable across two runs; n = 158.
+  - The existing `compare_charts.py` stays.
+- **PARITY.md:** the F1 row stays equal. Replace line 221 ("becomes 2D") with the 3D decision. Add the caption check: income part holds weakly, job-ratio part not supported. CHANGES.md gets an entry with old caption, new sentence, why, and keys.
+
+###### Front end
+- **The 2D spec** `censusScatter2d` lives in `web/src/lib/specs.ts`, owned by R2b: x = ratio, y = income, colour = robberies, size = robberies, magnitude ramp, tooltips. The explain loader prerenders it.
+- New `web/src/components/census/`, owned by R2c:
+  - `CensusScatter.tsx` (core, small) with props `{ data, spec, svgs }`;
+  - `plot3d.ts` (lazy);
+  - `webgl.ts` (detection, unit-tested with mocks).
+- **First paint:** a `Figure` with the prerendered 2D SVG (both themes, both widths). The `scatter2d` builder lives in `lib/specs.ts` so the explain loader can prerender it.
+  - The data table goes through `Figure`'s click-only `table` prop, not `DataTable`, which is always rendered and would be prerendered and audited.
+  - Cells are formatted with `formatNumber(v, formatFor(d, 'predict.census_scatter:points.<i>.<field>'))`.
+  - Vega tooltips and Plotly hover use the same decimals.
+- **Copy wording:** the numerals lint rejects "3D" and "158". Copy says "three-dimensional" and "flat view", and the count is `<Num k="predict.census_scatter:summary.n"/>`. No lint or audit allowlist is widened.
+- **Upgrade:**
+  - `useEffect` (client only) checks WebGL with a canvas `getContext('webgl')`.
+  - With `prefers-reduced-motion: reduce` or no WebGL, it stays 2D and a note says why.
+  - Otherwise a **"Rotate in three dimensions"** button is shown.
+  - From 1024 px, with a fine pointer, the chunk is also prefetched when the figure scrolls into view (IntersectionObserver plus idle), and the button swaps instantly.
+  - The 3D view replaces the 2D view in the same box, with a "Show 2D" toggle.
+  - If the load fails: stay 2D and show an inline message.
+  - In print, `@media print` hides the 3D and shows the 2D.
+- **`plot3d.ts`**
+  - `await import('plotly.js-gl3d-dist-min')`, then `Plotly.newPlot` with scatter3d: x ratio, y income, z robberies, `marker.color` = robberies, colourscale from the token ramp, colourbar titled "Robberies (2020)".
+  - Hover template: Neighbourhood / Job-to-labour-force ratio / Median income ($) / Robberies, values formatted with the same display formats.
+  - Axis titles with units:
+    - "Permanent job to labour force ratio"
+    - "Individual median income (CAD)"
+    - "Robberies reported in 2020"
+  - `displayModeBar: false`; the default camera is `eye {x:1.6, y:1.6, z:0.9}`.
+  - Types come from a local minimal `.d.ts`, so no `@types/plotly.js` is needed.
+- **Controls:** our own buttons, each ≥ 44 px, keyboard-reachable, with `aria-label`s: Reset view, Rotate left, Rotate right (±15° about z via `Plotly.relayout('scene.camera.eye')`), Zoom in, Zoom out, Show 2D. There is no auto-rotate.
+- **Touch and mobile:** under 1024 px, or with a coarse pointer, the 3D canvas has `pointer-events: none` until "Interact" is pressed, so page scroll is never hijacked. "Done" restores scrolling.
+- **Theme:**
+  - Scene background, grid, axis, font and hover-label colours are read from CSS variables (as Explore does for `--cat-*`).
+  - The colourscale comes from `--ramp-magnitude-*`.
+  - A MutationObserver on `data-theme` plus a `matchMedia` listener call `Plotly.relayout` and `restyle`, so the scene follows the toggle live.
+- **Accessibility:**
+  - The figure `aria-label` gives a text summary built from `<Num>` values (ρ, top-decile medians, max neighbourhood).
+  - The data table and CSV come from `Figure`.
+  - The 3D canvas container has `role="img"` with the same summary.
+- **Bundle:**
+  - `plot3d.ts` calls `import('plotly.js-gl3d-dist-min')` directly. No static import anywhere, so Plotly never merges into a core chunk.
+  - Vite 8 (Rolldown) names the chunk from the entry file, roughly `plotly-gl3d.min-*.js`. The exact name is confirmed at build, and the rule matches `/^plotly/`.
+  - `tools/check_bundle_size.mjs` gets a **separate rule and budget**: measured gz size + 5%, expected about 0.5 MB.
+  - The core rule excludes the chunk.
+  - A Playwright check (§8) asserts the chunk is requested only on `/explain`.
+
+---
+
+##### 6. Theme switch (`components/ThemeToggle.tsx`, `root.tsx`)
+
+- A single 44 px icon button (sun/moon) with `aria-pressed` and the label "Dark theme". The Radix ToggleGroup is removed.
+- **State:**
+  - With no stored choice, the effective theme = `prefers-color-scheme`. The button reflects it and follows OS changes live.
+  - A click stores `light` or `dark` in `localStorage['tca-theme']` and sets `data-theme`.
+  - There is no "System" option. Clearing site data returns to following the OS.
+- **Unchanged:** the `root.tsx` pre-paint script (it already reads the stored value) and the `tokens.css` selectors. The VegaChart and MapView listeners keep working, because they already watch both `data-theme` and the media query.
+- **SSR snapshot:** render a neutral icon until mounted, to avoid a hydration mismatch.
+
+---
+
+##### 7. Paper changes (`paper/`)
+
+- In `paper/paper.tex:74`, put `\clearpage` before the bibliography, so References start on their own page.
+- `tools/check_page_count.py` counts **content pages**: pages before the first page whose `pdftotext -f i -l i` text begins with "References".
+  - It fails if content pages > 7.
+  - It prints a warning if content pages > 6.
+  - Total pages are not limited.
+  - It also fails if no References page exists, which catches a missing `\clearpage`.
+  - `check_paper_pdf.py` and its tests under `tools/tests` are updated.
+- **`tools/audit_numbers.py` paper cut must change.** After `\clearpage`, "References" follows a form feed, so `rfind("\nReferences")` returns -1 and the bibliography's numbers would be flagged. Fix: split the `pdftotext` output on `\f` and drop everything from the first page whose `lstrip()` starts with "References". Add a test for it.
+- **One Discussion sentence** in `sections/discussion.tex` ("Census features are coarse" paragraph): neighbourhood robbery counts in 2020 correlate weakly with median income (`\res{predict.census_scatter:summary.spearman_income.rho}`) and not with the job ratio (`\res{…spearman_ratio.rho}`), and an interactive 3D view is on the site. `gen_paper.py` resolves the keys.
+- **Paper figures are unchanged:** they use the pinned `paper` theme.
+- Rebuild, and confirm content = 6 pages and References on page 7.
+
+---
+
+##### 8. Order of work, ownership and parallelism
+
+Checkpoint each item into PROGRESS.md and commit locally after each one.
+- Commit messages end with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` (the user's instruction for the implementation model).
+- Never push or deploy without asking.
+
+**R0 (main session, sequential)**
+1. **Reconcile the tree:**
+   - commit `reviews/shots.mjs`, `interact.mjs`, `targets.mjs` and `_metrics.txt` as review tooling;
+   - add `.claude/settings.local.json` to `.gitignore` and commit `.claude/launch.json`;
+   - restore the timestamp-only `paper.pdf` diff by rebuilding later. This is not a deletion.
+2. Apply the approved §0 wording to AGENTS.md, PLAN.md, DESIGN.md and PROGRESS.md, then commit.
+
+**R1 (three parallel subagents, disjoint files)**
+
+| Agent | Owns | Work |
+|---|---|---|
+| **R1a Foundations** (general-purpose) | `design/tokens.json`, `tools/gen_tokens.py`, `pipeline/src/tca/figures/theme.py`, generated `tokens.css` / `vega-theme.json` / `colors.tex`, `tools/gen_paper.py` (theme choice only), `pipeline/tests/test_design_tokens.py`, `web/src/styles/*`, `web/src/components/*` (except `census/`), `web/src/lib/vegaServer.ts`, `web/src/components/chart.module.css`, `web/src/root.tsx` | §1, §2, §6. Palette validation with the dataviz skill. Remove the `sources` prop from PageHeader, and update callers by deleting only that prop in the content files: a one-line, mechanical edit, done first and committed before R2 starts. |
+| **R1b Pipeline census** (general-purpose) | `pipeline/src/tca/explain/census_scatter.py`, `pipeline/tests/test_census_scatter.py`, Makefile `analysis` line, `results/*`, `RESULTS.md`, `design/display_formats.json`, `tools/gen_web_data.py`, `web/src/data/*` | §5 pipeline, plus removing `jsc370_benchmark` and `xgb_grid_fix` from PAGES. PARITY.md and CHANGES.md entries. |
+| **R1c Paper rule** (general-purpose) | `paper/paper.tex`, `tools/check_page_count.py`, `tools/check_paper_pdf.py`, `tools/tests/test_check_*` | §7, except the Discussion sentence (that needs the R1b keys and goes in R3). |
+
+**Who owns `tools/audit_numbers.py` and its tests:** R1b owns both the points exclusion and the `\f` References cut, so the file has one owner. R1c depends on that before its `make paper` check.
+
+**R2 (after R1a and R1b are committed; three parallel subagents, disjoint files)**
+
+| Agent | Owns | Work |
+|---|---|---|
+| **R2a Explore** | `web/src/explore/*` | §4 |
+| **R2b Results pages** | `web/src/content/{Explain,Predict}.tsx`, `routes/{explain,predict}.tsx`, `web/src/lib/specs.ts` (adds `oddsByTime`, `rungSteps`, `stepChart`, `censusScatter2d`; shared row builders untouched) | §3.3 and §3.4. It mounts `<CensusScatter data spec svgs>` from R2c through the props interface agreed in this plan. |
+| **R2c 3D scatter** | `web/src/components/census/*`, `web/package.json` / lockfile (adds `plotly.js-gl3d-dist-min@4.2.0`, an npm install inside the project), `tools/check_bundle_size.mjs` (3D rule and split core/per-route accounting), `web/scripts/census3d-check.mjs` (new), vitest for the fallback logic with mocks | §5 front end |
+
+**R3 (after R2b, which provides `stepChart`)**
+- R3a, Overview, Paper, Methods and About pages: `content/{Overview,Paper,Methods,About}.tsx`, `routes/{overview,paper}.tsx`.
+- Then the main session adds the paper Discussion sentence and runs `make paper web`.
+
+**Design gates (see §8a):** Gate A comes after R1a, before R2. Gate B comes after R2, before R3. Gate C is part of R4.
+
+**R4 verification and review loop (main session plus read-only reviewers)**
+- Run §9.
+- Run the UX-researcher comprehension test, the content-designer pass and the accessibility check (§8a).
+- **Design reviewer** (read-only; writes `reviews/design-review-p10.md`):
+  - Playwright screenshots at 375, 768, 1280, and 1440×900 for Explore, in light and dark;
+  - the 10-second test, the fold check, type sizes, measure, target sizes.
+- **Honesty auditor** (read-only; writes `reviews/honesty-audit-p10.md`):
+  - every number and claim, especially the census sentence and the Explore H1.
+- `code-review` skill (high) on the P10 diff.
+- Fixes go back to the owning agent or files.
+- Update PROGRESS.md, README (screenshots, the 3D link) and DESIGN.md.
+- **Ask the user before pushing.** After CI is green, the user runs `pages`.
+
+###### 8a. Design and research roles, skills, and gates
+
+No UI/UX skills exist in the user's catalog (searched 2026-10-31). Senior-level design work is therefore done through these skills and read-only reviewer roles. Each reviewer writes only to `reviews/` and never fixes what it reviews.
+
+**Skills: who loads what, and when**
+
+| Skill | Who loads it | When |
+|---|---|---|
+| `dataviz` | R1a, R2a, R2b, R2c, R3a | Before writing any chart spec, stat card, KPI row, legend, colour ramp or the dashboard layout. It covers form choice, mark specs, the stat-tile rules and dashboard composition. R1a also runs its `validate_palette.js` on the magnitude ramp. |
+| `run` | Main session | Starting the `site-preview` server for every visual check, through the in-app browser for quick looks. Playwright is used for the screenshot sets. |
+| `pdf` | R1c, main session | Content-page count and References detection after `make paper`. |
+| `code-review` (high) | Main session | Once at the end of R1, once at the end of R2/R3, and on the full P10 diff. |
+| `simplify` | Main session | Once before R4, on the changed web code (bundle headroom). |
+
+**Reviewer roles**
+
+1. **Design lead (art director).** Read-only. Runs at three gates:
+   - **Gate A, after R1a:** a throwaway route-free check. Screenshot one existing page (Predict) at 375, 1280 and 1440 in light and dark, with the new tokens and templates. Check:
+     - type scale and hierarchy (h1, h2, body, caption ratios);
+     - grid alignment and gutter;
+     - colour and contrast;
+     - touch targets of at least 44 px;
+     - the theme switch.
+     
+     Nothing in R2 starts until Gate A is green. This stops 18 px and 1280 px problems from spreading to every page.
+   - **Gate B, after R2:** Explore at 1280×800 and 1440×900 (one screen, no page scroll), at 1024 and at 375. Explain with the 3D scatter (flat view and three-dimensional view), in light and dark.
+   - **Gate C, R4:** all routes. Writes `reviews/design-review-p10.md`, findings ranked blocker, should-fix, nit.
+2. **UX researcher (comprehension test).** Read-only, run at R4. It is a cheap stand-in for a 5-second test with a general-audience persona: a curious Toronto resident with no statistics training.
+   - For each page, a fresh subagent sees **only the 1280 and 375 fold screenshots** and answers three questions:
+     1. "What is the main finding?"
+     2. "What would you click next?"
+     3. "Does anything suggest where crime is dangerous?" (it must not)
+   - A page passes when the answer matches the H1's meaning and the third answer is "no".
+   - Writes `reviews/comprehension-p10.md`.
+3. **Content designer (plain language).** Read-only, run at R4 over `web/src/content/*.tsx` and the rendered text.
+   - Words per page are the target. Rough budgets:
+
+     | Page | Words |
+     |---|---|
+     | Overview | ≤ 150 |
+     | Explain | ≤ 350 |
+     | Predict | ≤ 300 |
+     | Paper | ≤ 150 |
+     | Methods | ≤ 450 |
+     | About | ≤ 120 |
+
+   - Each block is no more than 2 sentences.
+   - Jargon is defined on first use: PR-AUC becomes "score from 0 to 1; guessing scores the robbery share", and odds ratio is defined too.
+   - No "risk", "safety", "cause" or "dangerous" wording, and the task-definition words are kept.
+   - Writes `reviews/content-p10.md`.
+4. **Accessibility check.** Run by the main session, not a separate agent:
+   - axe through `smoke.mjs`;
+   - keyboard-only walkthrough of the Explore filters, the brush alternative (the date inputs) and the 3D controls;
+   - `prefers-reduced-motion`;
+   - a 200% zoom check at 1280.
+5. **Honesty auditor**, as in R4.
+
+Fix loop: findings go back to the owning agent or files from §8, then the same reviewer re-runs only the failed checks.
+
+**Sessions vs subagents:** these are subagents within one session (results return here for integration). Two agents never touch the same file. Shared files (`ui.module.css`, `specs.ts`, `gen_web_data.py`) each have exactly one owner.
+
+---
+
+##### 9. Verification
+
+**Build and checks**
+```bash
+make analysis   # or only the new producer + hash_outputs + gen_results_md
+make paper web
+```
+- **Python:** `ruff`, `pytest pipeline/tests tools/tests`, all parity compare scripts.
+- **Generators:** `python tools/gen_tokens.py --check`, `python tools/gen_web_data.py && git diff --exit-code web/src/data`.
+- **Web:** `npm --prefix web run lint` (ESLint + numerals lint), `npm --prefix web test`, `npm --prefix web run build && npm --prefix web run package`.
+- **Bundle:** `node tools/check_bundle_size.mjs`. Core shared ≤ 180 KB gz, per-route ≤ 40 KB, the 3D chunk on its own line, Vega and MapLibre unchanged.
+- **Numbers:** `python tools/audit_numbers.py`, 0 unmatched on the site and in the PDF.
+- **Paper:** `tools/check_paper_pdf.py` reports content pages = 6, References on a new page, fonts embedded.
+
+**Browser checks** (preview "site-preview", Playwright browsers in `.cache/playwright`)
+- `node web/scripts/smoke.mjs`: all 7 routes × 375/768/1280 × light/dark. Pass criteria: no console errors, exactly one H1, no overflow, axe has zero serious or critical issues.
+- `node web/scripts/census3d-check.mjs`:
+  - the plotly chunk is requested on `/explain` only, after opt-in or in-view;
+  - with `--disable-webgl` / `--disable-3d-apis`, the 2D SVG and data table render and no chunk is requested;
+  - rotate, reset and theme switch work with no console errors;
+  - screenshots in light and dark;
+  - `emulateMedia({media: 'print'})` shows the 2D view.
+- **Explore fold:** at 1280×800 and 1440×900, `document.scrollingElement.scrollHeight ≤ innerHeight + footer`, and the map, trend and bars are visible. At 375×812 the map's top is above the fold. Brush → dates update, and the URL round-trips.
+- **H1 fold check per page:** the H1 spans ≤ 2 lines at 1280 and the main visual's top is < 800 px (shots metrics script).
+- **Lighthouse mobile** on Explain: performance ≥ 85, since the 3D chunk is not loaded on mobile without opt-in.
+
+**CI:** after the user approves a push, watch the python, web and paper jobs. No WebGL is needed anywhere in CI: plotly is imported only inside the client effect, and vitest mocks it.
+
+---
+
+##### 10. Risks
+1. **The Explore one-screen fit at 1280×800.** Fallback: at heights under 760 px, the weekday/hour card collapses into the crime-type card as a third Segmented option.
+2. **The 3D chunk size (~0.5 MB gz) and Lighthouse on Explain.** It is mitigated by never auto-loading on mobile or coarse pointers, and by prefetching on desktop only when in view and idle.
+3. **Core JS over 180 KB.**
+   - Real new code is about 1–1.5 KB gz, and removing the benchmark code returns about 1 KB.
+   - Measure after every item.
+   - The split shared vs per-route accounting (approved) is applied only if it is still over.
+   - The unused Radix deps (dialog, select, tabs) can be dropped from `package.json`: this removes dependencies, not files.
+4. **Bigger chart text vs the paper.** Mitigated by the pinned `paper` theme. Paper figures stay byte-similar, and the page check confirms it.
+5. **New prose numerals.** All bullets are written with `<Num>` only. The numerals lint and `audit_numbers.py` gate this.
+6. **Explore H1 must be a true finding.** It is verified against the engine before shipping, with a neutral fallback.
+7. **Linux CI differences.** No locale-dependent sorting in the new module (code-point order, as in 5e6dddb), and Spearman ties are handled deterministically.
+8. **Deletions.** No files are deleted. Sections are removed from `.tsx` content only, as approved by this plan. The unused scaffold files stay until asked separately.
+9. **Theme switch has no "follow the system" option after a click.** This is by design; clearing site data resets it.
+
+##### Out of scope (stays logged in PROGRESS.md as open)
+- The JSC370 Key Variable Statistics table.
+- The STA303 LASSO / VIF / ROC / influence panels: not in `results/`, and they would add report-style content.
+- The honesty-audit #18 sample-flow gap.
+
+##### Approval asked with this plan
+1. The AGENTS.md wording in §0 (a)–(c).
+2. The removals listed in §3: site sections only; results files are kept.
+
 **Sittings total: about 15–20.**
 
 ## 6. Design system spec (`design/DESIGN.md`, tokens in `design/tokens.json`)
@@ -497,6 +1108,7 @@ The message: statistically clear is not the same as predictive.
   - Each chart also has a "View data table" toggle for screen readers.
   - Cost: about 280 KB gz, lazy-loaded per route.
   - Rejected: Plotly (≈1 MB, weak print output); Observable Plot (needs a JSDOM pipeline for the paper); Recharts (no print path, limited statistical forms).
+  - *3D exception (2026-10-31, user decision): plotly.js-gl3d-dist-min for the census 3D scatter only, own lazy chunk with its own budget line in `tools/check_bundle_size.mjs`; Plotly remains rejected for all other charts (size, print).*
 - **Map: MapLibre GL JS** with a self-hosted **Protomaps PMTiles** Toronto basemap.
   - WebGL draws about 85K points smoothly; there is built-in clustering and a data-driven style per category.
   - Light/dark basemap themes come from the same tokens.
@@ -575,7 +1187,7 @@ The message: statistically clear is not the same as predictive.
 **Navigation:** Overview · Explore · Explain · Predict · Paper · Methods · About
 
 Two changes from the proposed IA:
-1. **Methods & Limitations** becomes **Methods**, whose sections are Data, Variables, Methods, Limitations and Reproducibility. Limitations is pinned as a visible section in the page TOC, so it stays prominent. This gives the JSC370 "Key Variable Statistics" page a natural home.
+1. **Methods & Limitations** becomes **Methods**, whose sections are Data, Variables, Methods, Limitations (P10 dropped the Reproducibility section from the site: README and PARITY.md hold it). Limitations is pinned as a visible section in the page TOC, so it stays prominent. This gives the JSC370 "Key Variable Statistics" page a natural home.
 2. A small **About** page holds acknowledgements, team credits and licences, so the JSC370 "Acknowledgements" page has a home without diluting Methods.
 
 **H1 copy is written in P6 from final results.** The wireframes below give structure only.
@@ -619,7 +1231,7 @@ Two changes from the proposed IA:
   - PR curves (small multiples per design).
   - Feature importance: grouped permutation for L5, plus the original RF Gini restyled.
   - Temporal holdout section with a prior-shift note.
-  - "Original JSC370 benchmark": 6-model table with published / R re-run / Python columns and the tier ranking; census scatter (Fig 1); ROC; link to the Explore Fig 5 preset.
+  - "Original JSC370 benchmark": removed from the site in P10 (README and PARITY.md); the census scatter (Fig 1) moved to Explain.
 - **Paper**
   - Title, authors, abstract.
   - Embedded PDF (`<object>`) on ≥ 768 px; download button always visible (mobile shows the button only).
@@ -632,13 +1244,13 @@ Two changes from the proposed IA:
   - **Methods:** inference, prediction, evaluation design.
   - **Explorer data:** dedup, haversine, presets.
   - **Limitations.**
-  - **Reproducibility:** `make all`, checksums, versions, the parity summary linking PARITY.md.
+  - **Reproducibility:** removed from the site in P10; `make all`, checksums, versions and the parity summary live in README and PARITY.md.
 - **About**
   - Credits: JSC370 (solo), STA303 (solo), STA313 (team of 6, led by Kaiwen Yang; see Q2).
   - Course acknowledgements (verbatim JSC370 text).
   - Licences; the video link.
 
-## 8. Paper outline (LaTeX, ≤ 7 pages total including references)
+## 8. Paper outline (LaTeX, ≤ 7 content pages; references on their own page, not counted)
 
 **Format:** single column, 10.5 pt Source Serif 4, 0.8 in margins, figures in Inter, colours from tokens, `natbib`, compiled with tectonic.
 
@@ -660,7 +1272,7 @@ Two changes from the proposed IA:
 
 - PR curves, calibration and the original 6-model benchmark are site-only (the page budget does not allow them). The paper points to the site for them.
 - The Explorer is not in the paper.
-- If the PDF runs over 7 pages, cut Tab 2 first, then fold Fig 4 into Tab 3.
+- If the content runs over 7 pages (references excluded since P10), cut Tab 2 first, then fold Fig 4 into Tab 3.
 
 ## 9. Subagent assignments and skills per phase
 
@@ -724,7 +1336,7 @@ Two changes from the proposed IA:
 1. **Remote:** `toronto-crime-analytics` returns 404 publicly. Is it private? Free GitHub Pages needs a public repo (or GitHub Pro). gh isn't installed, so pushes use git over HTTPS with your credentials. *Default: plan for public at release; nothing is pushed without asking.*
 2. **STA313 team:** may the site and paper credit teammates by name, and do they consent to the logic being ported and published? The Explorer LICENSE grants no rights. *Default: credit "STA313 project team (6 students), led by Kaiwen Yang", no names; reimplement rather than copy code.*
 3. **Licence:** MIT for this repo's code? Data stays under the TPS and City of Toronto terms. *Default: MIT, plus a DATA_LICENSE.md verified in P1.*
-4. **JSC370 Fig 1 (3D scatter):** neither Vega-Lite nor any print-friendly library does 3D. The z-axis repeated the colour channel (robbery count), so a 2D scatter with colour and size carries the same information. Is this one chart-type exception acceptable? *Default: yes, logged in PARITY.md.*
+4. **JSC370 Fig 1 (3D scatter): answered 2026-10-31: real interactive 3D on the site (Explain), 2D Vega-Lite fallback/print, paper gets one sentence.** (Original question:) neither Vega-Lite nor any print-friendly library does 3D. The z-axis repeated the colour channel (robbery count), so a 2D scatter with colour and size carries the same information. Is this one chart-type exception acceptable? *Default: yes, logged in PARITY.md.*
 5. **Installs (blocks P1):** R packages (CRAN, including xgboost 1.7 from the archive), PyPI packages, npm packages, Playwright Chromium and a Protomaps extract all download into this folder only. OK? *Asked at the start of P1; no default.*
 8. **Outside-folder fallbacks:** if the xgboost 1.7 build needs Homebrew `libomp`, or Python 3.14 lacks a needed wheel (so 3.12 is needed), may those be installed outside the folder? *Asked when the case arises; the in-folder fallback (§4) is tried first.*
 6. **Author line and metadata:** "Kaiwen (Kevin) Yang"? STA303 term/year? *Default: "Kaiwen Yang"; term omitted until confirmed.*
