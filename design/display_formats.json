@@ -293,5 +293,8 @@
   },
   "predict.ablation:designs.*.variants.*.f1.estimate": {
     "decimals": 3
+  },
+  "explain.sta303_v2:category_by_year.*.*": {
+    "decimals": 0
   }
 }

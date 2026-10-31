@@ -1,8 +1,8 @@
 {
  "_provenance": {
   "code_dirty": false,
-  "created": "2026-10-30T03:07:21+00:00",
-  "git_sha": "a96967cde798918f4aa43ede23277a98d10b051d",
+  "created": "2026-10-31T02:28:17+00:00",
+  "git_sha": "8cdc5b96f0bceb8203b47fe6fc2fa229b637dfa5",
   "inputs": {
    "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
    "Break_and_Enter_Open_Data.csv": "9a00dbaa982d14bebd9a8e77a67b1aa35b95a82d8b7c1d84e8ce797378df203b",
@@ -66,6 +66,68 @@
     "observed": 0.26386618035467235
    }
   ],
+  "category_by_year": {
+   "2014": {
+    "Auto Theft": 3429,
+    "Break and Enter": 7172,
+    "Robbery": 2893,
+    "Theft Over": 997
+   },
+   "2015": {
+    "Auto Theft": 3067,
+    "Break and Enter": 6875,
+    "Robbery": 2791,
+    "Theft Over": 1030
+   },
+   "2016": {
+    "Auto Theft": 3034,
+    "Break and Enter": 6357,
+    "Robbery": 2926,
+    "Theft Over": 1012
+   },
+   "2017": {
+    "Auto Theft": 3296,
+    "Break and Enter": 6838,
+    "Robbery": 3109,
+    "Theft Over": 1160
+   },
+   "2018": {
+    "Auto Theft": 4253,
+    "Break and Enter": 7581,
+    "Robbery": 2928,
+    "Theft Over": 1246
+   },
+   "2019": {
+    "Auto Theft": 4734,
+    "Break and Enter": 8418,
+    "Robbery": 2747,
+    "Theft Over": 1340
+   },
+   "2020": {
+    "Auto Theft": 5082,
+    "Break and Enter": 6862,
+    "Robbery": 2100,
+    "Theft Over": 1194
+   },
+   "2021": {
+    "Auto Theft": 5864,
+    "Break and Enter": 5608,
+    "Robbery": 1714,
+    "Theft Over": 1058
+   },
+   "2022": {
+    "Auto Theft": 8622,
+    "Break and Enter": 5952,
+    "Robbery": 2102,
+    "Theft Over": 1409
+   },
+   "2023": {
+    "Auto Theft": 10842,
+    "Break and Enter": 7445,
+    "Robbery": 2347,
+    "Theft Over": 1622
+   }
+  },
   "classes": {
    "Auto Theft": 52223,
    "Break and Enter": 69108,
