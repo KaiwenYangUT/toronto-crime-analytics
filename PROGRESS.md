@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P8 review loop (P7 done; P6 open items remain in its checklist) |
-| In progress | P8: waiting on the fresh-checkout run in `build/fresh/` (`build/fresh.log`); then log the sample-flow intermediate counts (audit item 18) and re-run it |
+| Current phase | P8 done except the open items listed under P8; P9 release next (every step needs the user's OK) |
+| In progress | — |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | P8: honesty audit of site and paper (`tools/audit_numbers.py`), read-only design review, code and security review, fresh-checkout `make all`. Still open: P6 gaps (Key Variable Statistics table, census scatter after Q4, STA303 model-check panels), paper author line (Q6) and repository link (Q1). Ask before deleting the unused Vite scaffold files and before any push or deploy |
+| Next action | Decide the open P8 items with the user (Explore map above the fold, Overview fold visual, paper author line Q6, repository link Q1, bibliography check of skogan1977dark, portal URL, scaffold deletion), then P9 (README, LICENSE; ask before every push or Pages deploy) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -139,7 +139,7 @@ Add a row whenever work moves to a different machine or app.
 - [x] `tools/audit_numbers.py` (string-matches every numeral on the built site and in the paper PDF against stored results in their display formats; 0 unmatched; tests in `tools/tests/test_audit_numbers.py`) plus a manual honesty-audit agent pass: `reviews/honesty-audit.md` (4 blockers, 14 should-fixes, 15 nits). Fixed: wrong CV design wording, false weekday title, wrong XGBoost-grid statement, tolerance overclaim, "place" vs premises wording and H1s, dropped intervals, reference-hour caveat, paper title (now "Which crime type is it? ...", because "When and where" contradicted the no-forecast limit), P/R intervals in Table 2. Not fixed: nits 22, 25 (shown as -0.000, honest), 29 partly, 33; item 18 (sample-flow gap of 15,589 unitemized rows; needs the intermediate counts logged as results keys) and the Explore claim about counts are open
 - [x] Design review pass 2: `reviews/design-review.md` (0 blockers, 9 should-fixes, 11 nits). Fixed: ladder labels at 375, PR-curve dashes and ticks, Explore crime-type bars and weekday labels, table scroll shadows, Overview card order, Methods nav pin. Open: Explore map below the fold at 375/768 (needs layout rework), Overview fold shows no chart supporting the H1, touch targets under 44 px, prose measure 85+ characters, the paper placeholder `[link added at release]`, author name (Q6)
 - [x] Code review (high) of `5873867..HEAD`: 9 findings, 8 fixed, 1 skipped (review scratch files committed by `git add -A`; history rewrite needs approval). Security review done by hand (`reviews/security-review.md`; the skill needs an origin remote): 2 low fixes. Simplify done inline (Fig 4 panel helper, audit tag set)
-- [ ] Fresh-checkout `make all` in `build/fresh/` gives identical hashes: first run (analysis recomputed from scratch) in progress at the time of writing; must be re-run after the last results change
+- [x] Fresh checkout in `build/fresh/` (`bash tools/fresh_checkout.sh`; R re-runs skipped, committed `parity/r_outputs` used): env, data, parity, analysis from scratch (51 min), web, paper, audit all pass; result hashes IDENTICAL to the committed ones at 389f5d9 (first run differed only in wall-clock `fit_seconds`, now excluded from identity hashes). Final run reused the fresh clone's cached ablation predictions. Audit item 18 fixed: the sample-flow table now adds up (new `log.rows_outside_toronto_box`, `exact_duplicate_rows_dropped`, `cross_category_conflict_rows_dropped`)
 - Bibliography: `skogan1977dark` could not be confirmed (an NCJRS abstract dated 1975 was found); other ten entries recognised. Portal URL: `data.tps.ca` answers, a search suggests `data.torontopolice.on.ca`; confirm before release
 
 ### P9 Release (ask before each step)
