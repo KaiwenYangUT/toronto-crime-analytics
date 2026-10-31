@@ -15,9 +15,11 @@ interface Props<T> {
   columns: Column<T>[]
   rows: T[]
   rowKey: (row: T) => string
+  /** Phones: turn each row into a card (default). Set false for a short two-column table that fits as a table. */
+  stack?: boolean
 }
 
-export function DataTable<T>({ caption, columns, rows, rowKey }: Props<T>) {
+export function DataTable<T>({ caption, columns, rows, rowKey, stack = true }: Props<T>) {
   const [sort, setSort] = useState<{ key: string; dir: 1 | -1 } | null>(null)
   const sorted = useMemo(() => {
     const col = columns.find((c) => c.key === sort?.key)
@@ -31,8 +33,8 @@ export function DataTable<T>({ caption, columns, rows, rowKey }: Props<T>) {
   }, [rows, columns, sort])
   const sortable = columns.filter((c) => c.sortValue)
   return (
-    <div className={`${s.tableWrap} ${s.tableStack}`} role="region" aria-label={caption} tabIndex={0}>
-      {sortable.length > 0 && (
+    <div className={stack ? `${s.tableWrap} ${s.tableStack}` : s.tableWrap} role="region" aria-label={caption} tabIndex={0}>
+      {stack && sortable.length > 0 && (
         <label className={s.sortSelect}>
           Sort by
           <select

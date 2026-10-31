@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { Callout } from '../components/Callout.tsx'
 import { Figure } from '../components/Figure.tsx'
 import { KeyPoints } from '../components/KeyPoints.tsx'
 import { Num } from '../components/Num.tsx'
@@ -16,10 +17,13 @@ const A = 'predict.ablation'
 const C = 'predict.census_scatter'
 const v = (rung: string, m: string, f: string) => `${A}:designs.${DESIGN_A}.variants.${rung}.${m}.${f}`
 
+const D = (d: string) => `${A}:designs.${DESIGN_A}.deltas.${d}.pr_auc.estimate`
+const BASE = `${A}:designs.${DESIGN_A}.L0.pr_auc_baseline`
+
 const LENSES = [
-  { to: '/explore', name: 'Explore', text: 'Filter reported incidents on a map.' },
-  { to: '/explain', name: 'Explain', text: 'Which timing differences are statistically clear.' },
-  { to: '/predict', name: 'Predict', text: 'How well a model tells the crime types apart.' },
+  { to: '/explore', name: 'Explore', text: 'Filter incidents on a map.' },
+  { to: '/explain', name: 'Explain', text: 'What changes the odds.' },
+  { to: '/predict', name: 'Predict', text: 'How well models tell types apart.' },
 ]
 
 export function Overview({ svgs }: { svgs: OverviewSvgs }) {
@@ -30,7 +34,7 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
     <>
       <PageHeader
         eyebrow="Toronto Police open data · 2014 to 2023"
-        title="Robbery or other property crime? The premises tell you far more than the time."
+        title="Robbery or other property crime? The type of place says far more than time."
       />
 
       <div className={p.landing}>
@@ -43,27 +47,32 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
                 stat: <Num k={v('L1', 'pr_auc', 'estimate')} />,
                 text: (
                   <>
-                    PR-AUC, a score from zero to one, from time alone: close to guessing at <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />. The full model reaches <Num k={v('L5', 'pr_auc', 'estimate')} />.
+                    PR-AUC from time alone: only modestly above guessing, which scores <Num k={BASE} />. With the type of place and the rest, the full model reaches <Num k={v('L5', 'pr_auc', 'estimate')} />.
                   </>
                 ),
               },
-              { stat: <Num k={`${X}:post2019.or`} />, text: <>times the odds of a robbery after 2019.</> },
+              { stat: <Num k={`${X}:post2019.or`} />, text: <>times the odds of a robbery in 2020 to 2023 compared with 2014 to 2019. Odds are robberies per other incident.</> },
               {
                 stat: <Num k={`${C}:summary.spearman_income.rho`} />,
                 text: (
                   <>
-                    correlation between neighbourhood income and robbery counts: weak. <Link className={p.textLink} to="/explain#income">See Explain</Link>
+                    a weak link: lower-income neighbourhoods reported somewhat more robberies in 2020. <Link className={p.textLink} to="/explain#income">See Explain</Link>
                   </>
                 ),
               },
             ]}
           />
+          <Callout variant="caveat" title="Partly built in">
+            <p>
+              The type of place is the premises and location type in the police record, such as a street or a shop. It partly defines the crime types: <Num k={D('L2_minus_L2-nopremises')} /> of the <Num k={D('L2_minus_L1')} /> gain from the first bar to the second comes from it.
+            </p>
+          </Callout>
         </div>
         <div className={p.landingVisual}>
           <Figure
             id="what-tells-apart"
             title="What tells robbery apart"
-            subtitle="PR-AUC with 95% intervals, tested on held-out neighbourhoods. Grey ticks mark guessing."
+            subtitle="PR-AUC runs from zero to one. Tested on new neighbourhoods; lines are 95% intervals, grey ticks are guessing."
             spec={steps.spec}
             svg={svgs.steps}
             description={steps.description}
@@ -74,10 +83,11 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
       </div>
 
       <section className={p.block} id="share" aria-labelledby="share-h">
-        <h2 id="share-h">The robbery share fell after 2017</h2>
+        <h2 id="share-h">The robbery share has fallen every year since 2017</h2>
         <Figure
           id="share-by-year"
-          title="Share of these reports that were robberies, by year"
+          title="Robbery share of reported incidents, by year"
+          subtitle="The odds above compare 2020 to 2023 with 2014 to 2019."
           spec={share.spec}
           svg={svgs.share}
           description={share.description}
@@ -87,7 +97,7 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
       </section>
 
       <section className={p.block} id="lenses" aria-labelledby="lenses-h">
-        <h2 id="lenses-h">Three ways in</h2>
+        <h2 id="lenses-h">Where to go next</h2>
         <ul className={p.lenses}>
           {LENSES.map((l) => (
             <li key={l.to}>
@@ -102,7 +112,7 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
 
       <div className={p.tail}>
         <div className={p.band}>
-          <p>The full method and results, in a short paper.</p>
+          <p>Read the full method and results in the paper.</p>
           <Link to="/paper" className={`${ui.btn} ${ui.btnPrimary}`}>Read the paper</Link>
         </div>
         <p>Counts are reported incidents, not risk.</p>

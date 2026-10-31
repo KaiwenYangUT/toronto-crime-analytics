@@ -9,22 +9,22 @@ const A = 'predict.ablation'
 const I = 'predict.inference_vs_prediction'
 const v = (rung: string, m: string, f: string) => `${A}:designs.${DESIGN_A}.variants.${rung}.${m}.${f}`
 
+const BASE = `${A}:designs.${DESIGN_A}.L0.pr_auc_baseline`
 const INSIDE = [
-  ['Question', 'Which crime type is a reported incident?'],
+  ['Question', 'Which major crime type is a reported incident?'],
   ['Data', 'Toronto Police major crime files.'],
-  ['Models', 'A logistic regression and a five-step prediction ladder.'],
-  ['Findings', 'Timing effects are clear, but weak predictors of crime type.'],
+  ['Models', 'A statistical model of the odds, and five prediction models that add information step by step.'],
 ]
 
 export function Paper() {
   const pdf = `${import.meta.env.BASE_URL}paper/paper.pdf`
   return (
     <>
-      <PageHeader eyebrow="Paper" title="Many time effects are statistically clear, yet time alone predicts little." />
+      <PageHeader eyebrow="Research paper · PDF" title="Many time effects are statistically clear, yet time alone predicts little." />
       <div className={p.paperGrid}>
         <div className={p.paperMain}>
           <section aria-labelledby="brief-h">
-            <h2 id="brief-h" className={p.subhead}>In brief</h2>
+            <h2 id="brief-h" className={p.subhead}>What the paper found</h2>
             <KeyPoints
               items={[
                 {
@@ -33,13 +33,13 @@ export function Paper() {
                       <Num k={`${I}:time_terms_clear`} /> of <Num k={`${I}:time_terms`} />
                     </>
                   ),
-                  text: 'time effects are statistically clear, with 95% intervals that exclude no effect.',
+                  text: 'time effects are statistically clear: the 95% interval for each does not include no difference. No adjustment is made for testing many at once.',
                 },
                 {
                   stat: <Num k={v('L1', 'pr_auc', 'estimate')} />,
                   text: (
                     <>
-                      PR-AUC from time alone, where guessing scores <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />.
+                      PR-AUC from time alone, a score from zero to one: only modestly above guessing, which scores <Num k={BASE} />.
                     </>
                   ),
                 },
@@ -47,7 +47,7 @@ export function Paper() {
                   stat: <Num k={v('L5', 'pr_auc', 'estimate')} />,
                   text: (
                     <>
-                      PR-AUC for the full model, but only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} /> without premises and location type.
+                      PR-AUC for the full model, but only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} /> without the type of place (premises and location type).
                     </>
                   ),
                 },
@@ -55,7 +55,7 @@ export function Paper() {
             />
           </section>
           <section aria-labelledby="inside-h">
-            <h2 id="inside-h" className={p.subhead}>Inside the paper</h2>
+            <h2 id="inside-h" className={p.subhead}>What the paper covers</h2>
             <dl className={p.inside}>
               {INSIDE.map(([k, text]) => (
                 <div key={k} style={{ display: 'contents' }}>
@@ -78,7 +78,12 @@ export function Paper() {
               <a className={ui.btn} href={pdf} target="_blank" rel="noopener noreferrer">Open in browser</a>
             </div>
           </article>
-          <iframe className={p.preview} src={pdf} loading="lazy" title="Preview of the paper (PDF)" />
+          <div className={p.previewBox}>
+            <p className={p.previewNote}>
+              If the preview does not appear, <a href={pdf} target="_blank" rel="noopener noreferrer">open the PDF</a>.
+            </p>
+            <iframe className={p.preview} src={pdf} loading="lazy" title="Preview of the paper (PDF)" />
+          </div>
         </div>
       </div>
     </>

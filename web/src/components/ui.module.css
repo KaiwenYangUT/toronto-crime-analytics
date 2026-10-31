@@ -11,8 +11,7 @@
 .nav { display: none; flex: 1; gap: var(--space-1); }
 .brandShort { display: inline; }
 .brandLong { display: none; }
-.themeDesktop { display: none; }
-.themeMobile { padding: var(--space-3) var(--space-3) 0; }
+.themeSlot { display: block; }
 .navLink { color: var(--text-muted); text-decoration: none; padding: 0 var(--space-3); min-height: var(--target); display: inline-flex; align-items: center; border-radius: var(--radius); font-size: var(--text-sm); font-weight: 500; }
 .navLink:hover { color: var(--text); background: var(--surface); }
 .navLink[aria-current='page'] { color: var(--text); background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent); }
@@ -24,7 +23,6 @@
 @media (min-width: 1024px) {
   .brandShort { display: none; }
   .brandLong { display: inline; }
-  .themeDesktop { display: block; }
   .nav { display: flex; }
   .menuButton { display: none; }
   .mobileNav, .mobileNav[data-open='true'] { display: none; }

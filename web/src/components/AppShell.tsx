@@ -56,7 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <div className={s.headerRight}>
-            <div className={s.themeDesktop}><ThemeToggle /></div>
+            <div className={s.themeSlot}><ThemeToggle /></div>
             <button
               type="button"
               className={s.menuButton}
@@ -74,7 +74,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               {n.label}
             </NavLink>
           ))}
-          <div className={s.themeMobile}><ThemeToggle /></div>
         </nav>
       </header>
       <main id="main" className={wide ? `${s.main} ${s.mainWide}` : s.main} tabIndex={-1}>
