@@ -37,7 +37,6 @@ export function Methods() {
         eyebrow="Methods"
         title="Every result comes from one pipeline that reproduced the three course projects first."
         dek="The definition, the data steps, the models and the checks, with the limits stated up front."
-        sources={[X, A]}
       />
       <div className={ui.withToc}>
         <nav className={ui.toc} aria-label="On this page">

@@ -87,11 +87,17 @@ export function VegaChart({ spec, svg, label, viewRef, minHeight = 240, onSignal
   }, [specKey, label, viewRef, signalName])
 
   return (
-    <div className={s.chart} style={{ minHeight }} role="img" aria-label={label}>
+    <div className={`${s.chart} ${svg?.lightNarrow && svg.darkNarrow ? s.hasNarrow : ''}`} style={{ minHeight }} role="img" aria-label={label}>
       {svg && !live && (
         <>
           <div className={s.svgLight} dangerouslySetInnerHTML={{ __html: svg.light }} />
           <div className={s.svgDark} dangerouslySetInnerHTML={{ __html: svg.dark }} />
+          {svg.lightNarrow && svg.darkNarrow && (
+            <>
+              <div className={s.svgLightNarrow} dangerouslySetInnerHTML={{ __html: svg.lightNarrow }} />
+              <div className={s.svgDarkNarrow} dangerouslySetInnerHTML={{ __html: svg.darkNarrow }} />
+            </>
+          )}
         </>
       )}
       <div ref={host} className={s.live} />

@@ -180,6 +180,72 @@ def check_ordinal(steps: list[str], mode: str, surface: str) -> list[tuple[str, 
     return rows
 
 
+def check_magnitude(steps: list[str], mode: str, surface: str) -> list[tuple[str, str, str]]:
+    """The viridis magnitude ramp (counts on a background), ordered low to high. It is multi-hue by
+    design (perceptually uniform, colour-vision safe), so the single-hue test does not apply. The low
+    end is the faint one: light on white (or dark on a dark ground) falls under 3:1 and so needs the
+    mandatory relief: value labels or the data-table view."""
+    lightness = [oklch(c)[0] for c in steps]
+    # low to high reads light to dark on a light surface, dark to light on a dark one
+    seq = lightness if mode == "light" else lightness[::-1]
+    gaps = [abs(a - b) for a, b in pairwise(lightness)]
+    low, high = steps[0], steps[-1]
+    ends = {k: delta_e(low, high, k) for k in (None, "protan", "deutan", "tritan")}
+    worst = min(ends.values())
+    rows = [
+        (
+            "Lightness monotone",
+            "PASS" if all(a > b for a, b in pairwise(seq)) else "FAIL",
+            "steps read low to high without reversing",
+        ),
+        (
+            "Adjacent dL",
+            "PASS" if min(gaps) >= ORDINAL_MIN_DL else "FAIL",
+            f"min gap {min(gaps):.3f} over {len(steps)} stops",
+        ),
+        (
+            "End stops, colour-vision separation",
+            "PASS" if worst >= CVD_TARGET else "FAIL",
+            (
+                f"{low}-{high} dE {ends[None]:.1f} normal, protan {ends['protan']:.1f}, "
+                f"deutan {ends['deutan']:.1f}, tritan {ends['tritan']:.1f}"
+            ),
+        ),
+    ]
+    c_low, c_high = contrast(low, surface), contrast(high, surface)
+    rows.append(
+        (
+            "High end vs bg",
+            "PASS" if c_high >= CONTRAST_MIN else "FAIL",
+            f"{high} at {c_high:.2f}:1 (need 3:1)",
+        )
+    )
+    rows.append(
+        (
+            "Low end vs bg",
+            "PASS" if c_low >= CONTRAST_MIN else "WARN",
+            f"{low} at {c_low:.2f}:1"
+            + (
+                ""
+                if c_low >= CONTRAST_MIN
+                else " (below 3:1: cells need a border, value labels or the data table)"
+            ),
+        )
+    )
+    hues = [
+        math.degrees(math.atan2(oklab_from_linear(lin(c))[2], oklab_from_linear(lin(c))[1])) % 360
+        for c in steps
+    ]
+    rows.append(
+        (
+            "Single hue",
+            "PASS",
+            f"not applicable: viridis spans {max(hues) - min(hues):.0f} deg of hue by design",
+        )
+    )
+    return rows
+
+
 def check_neutrals(tokens: dict, mode: str) -> list[tuple[str, str, str]]:
     c = tokens["color"][mode]
     rows = []
@@ -222,6 +288,9 @@ def run(tokens: dict) -> dict[str, list[tuple[str, str, str]]]:
             cats, mode, c["bg"]
         )
         report[f"{mode}: ordinal ramp"] = check_ordinal(c["ordinal"], mode, c["bg"])
+        report[f"{mode}: magnitude ramp (viridis, low to high)"] = check_magnitude(
+            c["ramp"]["magnitude"], mode, c["bg"]
+        )
         report[f"{mode}: neutral tokens"] = check_neutrals(tokens, mode)
     return report
 
@@ -245,6 +314,15 @@ def to_markdown(report: dict[str, list[tuple[str, str, str]]]) -> str:
             "A CVD result in the 6-8 band or a contrast below 3:1 is legal only with secondary encoding. "
             "Every chart therefore pairs colour with a marker shape (`category_markers` in tokens.json), a direct label "
             "or a legend, and a data-table view; colour is never the only channel."
+        ),
+        "",
+        (
+            "The magnitude ramp is viridis (user decision, P10). The dataviz skill's `validate_palette.js --ordinal` "
+            "reports its two ordinal-only checks as FAIL for it: single hue (viridis is multi-hue on purpose, which is "
+            "what makes it perceptually uniform and colour-vision safe) and light-end contrast (the low end sits close "
+            "to the background by design: it means near-zero). Lightness is monotone with gaps of at least 0.06 and the "
+            "end stops are 70 apart in OKLab dE for every vision type. The low end is therefore always paired with value "
+            "labels or the data-table view, and heat-map cells get a thin border in the border colour."
         ),
         "",
         f"Sections with warnings: {', '.join(warns) if warns else 'none'}.",

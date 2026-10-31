@@ -5,22 +5,26 @@
   --measure: 68ch;
   --radius: 6px;
   --focus-ring: 2px;
-  --text-xs: 0.8rem;
+  --text-xs: 0.875rem;
   --leading-xs: 1.4;
-  --text-sm: 0.875rem;
+  --text-sm: 1rem;
   --leading-sm: 1.5;
-  --text-base: 1rem;
+  --text-base: 1.125rem;
   --leading-base: 1.6;
-  --text-lg: 1.25rem;
+  --text-lg: 1.375rem;
   --leading-lg: 1.4;
-  --text-xl: 1.5625rem;
+  --text-xl: 1.75rem;
   --leading-xl: 1.3;
-  --text-2xl: 1.9375rem;
+  --text-2xl: 2.125rem;
   --leading-2xl: 1.2;
-  --text-3xl: 2.4375rem;
+  --text-3xl: 2.75rem;
   --leading-3xl: 1.15;
-  --text-display: 3rem;
+  --text-display: 3.5rem;
   --leading-display: 1.05;
+  --page-max: 1280px;
+  --gutter: 32px;
+  --aside: 360px;
+  --target: 44px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -56,7 +60,26 @@
   --density-3: #666970;
   --density-4: #A59C74;
   --density-5: #FFEA46;
+  --ramp-magnitude-1: #FDE725;
+  --ramp-magnitude-2: #B4DE2C;
+  --ramp-magnitude-3: #6DCD59;
+  --ramp-magnitude-4: #35B779;
+  --ramp-magnitude-5: #1F9E89;
+  --ramp-magnitude-6: #26828E;
+  --ramp-magnitude-7: #31688E;
+  --ramp-magnitude-8: #3E4989;
+  --ramp-magnitude-9: #482878;
+  --ramp-magnitude-10: #440154;
   color-scheme: light dark;
+}
+
+/* Under 768 px: tighter gutter, 17 px body (type.scale_mobile). */
+@media (max-width: 767.98px) {
+  :root {
+    --gutter: 16px;
+    --text-base: 1.0625rem;
+    --leading-base: 1.6;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,6 +106,16 @@
     --density-3: #666970;
     --density-4: #A59C74;
     --density-5: #FFEA46;
+    --ramp-magnitude-1: #440154;
+    --ramp-magnitude-2: #482878;
+    --ramp-magnitude-3: #3E4989;
+    --ramp-magnitude-4: #31688E;
+    --ramp-magnitude-5: #26828E;
+    --ramp-magnitude-6: #1F9E89;
+    --ramp-magnitude-7: #35B779;
+    --ramp-magnitude-8: #6DCD59;
+    --ramp-magnitude-9: #B4DE2C;
+    --ramp-magnitude-10: #FDE725;
   }
 }
 
@@ -109,4 +142,14 @@
   --density-3: #666970;
   --density-4: #A59C74;
   --density-5: #FFEA46;
+  --ramp-magnitude-1: #440154;
+  --ramp-magnitude-2: #482878;
+  --ramp-magnitude-3: #3E4989;
+  --ramp-magnitude-4: #31688E;
+  --ramp-magnitude-5: #26828E;
+  --ramp-magnitude-6: #1F9E89;
+  --ramp-magnitude-7: #35B779;
+  --ramp-magnitude-8: #6DCD59;
+  --ramp-magnitude-9: #B4DE2C;
+  --ramp-magnitude-10: #FDE725;
 }

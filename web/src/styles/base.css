@@ -3,7 +3,9 @@
 @font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url('/fonts/inter-latin-600-normal.woff2') format('woff2'); }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--space-8); }
+/* --nav-h is the header's real height; AppShell sets it. 60px is the first-paint guess. */
+:root { --nav-h: 60px; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--nav-h) + var(--space-4)); }
 body {
   margin: 0;
   background: var(--bg);
@@ -14,6 +16,8 @@ body {
   font-feature-settings: 'cv11', 'ss03';
 }
 h1, h2, h3, h4 { margin: 0; font-weight: 600; text-wrap: balance; }
+/* h1 fills the header width and avoids a one-word last line, rather than balancing into a narrow block */
+h1 { text-wrap: pretty; }
 h1 { font-size: var(--text-2xl); line-height: var(--leading-2xl); letter-spacing: -0.01em; }
 h2 { font-size: var(--text-xl); line-height: var(--leading-xl); }
 h3 { font-size: var(--text-lg); line-height: var(--leading-lg); }
@@ -23,6 +27,9 @@ p { margin: 0; }
 a { color: var(--accent); text-underline-offset: 0.18em; }
 a:hover { text-decoration-thickness: 2px; }
 button, input, select { font: inherit; color: inherit; }
+/* Touch targets: a default minimum (zero specificity, so a component can still choose a larger one).
+   Checkbox, radio and slider parts are drawn by their own components. */
+:where(button:not([role='checkbox'], [role='radio'], [role='slider']), select, input:not([type='checkbox'], [type='radio'], [type='range']), summary) { min-height: var(--target); }
 img, svg { max-width: 100%; }
 table { border-collapse: collapse; }
 code, kbd, samp { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.92em; }
@@ -32,7 +39,7 @@ code, kbd, samp { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospa
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-.prose { max-width: var(--measure); }
+.prose p, .prose li, .prose dd, p.prose, li.prose { max-width: var(--measure); }
 .prose > * + * { margin-top: var(--space-4); }
 .prose ul, .prose ol { padding-left: 1.25em; }
 .prose li + li { margin-top: var(--space-2); }

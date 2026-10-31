@@ -232,7 +232,8 @@ def write_figures() -> None:
         ["node", "scripts/export-paper-specs.mjs", str(specs)], cwd=ROOT / "web", check=True
     )
     vlc.register_font_directory(str(ROOT / ".cache" / "fonts" / "inter"))
-    theme = json.loads((ROOT / "design" / "vega-theme.json").read_text())["light"]
+    # the pinned "paper" block: light colours with the chart sizes the paper was laid out with
+    theme = json.loads((ROOT / "design" / "vega-theme.json").read_text())["paper"]
     for path in sorted(specs.glob("fig*.vl.json")):
         spec = {
             "$schema": "https://vega.github.io/schema/vega-lite/v6.json",

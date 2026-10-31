@@ -34,7 +34,6 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
             Odds ratios from <Num k={`${K}:n`} /> reported incidents, 2014 to 2023, holding hour, month, weekday and darkness fixed: association, not risk or cause.
           </>
         }
-        sources={[K, 'predict.eda_corrections']}
       />
 
       <div className={ui.split}>

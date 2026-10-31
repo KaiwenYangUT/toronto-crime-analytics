@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { View } from 'vega'
 import { csvOf, type Spec } from '../lib/chart.ts'
 import type { ChartSvgs } from '../lib/vegaServer.ts'
@@ -39,40 +39,80 @@ function download(name: string, mime: string, body: string) {
   URL.revokeObjectURL(url)
 }
 
+/** One "Data" menu holds every action: the table toggle, CSV, SVG and any page-specific export. */
+function DataMenu({ children, label }: { children: ReactNode; label: string }) {
+  const [open, setOpen] = useState(false)
+  const root = useRef<HTMLDivElement>(null)
+  const button = useRef<HTMLButtonElement>(null)
+  const panel = useId()
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => root.current && !root.current.contains(e.target as Node) && setOpen(false)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        button.current?.focus()
+      }
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+  return (
+    <div className={s.dataMenu} ref={root}>
+      <button ref={button} type="button" className={s.btn} aria-expanded={open} aria-controls={panel} aria-label={label} onClick={() => setOpen((o) => !o)}>
+        Data
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <path d="m3 6 5 5 5-5" />
+        </svg>
+      </button>
+      {open && (
+        <div id={panel} className={s.dataMenuPanel} onClick={() => setOpen(false)}>
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv }: Props) {
   const view = useRef<View | null>(null)
   const [showTable, setShowTable] = useState(false)
   const slug = (id ?? title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   const cols = table && table.length ? Object.keys(table[0]) : []
+  const hasMenu = Boolean(table) || Boolean(extraActions) || !compact
   return (
     <figure className={s.figure} id={id}>
       <figcaption className={s.figureTitle}>{title}</figcaption>
+      {hasMenu && (
+        <DataMenu label={`Data options for ${title}`}>
+          {table && (
+            <button type="button" aria-expanded={showTable} onClick={() => setShowTable((v) => !v)}>
+              {showTable ? 'Hide data table' : 'View data table'}
+            </button>
+          )}
+          {table && !noCsv && (
+            <button type="button" onClick={() => download(`${slug}.csv`, 'text/csv', csvOf(table))}>
+              Download CSV
+            </button>
+          )}
+          {extraActions}
+          {!compact && (
+            <button type="button" onClick={async () => view.current && download(`${slug}.svg`, 'image/svg+xml', await view.current.toSVG())}>
+              Download SVG
+            </button>
+          )}
+        </DataMenu>
+      )}
       {subtitle && <p className={s.figureSub}>{subtitle}</p>}
       <div className={s.figureBody}>
         <VegaChart spec={spec} svg={svg} label={`${title}. ${description}`} viewRef={view} minHeight={minHeight} onSignal={onSignal} />
       </div>
       {caption && <p className={s.figureCaption}>{caption}</p>}
       {source && <p className={s.figureCaption}>{source}</p>}
-      <div className={s.figureActions}>
-        {table && (
-          <button type="button" className={s.btn} aria-expanded={showTable} onClick={() => setShowTable((v) => !v)}>
-            {showTable ? 'Hide data table' : 'View data table'}
-          </button>
-        )}
-        {table && !noCsv && (
-          <button type="button" className={s.btn} onClick={() => download(`${slug}.csv`, 'text/csv', csvOf(table))}>
-            Download CSV
-          </button>
-        )}
-        {extraActions}
-        {!compact && <button
-          type="button"
-          className={s.btn}
-          onClick={async () => view.current && download(`${slug}.svg`, 'image/svg+xml', await view.current.toSVG())}
-        >
-          Download SVG
-        </button>}
-      </div>
       {table && showTable && (
         <div className={s.tableWrap} role="region" aria-label={`Data for ${title}`} tabIndex={0}>
           <table className={s.table}>

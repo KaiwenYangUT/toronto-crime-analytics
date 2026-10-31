@@ -19,7 +19,6 @@ export function Paper() {
         eyebrow="Paper"
         title="Many time effects are statistically clear, yet time alone predicts little."
         dek="A short research paper that answers one question twice: given a reported property-type crime, which type is it?"
-        sources={[X, A, I]}
       />
       <div className="prose">
         <p>

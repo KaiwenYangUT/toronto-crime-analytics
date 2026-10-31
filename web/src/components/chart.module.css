@@ -2,12 +2,25 @@
 .live { width: 100%; }
 .live :global(.vega-embed) { width: 100%; }
 .live :global(.vega-embed) summary { display: none; }
-.svgLight, .svgDark { width: 100%; overflow-x: auto; }
-.svgDark { display: none; }
+.svgLight, .svgDark, .svgLightNarrow, .svgDarkNarrow { width: 100%; overflow-x: auto; }
+.svgDark, .svgLightNarrow, .svgDarkNarrow { display: none; }
+.svgLight svg, .svgDark svg, .svgLightNarrow svg, .svgDarkNarrow svg { max-width: 100%; height: auto; }
 @media (prefers-color-scheme: dark) {
   :global(:root:not([data-theme='light'])) .svgLight { display: none; }
   :global(:root:not([data-theme='light'])) .svgDark { display: block; }
 }
 :global(:root[data-theme='dark']) .svgLight { display: none; }
 :global(:root[data-theme='dark']) .svgDark { display: block; }
-.svgLight svg, .svgDark svg { max-width: 100%; height: auto; }
+
+/* A page's main chart also ships 360 px variants (ChartSvgs.lightNarrow / darkNarrow, marked by
+   .hasNarrow). Under 600 px they replace the wide ones, with the same theme selectors. */
+@media (max-width: 599.98px) {
+  .hasNarrow .svgLight, .hasNarrow .svgDark { display: none !important; }
+  .hasNarrow .svgLightNarrow { display: block; }
+  :global(:root[data-theme='dark']) .hasNarrow .svgLightNarrow { display: none; }
+  :global(:root[data-theme='dark']) .hasNarrow .svgDarkNarrow { display: block; }
+}
+@media (max-width: 599.98px) and (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme='light'])) .hasNarrow .svgLightNarrow { display: none; }
+  :global(:root:not([data-theme='light'])) .hasNarrow .svgDarkNarrow { display: block; }
+}

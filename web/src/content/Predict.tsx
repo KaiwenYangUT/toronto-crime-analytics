@@ -60,7 +60,6 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
             Five models on the same <Num k={`${A}:designs.${DESIGN_A}.rows`} /> reported incidents, each scored with a 95% interval.
           </>
         }
-        sources={[A, V, J]}
       />
 
       <div className={ui.stack}>

@@ -27,7 +27,6 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
             Among <Num k={`${X}:n`} /> reported incidents, which crime type is it? An answer about reports, not risk.
           </>
         }
-        sources={[X, A]}
       />
 
       <CardGrid>
