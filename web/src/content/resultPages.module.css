@@ -1,0 +1,17 @@
+/* Local pieces of the Explain and Predict pages; the shared layout comes from components/ui.module.css. */
+
+/* A block under a ResultSection that keeps the width of an 8-column figure instead of spanning the whole container. */
+.half { max-width: 52rem; display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* Table cells that hold a sentence wrap instead of forcing the table wider. */
+.wrap { display: block; white-space: normal; min-width: 14rem; max-width: 36rem; }
+
+/* Verdict chip: a glyph and a word, never colour alone. */
+.chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: 2px var(--space-3); border-radius: 999px; border: 1px solid var(--text); font-size: var(--text-sm); font-weight: 600; white-space: nowrap; background: var(--bg); color: var(--text); }
+.chipHolds { border-color: var(--accent); color: var(--accent); }
+.chipPartly { border-style: dashed; border-color: var(--text-muted); }
+.chipFails { background: var(--surface); }
+.chipGlyph { font-weight: 700; }
+
+.note { margin: 0; max-width: var(--measure); }
+.legendRow { margin-bottom: var(--space-3); }

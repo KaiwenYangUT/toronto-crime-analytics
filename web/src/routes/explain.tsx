@@ -2,7 +2,7 @@ import type { Route } from './+types/explain'
 import { ResultsProvider } from '../components/Num.tsx'
 import { Explain } from '../content/Explain.tsx'
 import pageData from '../data/pages/explain.json'
-import { calibrationChart, forestPlot, patternChart } from '../lib/specs.ts'
+import { censusScatter2d, oddsByTime, patternChart, SLOT_WIDTH, svgsForSlot } from '../lib/specs.ts'
 import type { PageResults } from '../lib/results.ts'
 
 export function meta() {
@@ -10,15 +10,18 @@ export function meta() {
 }
 
 export async function loader() {
-  const { renderSvgs } = await import('../lib/vegaServer.ts')
+  const { one } = await import('../lib/vegaServer.ts')
   const data = pageData as unknown as PageResults
+  const { eight, narrow } = SLOT_WIDTH
+  // Only the first two charts are in view on load: they get the slot width and the 360 px variants. The pattern charts
+  // sit in a 52rem block. The forest and calibration charts live in closed disclosures, so they ship no prerendered SVG.
   return {
     data,
     svgs: {
-      forest: await renderSvgs(forestPlot(data).spec),
-      calibration: await renderSvgs(calibrationChart(data).spec),
-      weekday: await renderSvgs(patternChart(data, 'weekday').spec),
-      hour: await renderSvgs(patternChart(data, 'hour').spec),
+      time: await svgsForSlot(one, oddsByTime(data).spec, eight, narrow),
+      scatter: await svgsForSlot(one, censusScatter2d(data).spec, eight, narrow),
+      weekday: await svgsForSlot(one, patternChart(data, 'weekday').spec, eight),
+      hour: await svgsForSlot(one, patternChart(data, 'hour').spec, eight),
     },
   }
 }

@@ -51,9 +51,6 @@ PAGES: dict[str, dict[str, list[str] | None]] = {
     "predict": {
         "predict.ablation": None,
         "predict.eda_corrections": ["year", "rows", "robberies"],
-        "predict.inference_vs_prediction": None,
-        "predict.xgb_grid_fix": None,
-        "predict.jsc370_benchmark": None,
     },
     "methods": {
         "explain.sta303_v2": [

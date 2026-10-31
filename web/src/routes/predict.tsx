@@ -2,7 +2,7 @@ import type { Route } from './+types/predict'
 import { ResultsProvider } from '../components/Num.tsx'
 import { Predict } from '../content/Predict.tsx'
 import pageData from '../data/pages/predict.json'
-import { ablationLadder, blockImportance, DESIGN_A, DESIGN_B, prCurves } from '../lib/specs.ts'
+import { blockImportance, rungSteps, SLOT_WIDTH, svgsForSlot } from '../lib/specs.ts'
 import type { PageResults } from '../lib/results.ts'
 
 export function meta() {
@@ -10,15 +10,16 @@ export function meta() {
 }
 
 export async function loader() {
-  const { renderSvgs } = await import('../lib/vegaServer.ts')
+  const { one } = await import('../lib/vegaServer.ts')
   const data = pageData as unknown as PageResults
+  const { eight, narrow } = SLOT_WIDTH
+  // The step chart is the page's main visual (static PR-AUC view, with phone variants); the importance chart is in an
+  // 8-column slot. The precision-recall curves sit in a closed disclosure, so they ship no prerendered SVG.
   return {
     data,
     svgs: {
-      ladder: await renderSvgs(ablationLadder(data, 'pr_auc').spec),
-      prA: await renderSvgs(prCurves(data, DESIGN_A).spec),
-      prB: await renderSvgs(prCurves(data, DESIGN_B).spec),
-      importance: await renderSvgs(blockImportance(data).spec),
+      steps: await svgsForSlot(one, rungSteps(data, 'pr_auc').spec, eight, narrow),
+      importance: await svgsForSlot(one, blockImportance(data).spec, eight),
     },
   }
 }

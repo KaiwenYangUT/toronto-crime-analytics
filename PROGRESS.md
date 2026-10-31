@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
-| In progress | P10 R2 (R2a Explore, R2b Explain/Predict, R2c 3D scatter as parallel subagents) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
+| In progress | P10 Gate B (after R2) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | P10 R2 then Gate B, then R3 and R4. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
@@ -161,7 +161,9 @@ Add a row whenever work moves to a different machine or app.
 - [x] R1c Paper rule: `\clearpage` before the bibliography, `check_page_count.py` counts content pages (limit 7, warn above 6, fails without a References page), 7 tests; `make paper` = 6 content pages + references on page 7. The audit `\f` cut is R1b's
 - [x] Code review (high) of R1: 8 findings, 3 fixed (theme sync across tabs, Download SVG before live chart, DataMenu aria-controls), 5 handed to R2 owners (Explore CSS offsets and 44 px, specs.ts fontSize 13, ramp low-end relief, duplicate References logic, narrow width on concat specs). Gate A GREEN (`reviews/gate-a.md`); its should-fixes 1-2 applied (h2 24 px on mobile, auto-fit stat grid); 3 (prerender SVG at slot width) and 4 (prose outside ResultSection) go to R2b/R3a
 - [x] R2a Explore dashboard: one-screen grid at 1280x800/1440x900, drawer at 1024, map above the fold at 375, brush applied on release, own `ChartCard` and header (Figure/PageHeader lack the slots; note for cleanup), H1 "Reported incidents cluster downtown and peak in the evening." verified on default filters (31.3% within 3 km of Union Station; hours 15-21 hold 41.5%; busiest hour 18:00) - honesty audit must re-check it; cluster steps 50/300/1500; scratch `web/scripts/_probe*.mjs` left untracked, deletion needs approval
-- [ ] R2b Explain and Predict; R2c 3D scatter (plotly chunk, bundle rule); Gate B
+- [x] R2c 3D scatter: `plotly.js-gl3d-dist-min@4.2.0`, chunk `plotly-gl3d.min-*` 517.7 KB gz (budget 544), requested on /explain only after in-view/opt-in, 2D fallback, census3d-check passes; core JS reached 186.5 KB so the approved split applies: shared core 140.7 / 180 KB, route chunks <= 40 KB each (largest explore 21.5); unused Radix dialog/select/tabs dropped
+- [x] R2b Explain and Predict rebuilt (ResultSection, new specs oddsByTime/rungSteps/stepChart/censusScatter2d, benchmark section and grid-fix callout removed from the site; `jsc370_benchmark`, `xgb_grid_fix`, `inference_vs_prediction` dropped from the predict page data); words Explain 350/350, Predict 247/300; audit 0 unmatched
+- [ ] Gate B (design lead: Explore at 1280x800, 1440x900, 1024, 375; Explain with the three-dimensional scatter, light and dark)
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
 - [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`
 

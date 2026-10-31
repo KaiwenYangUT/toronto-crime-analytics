@@ -17,6 +17,7 @@ export function KeyPoints({ items, label }: { items: KeyPoint[]; label?: string 
       {items.map((p, i) => (
         <li key={i} className={s.keyPoint}>
           {p.stat ? <span className={s.keyStat}>{p.stat}</span> : <span className={s.keyMark} aria-hidden="true" />}
+          {p.stat && ' '}
           <span>{p.text}</span>
         </li>
       ))}

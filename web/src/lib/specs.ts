@@ -2,8 +2,9 @@
 // Marks take their colours from the theme's named styles (accent, muted, ink), so light and dark
 // modes need no per-mode code here. Table cells use the stored display formats.
 import { getValue, numberText, type PageResults } from './results.ts'
-import type { Spec } from './chart.ts'
+import type { Mode, Spec } from './chart.ts'
 import type { TableRow } from '../components/Figure.tsx'
+import type { ChartSvgs } from './vegaServer.ts'
 
 export interface FigureData {
   spec: Spec
@@ -31,8 +32,14 @@ export const ABL = 'predict.ablation'
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-/** Share of reported property-type incidents that are robberies, by year. */
-export function shareByYear(d: PageResults): FigureData {
+/**
+ * Share of reported property-type incidents that are robberies, by year.
+ * `labelSize` is the size of the two end labels. The default 13 is pinned because the paper's first figure reuses this
+ * builder and must not move; site pages pass `null` to take the theme's text size.
+ */
+export function shareByYear(d: PageResults, opts: { labelSize?: number | null } = {}): FigureData {
+  const labelSize = opts.labelSize === undefined ? 13 : opts.labelSize
+  const labelMark = labelSize === null ? {} : { fontSize: labelSize }
   const years = Object.keys((getValue(d, 'explain.sta303_v2:prevalence_by_year') as object))
   const rows = years.map((y) => ({
     year: y,
@@ -45,7 +52,7 @@ export function shareByYear(d: PageResults): FigureData {
     encoding: { x: { field: 'year', type: 'ordinal', title: null, axis: { labelAngle: 0 } } },
     layer: [
       { mark: { type: 'line', style: 'accent', point: { filled: true, size: 70, style: 'accent' } }, encoding: { y: { field: 'share', type: 'quantitative', title: 'Robbery share of incidents', axis: { format: '.0%' }, scale: { domain: [0, 0.25] } } } },
-      { transform: [{ filter: "datum.year === '2014' || datum.year === '2023'" }], mark: { type: 'text', style: 'ink', dy: -14, fontWeight: 600, fontSize: 13 }, encoding: { y: { field: 'share', type: 'quantitative' }, text: { field: 'label' } } },
+      { transform: [{ filter: "datum.year === '2014' || datum.year === '2023'" }], mark: { type: 'text', style: 'ink', dy: -14, fontWeight: 600, ...labelMark }, encoding: { y: { field: 'share', type: 'quantitative' }, text: { field: 'label' } } },
     ],
   }
   return {
@@ -108,7 +115,7 @@ export function forestPlot(d: PageResults): FigureData {
       { mark: { type: 'point', style: 'muted', filled: true, size: 36 }, encoding: { y, x: { field: 'or', ...x } } },
       { transform: [{ filter: 'datum.highlight' }], mark: { type: 'rule', style: 'accent', strokeWidth: 3 }, encoding: { y, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
       { transform: [{ filter: 'datum.highlight' }], mark: { type: 'point', style: 'accent', filled: true, size: 90 }, encoding: { y, x: { field: 'or', ...x } } },
-      { transform: [{ filter: 'datum.highlight' }], mark: { type: 'text', style: 'ink', align: 'left', dx: 8, fontWeight: 600, fontSize: 13 }, encoding: { y, x: { field: 'hi', ...x }, text: { field: 'label' } } },
+      { transform: [{ filter: 'datum.highlight' }], mark: { type: 'text', style: 'ink', align: 'left', dx: 8, fontWeight: 600 }, encoding: { y, x: { field: 'hi', ...x }, text: { field: 'label' } } },
     ],
   }
   const table = rows.map((r) => ({ Group: r.group, Term: r.term, 'Odds ratio': r.label, 'Robust interval low': r.loText, 'Robust interval high': r.hiText }))
@@ -212,7 +219,7 @@ export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN
   }
 }
 
-const BLOCK_LABEL: Record<string, string> = { premises: 'Premises and location type', time: 'Time (hour, month, weekday, darkness)', census: 'Census', geo: 'Geography' }
+const BLOCK_LABEL: Record<string, string> = { premises: 'Premises, location', time: 'Time', census: 'Census', geo: 'Geography' }
 
 /** Grouped permutation importance of the XGBoost rung: PR-AUC lost when one block of features is shuffled. */
 export function blockImportance(d: PageResults): FigureData {
@@ -224,7 +231,7 @@ export function blockImportance(d: PageResults): FigureData {
   const spec: Spec = {
     height: { step: 36 },
     data: { values: rows },
-    encoding: { y: { field: 'block', type: 'nominal', sort: '-x', title: null, axis: { labelLimit: 240 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost on shuffling', scale: { domain: [0, 0.5] }, axis: { tickCount: 5 } } },
+    encoding: { y: { field: 'block', type: 'nominal', sort: rows.map((r) => r.block), title: null, axis: { labelLimit: 150 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost on shuffling', scale: { domain: [0, 0.5] }, axis: { tickCount: 5 } } },
     layer: [
       { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
       { mark: { type: 'text', style: 'ink', align: 'left', dx: 6, fontWeight: 600 }, encoding: { text: { field: 'label' } } },
@@ -247,7 +254,7 @@ export function patternChart(d: PageResults, kind: 'weekday' | 'hour'): FigureDa
   const spec: Spec = {
     height: 220,
     data: { values: rows },
-    mark: { type: 'bar', style: 'accent' },
+    mark: { type: 'bar', style: 'accent', width: { band: 0.6 } },
     encoding: { x: { field: 'x', type: 'ordinal', sort: rows.map((r) => r.x), title: kind === 'hour' ? 'Hour of day' : null, axis: { labelAngle: 0, labelOverlap: true } }, y: { field: 'share', type: 'quantitative', title: 'Robbery share of incidents', axis: { format: '.0%' } }, tooltip: [{ field: 'x' }, { field: 'label', title: 'Share' }] },
   }
   return {
@@ -282,5 +289,244 @@ export function calibrationChart(d: PageResults): FigureData {
     spec,
     table: rows.map((r) => ({ Group: r.decile, 'Mean predicted': r.text[0], Observed: r.text[1] })),
     description: 'Ten points of mean predicted probability against the observed robbery share, close to the diagonal: the model is well calibrated, even though it separates the classes only weakly.',
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// P10 builders: prerender widths, odds by time, rung steps, step chart and the flat census scatter.
+// ---------------------------------------------------------------------------------------------------------------------
+
+/** Total SVG widths of the static first paint: an 8-column slot at 1280 px, and a phone (375 px minus gutters). */
+export const SLOT_WIDTH = { eight: 800, narrow: 330 } as const
+
+type RenderOne = (spec: Spec, mode: Mode, width?: number) => Promise<string>
+
+const svgWidth = (svg: string): number => Number(/<svg[^>]*\swidth="([\d.]+)"/.exec(svg)?.[1])
+
+/**
+ * The widest plot whose whole SVG (axes, labels, legend and padding included) is at most `total` px wide. The SVG
+ * width is flat while a wide axis title or legend dominates and grows with the plot after that, so it is bisected.
+ */
+async function plotWidthFor(one: RenderOne, spec: Spec, total: number): Promise<number> {
+  let lo = 60
+  let hi = total
+  while (hi - lo > 2) {
+    const mid = Math.floor((lo + hi) / 2)
+    if (svgWidth(await one(spec, 'light', mid)) <= total) lo = mid
+    else hi = mid - 1
+  }
+  return lo
+}
+
+/**
+ * Build-time SVGs that fit their slot: `total` px wide in total, so the static first paint is the size of the live chart
+ * and its 14 px text is not scaled down. With `narrow`, the 360 px variants are rendered too (a page's main chart only).
+ * Pass `one` from lib/vegaServer.ts (this file runs in the browser bundle, so it cannot import vega itself).
+ */
+export async function svgsForSlot(one: RenderOne, spec: Spec, total: number, narrow?: number): Promise<ChartSvgs> {
+  const w = await plotWidthFor(one, spec, total)
+  const svgs: ChartSvgs = { light: await one(spec, 'light', w), dark: await one(spec, 'dark', w) }
+  if (narrow) {
+    const n = await plotWidthFor(one, spec, narrow)
+    svgs.lightNarrow = await one(spec, 'light', n)
+    svgs.darkNarrow = await one(spec, 'dark', n)
+  }
+  return svgs
+}
+
+const OR_TICKS = [0.5, 0.75, 1, 1.5, 2, 3]
+const HOUR_POS = (h: number) => h
+const MONTH_POS = (m: number) => 25 + (m - 1)
+const DAY_POS = (w: number) => 38 + (w - 1)
+
+/**
+ * Hour, month and weekday odds ratios as three small multiples that share one log axis. They are one view with three
+ * labelled x ranges, so it keeps working at any container width (the live chart sizes to its container) and at 360 px.
+ */
+export function oddsByTime(d: PageResults): FigureData {
+  const K = 'explain.sta303_v2'
+  type R = { panel: string; term: string; pos: number; or: number; lo: number; hi: number; ref: boolean; label: string; ci: string; tip: string; peak: string }
+  const rows: R[] = []
+  const add = (panel: string, term: string, pos: number, base: string) => {
+    const [o, lo, hi] = [`${base}.or`, `${base}.robust_or_lo`, `${base}.robust_or_hi`].map((k) => fmt(d, `${K}:${k}`))
+    rows.push({ panel, term, pos, or: num(d, `${K}:${base}.or`), lo: num(d, `${K}:${base}.robust_or_lo`), hi: num(d, `${K}:${base}.robust_or_hi`), ref: false, label: o, ci: `${lo} to ${hi}`, tip: `${o} (${lo} to ${hi})`, peak: `×${o}` })
+  }
+  const ref = (panel: string, term: string, pos: number) => rows.push({ panel, term, pos, or: 1, lo: 1, hi: 1, ref: true, label: 'Reference', ci: '', tip: 'Reference category', peak: '' })
+  for (let h = 0; h < 24; h++) (h === 12 ? ref : add)('Hour', `${String(h).padStart(2, '0')}:00`, HOUR_POS(h), `hour_or_vs_12.${h}`)
+  for (let m = 1; m <= 12; m++) (m === 1 ? ref : add)('Month', MONTHS[m - 1], MONTH_POS(m), `month_or_vs_jan.${m}`)
+  for (let w = 1; w <= 7; w++) (w === 1 ? ref : add)('Weekday', WEEKDAYS[w - 1], DAY_POS(w), `weekday_or_vs_mon.${w}`)
+
+  const initials: Record<number, string> = {}
+  MONTHS.forEach((m, i) => (initials[MONTH_POS(i + 1)] = m[0]))
+  WEEKDAYS.forEach((w, i) => (initials[DAY_POS(i + 1)] = w[0]))
+  const ticks = [0, 3, 6, 9, 12, 15, 18, 21, ...Object.keys(initials).map(Number)]
+  const xs = { type: 'quantitative', scale: { domain: [-1, 45], nice: false }, axis: { values: ticks, labelExpr: `datum.value < 24 ? datum.label : ${JSON.stringify(initials)}[datum.value]`, labelAngle: 0, labelOverlap: 'greedy', grid: false, ticks: false, title: null } }
+  const x = { field: 'pos', ...xs }
+  const y = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3.4], nice: false }, axis: { values: OR_TICKS, format: '~g', title: 'Odds ratio (log scale)' } }
+  const heading = (text: string, at: number, align: 'left' | 'right', dx: number) => ({ at, text, align, dx })
+  const spec: Spec = {
+    height: 340,
+    data: { values: rows },
+    layer: [
+      { data: { values: [{ v: 24 }, { v: 37 }] }, mark: { type: 'rule', style: 'muted', strokeWidth: 1, opacity: 0.35 }, encoding: { x: { field: 'v', ...xs } } },
+      { data: { values: [{ v: 1 }] }, mark: { type: 'rule', style: 'muted', strokeDash: [4, 4] }, encoding: { y: { field: 'v', ...y } } },
+      {
+        data: { values: [heading('Hour', 0, 'left', 0), heading('Month', 25, 'left', -2), heading('Weekday', 44, 'right', 4)] },
+        mark: { type: 'text', style: 'muted', fontWeight: 600, baseline: 'top', y: 0, dy: 2 },
+        encoding: { x: { field: 'at', ...xs }, text: { field: 'text' } },
+      },
+      { transform: [{ filter: '!datum.ref' }], mark: { type: 'rule', style: 'accent', strokeWidth: 2 }, encoding: { x, y: { field: 'lo', ...y }, y2: { field: 'hi' } } },
+      { transform: [{ filter: '!datum.ref' }], mark: { type: 'point', style: 'accent', filled: true, size: 56 }, encoding: { x, y: { field: 'or', ...y }, tooltip: [{ field: 'panel', title: 'Group' }, { field: 'term', title: 'Term' }, { field: 'tip', title: 'Odds ratio (robust 95% CI)' }] } },
+      { transform: [{ filter: 'datum.ref' }], mark: { type: 'point', style: 'accentOutline', filled: false, size: 56, strokeWidth: 2 }, encoding: { x, y: { field: 'or', ...y }, tooltip: [{ field: 'panel', title: 'Group' }, { field: 'term', title: 'Term' }, { field: 'tip', title: 'Odds ratio' }] } },
+      { transform: [{ filter: "datum.panel === 'Hour' && datum.term === '15:00'" }], mark: { type: 'text', style: 'ink', align: 'left', dx: 9, fontWeight: 600 }, encoding: { x, y: { field: 'or', ...y }, text: { field: 'peak' } } },
+    ],
+  }
+  return {
+    spec,
+    table: rows.map((r) => ({ Group: r.panel, Term: r.term, 'Odds ratio': r.ref ? 'Reference' : r.label, 'Robust interval': r.ci })),
+    description:
+      'Three panels on one log axis: odds ratios for each hour against noon, each month against January and each weekday against Monday, with cluster-robust 95% intervals. Hours vary from below one half to above two; months and weekdays stay close to one.',
+  }
+}
+
+export interface StepRow {
+  id: string
+  /** y value: the row label */
+  label: string
+  design: string
+  estimate: number
+  lo: number
+  hi: number
+  text: [string, string, string]
+  /** the formatted estimate, for the bar label */
+  est: string
+}
+
+/** The four rungs shown on the Overview and Predict step charts, in reading order. */
+export const STEPS: { id: string; label: string; lines: string[] }[] = [
+  { id: 'L1', label: 'Time only', lines: ['Time only'] },
+  { id: 'L2', label: '+ premises and location', lines: ['+ premises', 'and location'] },
+  { id: 'L5', label: 'Full model', lines: ['Full model'] },
+  { id: 'L5-nopremises', label: 'Full model without premises', lines: ['Full model', 'without premises'] },
+]
+const DESIGN_LABEL: Record<string, string> = { [DESIGN_A]: 'Grouped CV', [DESIGN_B]: 'Temporal holdout' }
+
+/** One row per rung (STEPS) and evaluation design, with the 95% bootstrap interval of one metric. */
+export function stepRows(d: PageResults, designs: string[] = [DESIGN_A], metric: Metric = 'pr_auc'): StepRow[] {
+  return designs.flatMap((design) =>
+    STEPS.map((s) => {
+      const p = `${ABL}:designs.${design}.variants.${s.id}.${metric}`
+      return { id: s.id, label: s.label, design: DESIGN_LABEL[design] ?? design, estimate: num(d, `${p}.estimate`), lo: num(d, `${p}.lo`), hi: num(d, `${p}.hi`), text: [fmt(d, `${p}.estimate`), fmt(d, `${p}.lo`), fmt(d, `${p}.hi`)] as [string, string, string], est: fmt(d, `${p}.estimate`) }
+    }),
+  )
+}
+
+// Row labels are text marks above each row, not axis labels: the axis would reserve the width of the longest label
+// and squeeze the plot on a phone.
+const stepY = () => ({ field: 'label', type: 'nominal', sort: STEPS.map((s) => s.label), title: null, axis: null })
+const stepTable = (rows: StepRow[], metric: Metric): TableRow[] => rows.map((r) => ({ Model: `${r.id} ${r.label}`, Design: r.design, [METRIC_LABEL[metric]]: r.text[0], 'Interval low': r.text[1], 'Interval high': r.text[2] }))
+const stepX = (metric: 'pr_auc' | 'roc_auc') => ({ type: 'quantitative', scale: { domain: metric === 'pr_auc' ? [0, 0.75] : [0.45, 1] }, axis: { title: METRIC_LABEL[metric], values: metric === 'pr_auc' ? [0, 0.2, 0.4, 0.6] : [0.5, 0.6, 0.7, 0.8, 0.9, 1], format: '.1f' } })
+
+/**
+ * Overview figure: horizontal bars of one metric for the four rungs under one design, with 95% intervals and a grey tick
+ * at the baseline (the robbery share for PR-AUC, 0.5 for ROC-AUC). Generic: pass `design` and `metric`.
+ */
+export function stepChart(d: PageResults, opts: { design?: typeof DESIGN_A | typeof DESIGN_B; metric?: 'pr_auc' | 'roc_auc' } = {}): FigureData {
+  const design = opts.design ?? DESIGN_A
+  const metric = opts.metric ?? 'pr_auc'
+  const rows = stepRows(d, [design], metric)
+  const baseKey = metric === 'pr_auc' ? `${ABL}:designs.${design}.prevalence` : `${ABL}:designs.${design}.L0.roc_auc`
+  const base = num(d, baseKey)
+  const baseText = `${metric === 'pr_auc' ? 'Guessing' : 'Chance'}: ${fmt(d, baseKey)}`
+  const x = stepX(metric)
+  const data = rows.map((r) => ({ ...r, base }))
+  const spec: Spec = {
+    height: STEPS.length * 56,
+    data: { values: data },
+    layer: [
+      { mark: { type: 'bar', style: 'accent', height: { band: 0.35 } }, encoding: { y: stepY(), x: { field: 'estimate', ...x }, tooltip: [{ field: 'label', title: 'Model' }, { field: 'estimate', format: '.3f', title: METRIC_LABEL[metric] }, { field: 'lo', format: '.3f', title: '95% low' }, { field: 'hi', format: '.3f', title: '95% high' }] } },
+      { mark: { type: 'rule', style: 'ink', strokeWidth: 2 }, encoding: { y: stepY(), x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
+      { mark: { type: 'text', style: 'ink', align: 'left', dx: 8, fontWeight: 600 }, encoding: { y: stepY(), x: { field: 'hi', ...x }, text: { field: 'est' } } },
+      { mark: { type: 'tick', style: 'muted', orient: 'vertical', thickness: 2, size: 26 }, encoding: { y: stepY(), x: { field: 'base', ...x } } },
+      { mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -20, fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
+      { data: { values: [{ v: base, t: baseText }] }, mark: { type: 'text', style: 'muted', align: 'left', baseline: 'top', y: 0, dx: 6 }, encoding: { x: { field: 'v', ...x }, text: { field: 't' } } },
+    ],
+  }
+  return {
+    spec,
+    table: stepTable(rows, metric),
+    description: `Horizontal bars of ${METRIC_LABEL[metric]} with 95% intervals for four models: time only, plus premises and location type, the full model, and the full model without premises. A grey tick marks the score of guessing. Time only sits close to it; the models with premises and location type are far above it.`,
+  }
+}
+
+/**
+ * Predict figure: the four rungs under both evaluation designs. Grouped cross-validation is filled and the temporal
+ * holdout hollow, each with its 95% interval; a grey tick beside each point marks the guessing score of its design.
+ */
+export function rungSteps(d: PageResults, metric: 'pr_auc' | 'roc_auc' = 'pr_auc'): FigureData {
+  const baseOf = (design: string) => num(d, metric === 'pr_auc' ? `${ABL}:designs.${design}.prevalence` : `${ABL}:designs.${design}.L0.roc_auc`)
+  const rows = stepRows(d, [DESIGN_A, DESIGN_B], metric).map((r) => ({ ...r, base: baseOf(r.design === 'Grouped CV' ? DESIGN_A : DESIGN_B) }))
+  const x = stepX(metric)
+  const yOffset = { field: 'design', type: 'nominal', sort: ['Grouped CV', 'Temporal holdout'] }
+  const tooltip = [{ field: 'label', title: 'Model' }, { field: 'design', title: 'Design' }, { field: 'estimate', format: '.3f', title: METRIC_LABEL[metric] }, { field: 'lo', format: '.3f', title: '95% low' }, { field: 'hi', format: '.3f', title: '95% high' }]
+  const spec: Spec = {
+    height: STEPS.length * 84,
+    data: { values: rows },
+    layer: [
+      { mark: { type: 'tick', style: 'muted', orient: 'vertical', thickness: 2, size: 22 }, encoding: { y: stepY(), yOffset, x: { field: 'base', ...x } } },
+      { mark: { type: 'rule', style: 'accent', strokeWidth: 2 }, encoding: { y: stepY(), yOffset, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
+      {
+        mark: { type: 'point', style: ['accent', 'accentOutline'], size: 90, strokeWidth: 2 },
+        encoding: { y: stepY(), yOffset, x: { field: 'estimate', ...x }, fillOpacity: { field: 'design', type: 'nominal', sort: ['Grouped CV', 'Temporal holdout'], scale: { domain: ['Grouped CV', 'Temporal holdout'], range: [1, 0] }, legend: null }, tooltip },
+      },
+      { transform: [{ filter: "datum.design === 'Grouped CV'" }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -28, fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
+    ],
+  }
+  return {
+    spec,
+    table: stepTable(rows, metric),
+    description: `Points with 95% intervals for ${METRIC_LABEL[metric]} at four models: time only, plus premises and location type, the full model, and the full model without premises, under grouped cross-validation (filled) and the temporal holdout (hollow). Grey ticks mark the score of guessing in each design. Models with premises and location type score far above it; time alone barely does.`,
+  }
+}
+
+const CENSUS = 'predict.census_scatter'
+
+/** Flat view of the neighbourhood scatter: job ratio against median income, colour and area both show the 2020 robbery count. */
+export function censusScatter2d(d: PageResults): FigureData {
+  const points = getValue(d, `${CENSUS}:points`) as { name: string; ratio: number; income: number; robberies: number }[]
+  const maxName = getValue(d, `${CENSUS}:summary.max.name`) as string
+  const rows = points.map((p, i) => {
+    const f = (field: string) => fmt(d, `${CENSUS}:points.${i}.${field}`)
+    return { ...p, area: p.robberies, ratioText: f('ratio'), incomeText: `$${f('income')}`, robberiesText: f('robberies') }
+  })
+  const x = { field: 'ratio', type: 'quantitative', scale: { zero: false, domain: [0.47, 0.77], nice: false }, axis: { title: ['Permanent job to', 'labour force ratio'], format: '.2f', values: [0.5, 0.55, 0.6, 0.65, 0.7, 0.75] } }
+  const y = { field: 'income', type: 'quantitative', scale: { zero: false, domain: [26000, 78000], nice: false }, axis: { title: 'Individual median income (CAD)', format: '$,.0f', values: [30000, 40000, 50000, 60000, 70000] } }
+  const spec: Spec = {
+    height: 420,
+    data: { values: rows },
+    layer: [
+      {
+        // outline marks: the low end of the magnitude ramp is nearly invisible on the page background
+        mark: { type: 'point', style: 'accentOutline', filled: true, strokeWidth: 1.25, opacity: 0.9 },
+        encoding: {
+          x,
+          y,
+          fill: { field: 'robberies', type: 'quantitative', scale: { type: 'sqrt', domain: [0, 135], range: 'magnitude' }, legend: { title: 'Robberies, 2020', titleLimit: 0, gradientLength: 200, format: ',d', values: [0, 40, 80, 120] } },
+          // a copy of the count, so that hiding the size legend does not also hide the colour legend (same-field legends merge)
+          size: { field: 'area', type: 'quantitative', scale: { zero: true, range: [50, 900] }, legend: null },
+          order: { field: 'robberies', type: 'quantitative', sort: 'descending' },
+          tooltip: [{ field: 'name', title: 'Neighbourhood' }, { field: 'ratioText', title: 'Job-to-labour-force ratio' }, { field: 'incomeText', title: 'Median income' }, { field: 'robberiesText', title: 'Robberies, 2020' }],
+        },
+      },
+      // the largest count is named with a leader up to clear space; every other neighbourhood is in the tooltip and the table
+      { transform: [{ filter: `datum.name === ${JSON.stringify(maxName)}` }, { calculate: '66000', as: 'top' }], mark: { type: 'rule', style: 'muted', strokeWidth: 1 }, encoding: { x, y: { field: 'income', type: 'quantitative', scale: y.scale }, y2: { field: 'top' } } },
+      { transform: [{ filter: `datum.name === ${JSON.stringify(maxName)}` }, { calculate: '66000', as: 'top' }], mark: { type: 'text', style: 'ink', baseline: 'bottom', dy: -4, fontWeight: 600 }, encoding: { x, y: { field: 'top', type: 'quantitative', scale: y.scale }, text: { field: 'name' } } },
+    ],
+  }
+  return {
+    spec,
+    table: rows.map((r) => ({ Neighbourhood: r.name, 'Job ratio': r.ratioText, 'Median income (CAD)': r.incomeText, 'Robberies, 2020': r.robberiesText })),
+    description:
+      'Scatter plot of the neighbourhoods: permanent job to labour force ratio across, median income up, with colour and marker area showing the number of robberies reported in 2020. The highest counts sit in mid-income downtown areas; there is only a weak tendency for lower-income areas to have more.',
   }
 }

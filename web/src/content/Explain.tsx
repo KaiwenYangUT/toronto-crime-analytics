@@ -1,168 +1,243 @@
 import { useState } from 'react'
 import { Callout } from '../components/Callout.tsx'
+import { CensusScatter } from '../components/census/CensusScatter.tsx'
+import type { CensusScatterData } from '../components/census/types.ts'
 import { DataTable } from '../components/DataTable.tsx'
 import { Disclosure } from '../components/Disclosure.tsx'
 import { Figure } from '../components/Figure.tsx'
-import { FindingCard } from '../components/FindingCard.tsx'
+import { KeyPoints } from '../components/KeyPoints.tsx'
 import { Num } from '../components/Num.tsx'
 import { PageHeader } from '../components/PageHeader.tsx'
-import { Section } from '../components/Section.tsx'
+import { ResultSection } from '../components/ResultSection.tsx'
 import { Segmented } from '../components/Segmented.tsx'
+import { StatCard } from '../components/StatCard.tsx'
+import { getValue, useResults, type PageResults } from '../lib/results.ts'
 import type { ChartSvgs } from '../lib/vegaServer.ts'
-import { useResults } from '../lib/results.ts'
-import { calibrationChart, forestPlot, patternChart } from '../lib/specs.ts'
-import ui from '../components/ui.module.css'
+import { calibrationChart, censusScatter2d as flatScatter, forestPlot, oddsByTime, patternChart } from '../lib/specs.ts'
+import r from './resultPages.module.css'
 
-export type ExplainSvgs = Record<'forest' | 'calibration' | 'weekday' | 'hour', ChartSvgs>
+export type ExplainSvgs = Record<'time' | 'scatter' | 'weekday' | 'hour', ChartSvgs>
 
 const K = 'explain.sta303_v2'
 const E = 'predict.eda_corrections:claims'
+const C = 'predict.census_scatter'
+
+type Verdict = 'holds' | 'partly' | 'fails'
+const VERDICT: Record<Verdict, { label: string; glyph: string; cls: string }> = {
+  holds: { label: 'Holds', glyph: '✓', cls: r.chipHolds },
+  partly: { label: 'Partly', glyph: '◐', cls: r.chipPartly },
+  fails: { label: 'Does not hold', glyph: '✕', cls: r.chipFails },
+}
+
+/** The checked claim's verdict from the results: kept as stated, partly (some part of it holds) or contradicted. */
+function verdictOf(d: PageResults, claim: string): Verdict {
+  if (!getValue(d, `${E}.${claim}.contradicted`)) return 'holds'
+  const parts = (getValue(d, `${E}.${claim}`) as { claim_parts?: Record<string, boolean> }).claim_parts
+  return parts && Object.values(parts).some(Boolean) ? 'partly' : 'fails'
+}
+
+function Chip({ verdict }: { verdict: Verdict }) {
+  const v = VERDICT[verdict]
+  return (
+    <span className={`${r.chip} ${v.cls}`}>
+      <span className={r.chipGlyph} aria-hidden="true">{v.glyph}</span>
+      {v.label}
+    </span>
+  )
+}
 
 export function Explain({ svgs }: { svgs: ExplainSvgs }) {
   const data = useResults()
   const [pattern, setPattern] = useState<'weekday' | 'hour'>('weekday')
+  const time = oddsByTime(data)
   const forest = forestPlot(data)
+  const scatter = flatScatter(data)
   const calibration = calibrationChart(data)
   const chart = patternChart(data, pattern)
+  const census = data.results[C].values as CensusScatterData
+  const patterns = [
+    {
+      claim: 'summer_rise',
+      pattern: 'Robberies rise in summer',
+      evidence: (
+        <>
+          The robbery share was <Num k={`${E}.summer_rise.summer_share`} /> in summer against <Num k={`${E}.summer_rise.winter_share`} /> in winter.
+        </>
+      ),
+    },
+    {
+      claim: 'weekend_peak',
+      pattern: 'Robberies peak at weekends',
+      evidence: (
+        <>
+          Friday and Saturday tie for the most robberies (<Num k={`${E}.weekend_peak.robberies_by_day.Fri`} /> and <Num k={`${E}.weekend_peak.robberies_by_day.Sat`} />); Sunday has the fewest (
+          <Num k={`${E}.weekend_peak.robberies_by_day.Sun`} />).
+        </>
+      ),
+    },
+    {
+      claim: 'darkness',
+      pattern: 'Robberies are more likely after dark',
+      evidence: (
+        <>
+          <Num k={`${E}.darkness.dark_share`} /> of after-dark incidents were robberies, against <Num k={`${E}.darkness.light_share`} /> in daylight.
+        </>
+      ),
+    },
+    {
+      claim: 'hourly_shape',
+      pattern: 'Counts follow a smooth curve through the day',
+      evidence: (
+        <>
+          Counts rise <Num k={`${E}.hourly_shape.rises_between_1am_and_11am`} /> times between 1am and 11am and <Num k={`${E}.hourly_shape.rises_between_1pm_and_11pm`} /> times between 1pm and 11pm.
+        </>
+      ),
+    },
+  ]
   return (
     <>
       <PageHeader
         eyebrow="Explain · inference"
-        title="After 2019 a reported property-type incident was much less likely to be a robbery."
+        title="After 2019, a reported incident was much less likely to be a robbery."
         dek={
           <>
-            Odds ratios from <Num k={`${K}:n`} /> reported incidents, 2014 to 2023, holding hour, month, weekday and darkness fixed: association, not risk or cause.
+            Odds of robbery against other major property crime in <Num k={`${K}:n`} /> reported incidents from 2014 to 2023: an association, not a measure of risk.
           </>
         }
       />
 
-      <div className={ui.split}>
-        <Figure
-          id="forest"
-          title="The hour of day moves the odds of robbery most; month and weekday effects are smaller"
-          subtitle="Odds ratios with cluster-robust 95% intervals (clustered by neighbourhood); highlighted terms are discussed in the cards."
-          spec={forest.spec}
-          svg={svgs.forest}
-          description={forest.description}
-          table={forest.table}
-          minHeight={800}
-          caption="A ratio above one means a reported incident at that hour, month or weekday was more likely to be a robbery than in the reference category; below one, less likely. Colour is not the only cue: highlighted rows are also labelled."
-          source={<>Source: <code>{K}</code> · <Num k={`${K}:n`} /> incidents, <Num k={`${K}:log.neighbourhoods`} /> neighbourhoods.</>}
-        />
-        <div className={ui.stack}>
-          <FindingCard
-            label="After 2019 vs 2014 to 2019"
-            value={<Num k={`${K}:post2019.or`} />}
-            unit="times the odds of being a robbery"
-            ci={
-              <>
-                95% CI <Num k={`${K}:post2019.or_lo`} /> to <Num k={`${K}:post2019.or_hi`} />; cluster-robust <Num k={`${K}:post2019.robust_or_lo`} /> to{' '}
-                <Num k={`${K}:post2019.robust_or_hi`} />
-              </>
-            }
-            meaning="Compared with earlier years, a reported incident in the period after 2019 had lower odds of being a robbery, at the same hour, month, weekday and darkness."
-            notMean={
-              <>
-                It cannot say whether robberies fell or other reports rose. Against auto theft alone the odds ratio is{' '}
-                <Num k={`${K}:composition.Auto Theft.post2019.or`} /> (<Num k={`${K}:composition.Auto Theft.post2019.robust_or_lo`} /> to <Num k={`${K}:composition.Auto Theft.post2019.robust_or_hi`} />);
-                against break and enter <Num k={`${K}:composition.Break and Enter.post2019.or`} /> (<Num k={`${K}:composition.Break and Enter.post2019.robust_or_lo`} /> to{' '}
-                <Num k={`${K}:composition.Break and Enter.post2019.robust_or_hi`} />); against theft over <Num k={`${K}:composition.Theft Over.post2019.or`} /> (
-                <Num k={`${K}:composition.Theft Over.post2019.robust_or_lo`} /> to <Num k={`${K}:composition.Theft Over.post2019.robust_or_hi`} />), all cluster-robust 95% intervals. The size depends on the comparison group.
-              </>
-            }
-            sourceKey={`${K}:post2019`}
+      <ResultSection
+        id="time"
+        title="The hour of day moves the odds most; month and weekday barely do."
+        figure={
+          <Figure
+            id="odds-by-time"
+            title="Odds of robbery by hour, month and weekday"
+            subtitle="Against noon, January and Monday (open markers). Bars are cluster-robust 95% intervals."
+            spec={time.spec}
+            svg={svgs.time}
+            description={time.description}
+            table={time.table}
+            minHeight={340}
+            caption="An odds ratio compares the odds of a robbery with a reference group: one means no difference."
           />
-          <FindingCard
-            label="15:00 vs noon"
-            value={<Num k={`${K}:hour_or_vs_12.15.or`} />}
-            unit="times the odds of being a robbery"
-            ci={
-              <>
-                Cluster-robust 95% CI <Num k={`${K}:hour_or_vs_12.15.robust_or_lo`} /> to <Num k={`${K}:hour_or_vs_12.15.robust_or_hi`} />
-              </>
-            }
-            meaning="Among incidents reported for mid-afternoon, a larger share were robberies than among those reported for noon."
-            notMean={
-              <>
-                It does not mean robberies are more likely to happen at 15:00; it compares the mix of crime types among reported incidents. Noon is an unusual reference: 11:00 (
-                <Num k={`${K}:hour_or_vs_12.11.or`} />) and 13:00 (<Num k={`${K}:hour_or_vs_12.13.or`} />) are themselves well above it, so read each hour ratio as a comparison with noon only.
-              </>
-            }
-            sourceKey={`${K}:hour_or_vs_12.15`}
-          />
-          <FindingCard
-            label="After dark vs daylight"
-            value={<Num k={`${K}:dark.or`} />}
-            unit="times the odds of being a robbery"
-            ci={
-              <>
-                Cluster-robust 95% CI <Num k={`${K}:dark.robust_or_lo`} /> to <Num k={`${K}:dark.robust_or_hi`} />
-              </>
-            }
-            meaning="A small association once the hour is already in the model."
-            notMean="It does not show that darkness causes robbery. With hour and month as factors, darkness is separated only by twilight hours that are dark on some dates and light on others."
-            sourceKey={`${K}:dark`}
-          />
-        </div>
-      </div>
+        }
+        aside={
+          <>
+            <StatCard
+              label="After 2019"
+              value={<Num k={`${K}:post2019.or`} />}
+              unit="times the odds of a robbery"
+              ci={
+                <>
+                  Cluster-robust 95% CI <Num k={`${K}:post2019.robust_or_lo`} /> to <Num k={`${K}:post2019.robust_or_hi`} />
+                </>
+              }
+              meaning="Against 2014 to 2019, at the same hour, month, weekday and darkness."
+              notMean="It does not say whether robberies fell or other reports rose; the size depends on the comparison group."
+            />
+            <StatCard
+              label="After dark"
+              value={<Num k={`${K}:dark.or`} />}
+              unit="times the odds of a robbery"
+              ci={
+                <>
+                  Cluster-robust 95% CI <Num k={`${K}:dark.robust_or_lo`} /> to <Num k={`${K}:dark.robust_or_hi`} />
+                </>
+              }
+              meaning="A small difference once the hour is already in the model."
+              notMean="It describes reported incidents only; it does not show that darkness explains robberies."
+            />
+            <KeyPoints
+              items={[
+                { stat: <>×<Num k={`${K}:hour_or_vs_12.15.or`} /></>, text: ' the odds at 15:00 against noon, the largest hourly ratio.' },
+                { text: 'Month and weekday ratios stay much closer to one.' },
+              ]}
+            />
+          </>
+        }
+      >
+        <Disclosure id="all-terms" title="Show all model terms">
+          <div className={r.half}>
+            <Figure
+              id="forest"
+              title="Every odds ratio in the model"
+              subtitle="Cluster-robust 95% intervals; the highlighted terms are discussed above."
+              spec={forest.spec}
+              description={forest.description}
+              table={forest.table}
+              minHeight={760}
+            />
+          </div>
+        </Disclosure>
+      </ResultSection>
 
-      <Section id="patterns" title="Patterns in the data: four original captions checked">
-        <div className={ui.stack}>
-          <p className="prose">
-            The original course report described four patterns in the <Num k="predict.eda_corrections:year" /> data. The table repeats each caption and
-            compares it with the same data. Counts here are reported incidents, not risk, and the year was the first pandemic year, so seasonal comparisons are confounded: January to March came before lockdown.
-          </p>
+      <ResultSection
+        id="income"
+        title="Lower-income neighbourhoods reported somewhat more robberies in 2020; the job ratio shows no pattern."
+        figure={<CensusScatter data={census} spec={scatter.spec} svgs={svgs.scatter} />}
+        aside={
+          <>
+            <KeyPoints
+              items={[
+                {
+                  stat: <Num k={`${C}:summary.spearman_income.rho`} />,
+                  text: (
+                    <>
+                      {' '}Rank correlation of robbery count with median income across <Num k={`${C}:summary.n`} /> neighbourhoods: weak, negative (p <Num k={`${C}:summary.spearman_income.p`} />).
+                    </>
+                  ),
+                },
+                {
+                  stat: <Num k={`${C}:summary.spearman_ratio.rho`} />,
+                  text: (
+                    <>
+                      {' '}With the job ratio: no relationship (p <Num k={`${C}:summary.spearman_ratio.p`} />).
+                    </>
+                  ),
+                },
+                {
+                  text: (
+                    <>
+                      The <Num k={`${C}:summary.top_decile.n`} /> neighbourhoods with the most robberies had median income $<Num k={`${C}:summary.top_decile.median_income`} /> against{' '}
+                      $<Num k={`${C}:summary.rest.median_income`} /> for the rest, and the same job ratio.
+                    </>
+                  ),
+                },
+              ]}
+            />
+            <Callout variant="info" title="What the original caption said">
+              <p>The report saw low income and, surprisingly, a high job ratio. Income holds, weakly; the job ratio is not supported.</p>
+            </Callout>
+            <Callout variant="caveat" title="Counts, not rates">
+              <p>These are reported incidents in 2020, not per resident and not risk.</p>
+            </Callout>
+          </>
+        }
+      />
+
+      <ResultSection
+        id="patterns"
+        title="The course report's four patterns do not hold in its own 2020 data."
+        figure={
           <DataTable
-            caption="Original captions and what the data show"
-            rowKey={(r) => r.pattern}
+            caption="Four patterns from the course report, checked"
+            rowKey={(row) => row.claim}
             columns={[
-              { key: 'pattern', header: 'Pattern', render: (r) => r.pattern },
-              { key: 'original', header: 'Original caption', render: (r) => <span style={{ whiteSpace: 'normal' }}>{r.original}</span> },
-              { key: 'data', header: 'What the data show', render: (r) => <span style={{ whiteSpace: 'normal' }}>{r.data}</span> },
+              { key: 'pattern', header: 'Pattern', render: (row) => <span className={r.wrap}>{row.pattern}</span> },
+              { key: 'verdict', header: 'Verdict', render: (row) => <Chip verdict={verdictOf(data, row.claim)} /> },
+              { key: 'evidence', header: 'Evidence', render: (row) => <span className={r.wrap}>{row.evidence}</span> },
             ]}
-            rows={[
-              {
-                pattern: 'Summer rise',
-                original: 'Robberies rise in summer, tied to warmer weather and holidays.',
-                data: (
-                  <>
-                    The robbery share was lower in summer (<Num k={`${E}.summer_rise.summer_share`} />) than in winter (
-                    <Num k={`${E}.summer_rise.winter_share`} />), and January, February and March were the three busiest months for robberies.
-                  </>
-                ),
-              },
-              {
-                pattern: 'Weekend peak',
-                original: 'Robberies are higher at weekends; Saturday and Thursday have the most incidents.',
-                data: (
-                  <>
-                    Friday and Saturday had the most robberies (<Num k={`${E}.weekend_peak.robberies_by_day.Fri`} /> and <Num k={`${E}.weekend_peak.robberies_by_day.Sat`} />),
-                    Sunday the fewest (<Num k={`${E}.weekend_peak.robberies_by_day.Sun`} />), and Wednesday had the most incidents overall.
-                  </>
-                ),
-              },
-              {
-                pattern: 'After dark',
-                original: 'Robberies are more likely after dark.',
-                data: (
-                  <>
-                    By the original 18:00 to 06:00 clock rule, <Num k={`${E}.darkness.dark_share`} /> of after-dark incidents were robberies against{' '}
-                    <Num k={`${E}.darkness.light_share`} /> in daylight hours: no higher, and the small difference is within sampling noise. This is the unadjusted 2020 clock rule; the adjusted solar-darkness estimate above is a different quantity.
-                  </>
-                ),
-              },
-              {
-                pattern: 'Hourly shape',
-                original: 'Counts follow a smooth shape through the day.',
-                data: (
-                  <>
-                    Counts rise and fall in steps: they rise <Num k={`${E}.hourly_shape.rises_between_1am_and_11am`} /> times between 1am and 11am and{' '}
-                    <Num k={`${E}.hourly_shape.rises_between_1pm_and_11pm`} /> times between 1pm and 11pm, rather than declining smoothly.
-                  </>
-                ),
-              },
-            ]}
+            rows={patterns}
           />
+        }
+        aside={
+          <Callout variant="caveat" title="Reported incidents in one year">
+            <p>Counts are reported incidents, not risk, from the first pandemic year, so seasonal comparisons are confounded.</p>
+          </Callout>
+        }
+      >
+        <div className={r.half}>
           <Segmented
             label="Pattern to chart"
             value={pattern}
@@ -178,64 +253,31 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
             description={chart.description}
             table={chart.table}
             minHeight={260}
-            caption="The captions are kept in the parity report as originally written and corrected here."
           />
         </div>
-      </Section>
-
-      <Section id="corrected" title="Original model vs corrected model">
-        <DataTable
-          caption="What changed between the course report and this site"
-          rowKey={(r) => r.what}
-          columns={[
-            { key: 'what', header: 'Item', render: (r) => r.what },
-            { key: 'orig', header: 'Original (STA303 report)', render: (r) => <span style={{ whiteSpace: 'normal' }}>{r.orig}</span> },
-            { key: 'new', header: 'This site', render: (r) => <span style={{ whiteSpace: 'normal' }}>{r.next}</span> },
-          ]}
-          rows={[
-            { what: 'Model family', orig: 'The final summary table was a linear (Gaussian) model, by accident.', next: 'A binomial logistic regression, reported as odds ratios.' },
-            { what: 'Hour, weekday, month', orig: 'Linear numbers; season derived from month.', next: 'Categorical terms (noon, Monday and January as references); season dropped because month already contains it.' },
-            { what: 'Period', orig: 'A COVID indicator.', next: 'A post-2019 indicator; it absorbs every change after 2019, so it is not an outbreak effect.' },
-            { what: 'Darkness', orig: 'A fixed clock rule, 18:00 to 06:00.', next: 'Solar darkness: the sun below civil twilight at the middle of the local hour.' },
-            { what: 'Intervals', orig: 'Model-based only.', next: 'Model-based, plus cluster-robust by neighbourhood.' },
-            { what: 'Rows', orig: 'Every complete row, including occurrence years before 2014.', next: <><Num k={`${K}:log.model_rows`} /> incidents from 2014 to 2023.</> },
-          ]}
-        />
-      </Section>
-
-      <Section id="checks" title="Model checks">
-        <Disclosure id="model-checks" title="Fit, cross-validation and calibration">
-          <div className={ui.stack}>
-            <p className="prose">
-              Stratified random five-fold cross-validation (not grouped by neighbourhood, and including the post-2019 term, so it is not comparable with the Predict page) gives a ROC-AUC of <Num k={`${K}:cv.auc_mean`} /> (standard deviation <Num k={`${K}:cv.auc_sd`} /> across{' '}
-              <Num k={`${K}:cv.folds`} /> folds). That is a weak separation, although <Num k="predict.inference_vs_prediction:time_terms_clear" /> of{' '}
-              <Num k="predict.inference_vs_prediction:time_terms" /> time terms are statistically clear (robust 95% interval excludes one; no adjustment for the number of terms): many small, reliable differences do not make an incident easy to classify.
-            </p>
-            <p className="prose">
-              Replacing the hour and month factors by a smooth cyclic form raises AIC by <Num k={`${K}:fit.harmonic.delta_aic`} />, so the factor version fits better.
+        <Disclosure id="model-checks" title="Model fit and calibration">
+          <div className={r.half}>
+            <p className={r.note}>
+              Five-fold cross-validation gives a ROC-AUC of <Num k={`${K}:cv.auc_mean`} /> (standard deviation <Num k={`${K}:cv.auc_sd`} />), where guessing scores one half. That is a weak separation, although{' '}
+              <Num k="predict.inference_vs_prediction:time_terms_clear" /> of <Num k="predict.inference_vs_prediction:time_terms" /> time terms are statistically clear: many small, reliable differences do not make an incident easy to classify.
             </p>
             <Figure
               id="calibration"
               title="Predicted probabilities match the observed robbery share"
               subtitle="Ten groups of incidents ordered by predicted probability; the dashed line is perfect calibration."
               spec={calibration.spec}
-              svg={svgs.calibration}
               description={calibration.description}
               table={calibration.table}
               minHeight={340}
             />
           </div>
         </Disclosure>
-      </Section>
-
-      <Section id="limits" title="Limitations">
-        <Callout variant="caveat" title="Read these odds ratios as associations among reported incidents">
+        <Callout variant="caveat" title="Associations among reported incidents">
           <p>
-            The model compares the mix of crime types among incidents that were reported. It says nothing about how risky a place or hour is, and the comparison group (auto
-            theft, break and enter, theft over) changes the size of every effect. The post-2019 term absorbs everything that changed over time, including reporting.
+            The model compares the mix of crime types among reported incidents; it is not a measure of risk. The post-2019 term absorbs everything that changed over time, including reporting.
           </p>
         </Callout>
-      </Section>
+      </ResultSection>
     </>
   )
 }
