@@ -25,6 +25,22 @@ export const RUNG_LABEL: Record<string, string> = {
   L4: 'Random forest',
   L5: 'XGBoost',
 }
+/** Plain model names for the site (RUNG_LABEL keeps the rung codes the paper's figure uses). */
+const PLAIN_RUNG: Record<string, string> = {
+  L1: 'Time only',
+  L2: 'Time, place and coordinates',
+  L3: 'Adds census data',
+  L4: 'Random forest',
+  L5: 'XGBoost',
+}
+/** The name of one model on the site: no rung codes; the no-premises variants say what they leave out. */
+export function modelLabel(rung: string, noPremises = false): string {
+  if (!noPremises) return PLAIN_RUNG[rung]
+  return rung === 'L2' ? 'Time and coordinates' : `${PLAIN_RUNG[rung]}, without type of place`
+}
+/** A clock hour as '3am', '3pm', 'noon' or '12am'. */
+export const hourText = (h: number): string => (h === 0 ? '12am' : h === 12 ? 'noon' : h < 12 ? `${h}am` : `${h - 12}pm`)
+const HOUR_EXPR = "(datum.value == 0 ? '12am' : datum.value == 12 ? 'noon' : datum.value % 12 + (datum.value < 12 ? 'am' : 'pm'))"
 export type Metric = 'pr_auc' | 'roc_auc' | 'f1'
 export const METRIC_LABEL: Record<Metric, string> = { pr_auc: 'PR-AUC', roc_auc: 'ROC-AUC', f1: 'F1 at the tuned threshold' }
 
@@ -102,10 +118,11 @@ export function forestRows(d: PageResults): ForestRow[] {
 
 /** Forest plot of the odds ratios of robbery vs other property crime, with cluster-robust 95% intervals. */
 export function forestPlot(d: PageResults): FigureData {
-  const rows = forestRows(d)
+  // hours read as '3pm' here; forestRows keeps the 24-hour terms because the paper's figure prints them
+  const rows = forestRows(d).map((r) => ({ ...r, term: r.term.replace(/^Hour (\d\d):00$/, (_, h) => `Hour ${hourText(Number(h))}`), group: r.group.replace('vs noon', 'against noon') }))
   const order = rows.map((r) => r.term)
   const y = { field: 'term', type: 'nominal', sort: order, title: null, axis: { labelLimit: 140, ticks: false, domain: false, grid: true } }
-  const x = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3] }, axis: { values: [0.5, 0.75, 1, 1.5, 2, 3], format: '~g', title: 'Odds of robbery vs other property crime (log scale; 1 = no difference)' } }
+  const x = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3] }, axis: { values: [0.5, 0.75, 1, 1.5, 2, 3], format: '~g', title: 'Odds ratio (1 = no difference)' } }
   const spec: Spec = {
     height: { step: 17 },
     data: { values: rows },
@@ -118,12 +135,12 @@ export function forestPlot(d: PageResults): FigureData {
       { transform: [{ filter: 'datum.highlight' }], mark: { type: 'text', style: 'ink', align: 'left', dx: 8, fontWeight: 600 }, encoding: { y, x: { field: 'hi', ...x }, text: { field: 'label' } } },
     ],
   }
-  const table = rows.map((r) => ({ Group: r.group, Term: r.term, 'Odds ratio': r.label, 'Robust interval low': r.loText, 'Robust interval high': r.hiText }))
+  const table = rows.map((r) => ({ Group: r.group, Term: r.term, 'Odds ratio': r.label, '95% interval low': r.loText, '95% interval high': r.hiText }))
   return {
     spec,
     table,
     description:
-      'Forest plot with one row for the post-2019 period, darkness, each hour against noon, each month against January and each weekday against Monday. Most hours and several months have intervals that exclude one; most weekdays do not.',
+      'Forest plot on a log axis with one row for the period after 2019, darkness, each hour against noon, each month against January and each weekday against Monday. Most hours and several months have intervals that exclude one; most weekdays do not.',
   }
 }
 
@@ -200,9 +217,9 @@ export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN
     const base = `${ABL}:designs.${design}.variants.${rung}.pr_curve`
     const precision = getValue(d, `${base}.precision`) as number[]
     const recall = getValue(d, `${base}.recall`) as number[]
-    precision.forEach((p, i) => rows.push({ rung: `${rung} ${RUNG_LABEL[rung]}`, recall: recall[i], precision: p, text: [fmt(d, `${base}.recall.${i}`), fmt(d, `${base}.precision.${i}`)] }))
+    precision.forEach((p, i) => rows.push({ rung: modelLabel(rung), recall: recall[i], precision: p, text: [fmt(d, `${base}.recall.${i}`), fmt(d, `${base}.precision.${i}`)] }))
   }
-  const order = RUNGS.map((r) => `${r} ${RUNG_LABEL[r]}`)
+  const order = RUNGS.map((r) => modelLabel(r))
   const prev = num(d, `${ABL}:designs.${design}.prevalence`)
   const spec: Spec = {
     height: 320,
@@ -214,12 +231,12 @@ export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN
   }
   return {
     spec,
-    table: rows.filter((_, i) => i % 10 === 0).map((r) => ({ Rung: r.rung, Recall: r.text[0], Precision: r.text[1] })),
-    description: 'Precision against recall for the five model rungs. The curves for the time-only model sit close to the baseline share of robberies; the curves for the other rungs rise well above it.',
+    table: rows.filter((_, i) => i % 10 === 0).map((r) => ({ Model: r.rung, Recall: r.text[0], Precision: r.text[1] })),
+    description: 'Precision against recall for the five models. The time-only curve sits only a little above the dotted line for the robbery share; the curves for the models that know the type of place rise well above it.',
   }
 }
 
-const BLOCK_LABEL: Record<string, string> = { premises: 'Premises, location', time: 'Time', census: 'Census', geo: 'Geography' }
+const BLOCK_LABEL: Record<string, string> = { premises: 'Type of place', time: 'Time', census: 'Census data', geo: 'Coordinates' }
 
 /** Grouped permutation importance of the XGBoost rung: PR-AUC lost when one block of features is shuffled. */
 export function blockImportance(d: PageResults): FigureData {
@@ -231,7 +248,7 @@ export function blockImportance(d: PageResults): FigureData {
   const spec: Spec = {
     height: { step: 36 },
     data: { values: rows },
-    encoding: { y: { field: 'block', type: 'nominal', sort: rows.map((r) => r.block), title: null, axis: { labelLimit: 150 } }, x: { field: 'drop', type: 'quantitative', title: 'PR-AUC lost on shuffling', scale: { domain: [0, 0.5] }, axis: { tickCount: 5 } } },
+    encoding: { y: { field: 'block', type: 'nominal', sort: rows.map((r) => r.block), title: null, axis: { labelLimit: 150 } }, x: { field: 'drop', type: 'quantitative', title: 'Score lost when scrambled (PR-AUC)', scale: { domain: [0, 0.5] }, axis: { tickCount: 5 } } },
     layer: [
       { mark: { type: 'bar', style: 'accent', height: { band: 0.6 } } },
       { mark: { type: 'text', style: 'ink', align: 'left', dx: 6, fontWeight: 600 }, encoding: { text: { field: 'label' } } },
@@ -239,8 +256,8 @@ export function blockImportance(d: PageResults): FigureData {
   }
   return {
     spec,
-    table: rows.map((r) => ({ Block: r.block, 'PR-AUC lost': r.label })),
-    description: 'Horizontal bars: shuffling the premises and location block costs the most PR-AUC, far more than time, census or geography.',
+    table: rows.map((r) => ({ Information: r.block, 'PR-AUC lost': r.label })),
+    description: 'Horizontal bars: scrambling the type of place costs the most PR-AUC, far more than time, census data or coordinates.',
   }
 }
 
@@ -250,12 +267,12 @@ export function patternChart(d: PageResults, kind: 'weekday' | 'hour'): FigureDa
   const rows =
     kind === 'weekday'
       ? WEEKDAYS.map((w) => ({ x: w, share: num(d, `${C}.weekend_peak.robbery_share_by_day.${w}`), label: fmt(d, `${C}.weekend_peak.robbery_share_by_day.${w}`) }))
-      : Array.from({ length: 24 }, (_, h) => ({ x: String(h).padStart(2, '0'), share: num(d, `${C}.hourly_shape.robbery_share_by_hour.${h}`), label: fmt(d, `${C}.hourly_shape.robbery_share_by_hour.${h}`) }))
+      : Array.from({ length: 24 }, (_, h) => ({ x: hourText(h), hour: h, share: num(d, `${C}.hourly_shape.robbery_share_by_hour.${h}`), label: fmt(d, `${C}.hourly_shape.robbery_share_by_hour.${h}`) }))
   const spec: Spec = {
     height: 220,
     data: { values: rows },
     mark: { type: 'bar', style: 'accent', width: { band: 0.6 } },
-    encoding: { x: { field: 'x', type: 'ordinal', sort: rows.map((r) => r.x), title: kind === 'hour' ? 'Hour of day' : null, axis: { labelAngle: 0, labelOverlap: true } }, y: { field: 'share', type: 'quantitative', title: 'Robbery share of incidents', axis: { format: '.0%' } }, tooltip: [{ field: 'x' }, { field: 'label', title: 'Share' }] },
+    encoding: { x: { field: 'x', type: 'ordinal', sort: rows.map((r) => r.x), title: kind === 'hour' ? 'Hour of day' : null, axis: { labelAngle: 0, labelOverlap: true, ...(kind === 'hour' ? { labelExpr: "indexof(['12am', '3am', '6am', '9am', 'noon', '3pm', '6pm', '9pm'], datum.value) < 0 ? '' : datum.value" } : {}) } }, y: { field: 'share', type: 'quantitative', title: 'Robbery share of incidents', axis: { format: '.0%' } }, tooltip: [{ field: 'x' }, { field: 'label', title: 'Share' }] },
   }
   return {
     spec,
@@ -352,7 +369,7 @@ export function oddsByTime(d: PageResults): FigureData {
     rows.push({ panel, term, pos, or: num(d, `${K}:${base}.or`), lo: num(d, `${K}:${base}.robust_or_lo`), hi: num(d, `${K}:${base}.robust_or_hi`), ref: false, label: o, ci: `${lo} to ${hi}`, tip: `${o} (${lo} to ${hi})`, peak: `×${o}` })
   }
   const ref = (panel: string, term: string, pos: number) => rows.push({ panel, term, pos, or: 1, lo: 1, hi: 1, ref: true, label: 'Reference', ci: '', tip: 'Reference category', peak: '' })
-  for (let h = 0; h < 24; h++) (h === 12 ? ref : add)('Hour', `${String(h).padStart(2, '0')}:00`, HOUR_POS(h), `hour_or_vs_12.${h}`)
+  for (let h = 0; h < 24; h++) (h === 12 ? ref : add)('Hour', hourText(h), HOUR_POS(h), `hour_or_vs_12.${h}`)
   for (let m = 1; m <= 12; m++) (m === 1 ? ref : add)('Month', MONTHS[m - 1], MONTH_POS(m), `month_or_vs_jan.${m}`)
   for (let w = 1; w <= 7; w++) (w === 1 ? ref : add)('Weekday', WEEKDAYS[w - 1], DAY_POS(w), `weekday_or_vs_mon.${w}`)
 
@@ -364,10 +381,10 @@ export function oddsByTime(d: PageResults): FigureData {
   const skipNarrow: Record<number, number> = {}
   for (let m = 2; m <= 12; m += 2) skipNarrow[MONTH_POS(m)] = 1
   for (let w = 2; w <= 6; w += 2) skipNarrow[DAY_POS(w)] = 1
-  const labelExpr = `datum.value < 24 ? (width < 420 && datum.value % 6 ? '' : datum.label) : (width < 420 && ${JSON.stringify(skipNarrow)}[datum.value] ? '' : ${JSON.stringify(initials)}[datum.value])`
+  const labelExpr = `datum.value < 24 ? (width < 420 && datum.value % 6 ? '' : ${HOUR_EXPR}) : (width < 420 && ${JSON.stringify(skipNarrow)}[datum.value] ? '' : ${JSON.stringify(initials)}[datum.value])`
   const xs = { type: 'quantitative', scale: { domain: [-1, 45], nice: false }, axis: { values: ticks, labelExpr, labelAngle: 0, labelOverlap: 'greedy', grid: false, ticks: false, title: null } }
   const x = { field: 'pos', ...xs }
-  const y = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3.4], nice: false }, axis: { values: OR_TICKS, format: '~g', title: 'Odds ratio (log scale)' } }
+  const y = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3.4], nice: false }, axis: { values: OR_TICKS, format: '~g', title: 'Odds ratio (1 = no change)' } }
   const heading = (text: string, at: number, align: 'left' | 'right', dx: number) => ({ at, text, align, dx })
   const spec: Spec = {
     height: 340,
@@ -381,16 +398,65 @@ export function oddsByTime(d: PageResults): FigureData {
         encoding: { x: { field: 'at', ...xs }, text: { field: 'text' } },
       },
       { transform: [{ filter: '!datum.ref' }], mark: { type: 'rule', style: 'accent', strokeWidth: 2 }, encoding: { x, y: { field: 'lo', ...y }, y2: { field: 'hi' } } },
-      { transform: [{ filter: '!datum.ref' }], mark: { type: 'point', style: 'accent', filled: true, size: 56 }, encoding: { x, y: { field: 'or', ...y }, tooltip: [{ field: 'panel', title: 'Group' }, { field: 'term', title: 'Term' }, { field: 'tip', title: 'Odds ratio (robust 95% CI)' }] } },
+      { transform: [{ filter: '!datum.ref' }], mark: { type: 'point', style: 'accent', filled: true, size: 56 }, encoding: { x, y: { field: 'or', ...y }, tooltip: [{ field: 'panel', title: 'Group' }, { field: 'term', title: 'Term' }, { field: 'tip', title: 'Odds ratio (95% interval)' }] } },
       { transform: [{ filter: 'datum.ref' }], mark: { type: 'point', style: 'accentOutline', filled: false, size: 56, strokeWidth: 2 }, encoding: { x, y: { field: 'or', ...y }, tooltip: [{ field: 'panel', title: 'Group' }, { field: 'term', title: 'Term' }, { field: 'tip', title: 'Odds ratio' }] } },
-      { transform: [{ filter: "datum.panel === 'Hour' && datum.term === '15:00'" }], mark: { type: 'text', style: 'ink', align: 'left', dx: 9, fontWeight: 600 }, encoding: { x, y: { field: 'or', ...y }, text: { field: 'peak' } } },
+      { transform: [{ filter: "datum.panel === 'Hour' && datum.term === '3pm'" }], mark: { type: 'text', style: 'ink', align: 'left', dx: 9, fontWeight: 600 }, encoding: { x, y: { field: 'or', ...y }, text: { field: 'peak' } } },
     ],
   }
   return {
     spec,
-    table: rows.map((r) => ({ Group: r.panel, Term: r.term, 'Odds ratio': r.ref ? 'Reference' : r.label, 'Robust interval': r.ci })),
+    table: rows.map((r) => ({ Group: r.panel, Term: r.term, 'Odds ratio': r.ref ? 'Reference' : r.label, '95% interval': r.ci })),
     description:
-      'Three panels on one log axis: odds ratios for each hour against noon, each month against January and each weekday against Monday, with cluster-robust 95% intervals. Hours vary from below one half to above two; months and weekdays stay close to one.',
+      'Three panels on one log axis: odds ratios for each hour against noon, each month against January and each weekday against Monday, with 95% intervals. Hours vary from below one half to above two; months and weekdays stay closer to one.',
+  }
+}
+
+const AFTER_ROWS: { label: string; base: string; pooled: boolean }[] = [
+  { label: 'Against all three other types', base: 'post2019', pooled: true },
+  { label: 'Against auto theft only', base: 'composition.Auto Theft.post2019', pooled: false },
+  { label: 'Against theft over only', base: 'composition.Theft Over.post2019', pooled: false },
+  { label: 'Against break and enter only', base: 'composition.Break and Enter.post2019', pooled: false },
+]
+
+/**
+ * Odds of a robbery after 2019 against 2014 to 2019: the pooled model first, then robbery against each other type on
+ * its own. The ratio depends on the comparison group, so the three single comparisons are drawn beside the pooled one.
+ */
+export function postByComparator(d: PageResults): FigureData {
+  const K = 'explain.sta303_v2'
+  const rows = AFTER_ROWS.map((r) => ({
+    label: r.label,
+    pooled: r.pooled,
+    or: num(d, `${K}:${r.base}.or`),
+    lo: num(d, `${K}:${r.base}.robust_or_lo`),
+    hi: num(d, `${K}:${r.base}.robust_or_hi`),
+    text: fmt(d, `${K}:${r.base}.or`),
+    ci: `${fmt(d, `${K}:${r.base}.robust_or_lo`)} to ${fmt(d, `${K}:${r.base}.robust_or_hi`)}`,
+    peak: `×${fmt(d, `${K}:${r.base}.or`)}`,
+  }))
+  const y = { field: 'label', type: 'nominal', sort: rows.map((r) => r.label), title: null, axis: null }
+  const x = { type: 'quantitative', scale: { type: 'log', domain: [0.25, 1.3], nice: false }, axis: { values: [0.25, 0.5, 0.75, 1], format: '~g', title: 'Odds ratio after 2019 (1 = no change)' } }
+  const tooltip = [{ field: 'label', title: 'Comparison' }, { field: 'peak', title: 'Odds ratio' }, { field: 'ci', title: '95% interval' }]
+  const spec: Spec = {
+    height: rows.length * 54,
+    data: { values: rows },
+    layer: [
+      { data: { values: [{ v: 1 }] }, mark: { type: 'rule', style: 'muted', strokeDash: [4, 4] }, encoding: { x: { field: 'v', ...x } } },
+      { transform: [{ filter: '!datum.pooled' }], mark: { type: 'rule', style: 'ink', strokeWidth: 2 }, encoding: { y, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
+      { transform: [{ filter: '!datum.pooled' }], mark: { type: 'point', style: 'ink', filled: true, size: 90 }, encoding: { y, x: { field: 'or', ...x }, tooltip } },
+      { transform: [{ filter: 'datum.pooled' }], mark: { type: 'rule', style: 'accent', strokeWidth: 3 }, encoding: { y, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
+      { transform: [{ filter: 'datum.pooled' }], mark: { type: 'point', style: 'accent', filled: true, size: 130 }, encoding: { y, x: { field: 'or', ...x }, tooltip } },
+      // the value sits beside the bar, on the left when the bar is close to the line at one
+      { transform: [{ filter: 'datum.or < 0.7' }], mark: { type: 'text', style: 'ink', align: 'left', dx: 9, fontWeight: 600 }, encoding: { y, x: { field: 'hi', ...x }, text: { field: 'peak' } } },
+      { transform: [{ filter: 'datum.or >= 0.7' }], mark: { type: 'text', style: 'ink', align: 'right', dx: -9, fontWeight: 600 }, encoding: { y, x: { field: 'lo', ...x }, text: { field: 'peak' } } },
+      { mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -16, fontWeight: 600 }, encoding: { y, text: { field: 'label' } } },
+    ],
+  }
+  return {
+    spec,
+    table: rows.map((r) => ({ Comparison: r.label, 'Odds ratio': r.text, '95% interval': r.ci })),
+    description:
+      'Odds ratios for a robbery after 2019 against 2014 to 2019, with 95% intervals, on a log axis. The first row pools all three other types. Against auto theft alone the ratio is lowest, against theft over in between and against break and enter highest, but all are below one.',
   }
 }
 
@@ -410,18 +476,22 @@ export interface StepRow {
 /** The four rungs shown on the Overview and Predict step charts, in reading order. */
 export const STEPS: { id: string; label: string; lines: string[] }[] = [
   { id: 'L1', label: 'Time only', lines: ['Time only'] },
-  { id: 'L2', label: '+ premises and location', lines: ['+ premises', 'and location'] },
+  { id: 'L2', label: 'Time and type of place', lines: ['Time and', 'type of place'] },
   { id: 'L5', label: 'Full model', lines: ['Full model'] },
-  { id: 'L5-nopremises', label: 'Full model without premises', lines: ['Full model', 'without premises'] },
+  { id: 'L5-nopremises', label: 'Full model without type of place', lines: ['Full model', 'without type of place'] },
 ]
-const DESIGN_LABEL: Record<string, string> = { [DESIGN_A]: 'Grouped CV', [DESIGN_B]: 'Temporal holdout' }
+/** The two tests, by the names the site uses: grouped cross-validation and the temporal holdout (2022 to 2023). */
+export const TEST_LABEL: Record<string, string> = { [DESIGN_A]: 'New neighbourhoods', [DESIGN_B]: 'Later years' }
+const TESTS = [TEST_LABEL[DESIGN_A], TEST_LABEL[DESIGN_B]]
+/** The score of guessing for PR-AUC (the robbery share, as a decimal like the scores) or ROC-AUC (one half). */
+const guessKey = (design: string, metric: 'pr_auc' | 'roc_auc') => `${ABL}:designs.${design}.L0.${metric === 'pr_auc' ? 'pr_auc_baseline' : 'roc_auc'}`
 
 /** One row per rung (STEPS) and evaluation design, with the 95% bootstrap interval of one metric. */
 export function stepRows(d: PageResults, designs: string[] = [DESIGN_A], metric: Metric = 'pr_auc'): StepRow[] {
   return designs.flatMap((design) =>
     STEPS.map((s) => {
       const p = `${ABL}:designs.${design}.variants.${s.id}.${metric}`
-      return { id: s.id, label: s.label, design: DESIGN_LABEL[design] ?? design, estimate: num(d, `${p}.estimate`), lo: num(d, `${p}.lo`), hi: num(d, `${p}.hi`), text: [fmt(d, `${p}.estimate`), fmt(d, `${p}.lo`), fmt(d, `${p}.hi`)] as [string, string, string], est: fmt(d, `${p}.estimate`) }
+      return { id: s.id, label: s.label, design: TEST_LABEL[design] ?? design, estimate: num(d, `${p}.estimate`), lo: num(d, `${p}.lo`), hi: num(d, `${p}.hi`), text: [fmt(d, `${p}.estimate`), fmt(d, `${p}.lo`), fmt(d, `${p}.hi`)] as [string, string, string], est: fmt(d, `${p}.estimate`) }
     }),
   )
 }
@@ -429,20 +499,21 @@ export function stepRows(d: PageResults, designs: string[] = [DESIGN_A], metric:
 // Row labels are text marks above each row, not axis labels: the axis would reserve the width of the longest label
 // and squeeze the plot on a phone.
 const stepY = () => ({ field: 'label', type: 'nominal', sort: STEPS.map((s) => s.label), title: null, axis: null })
-const stepTable = (rows: StepRow[], metric: Metric): TableRow[] => rows.map((r) => ({ Model: `${r.id} ${r.label}`, Design: r.design, [METRIC_LABEL[metric]]: r.text[0], 'Interval low': r.text[1], 'Interval high': r.text[2] }))
-const stepX = (metric: 'pr_auc' | 'roc_auc') => ({ type: 'quantitative', scale: { domain: metric === 'pr_auc' ? [0, 0.75] : [0.45, 1] }, axis: { title: METRIC_LABEL[metric], values: metric === 'pr_auc' ? [0, 0.2, 0.4, 0.6] : [0.5, 0.6, 0.7, 0.8, 0.9, 1], format: '.1f' } })
+const stepTable = (rows: StepRow[], metric: Metric): TableRow[] => rows.map((r) => ({ Model: r.label, Test: r.design, [METRIC_LABEL[metric]]: r.text[0], 'Interval low': r.text[1], 'Interval high': r.text[2] }))
+const stepX = (metric: 'pr_auc' | 'roc_auc') => ({ type: 'quantitative', scale: { domain: metric === 'pr_auc' ? [0, 0.75] : [0.35, 1] }, axis: { title: METRIC_LABEL[metric], values: metric === 'pr_auc' ? [0, 0.2, 0.4, 0.6] : [0.5, 0.6, 0.7, 0.8, 0.9, 1], format: '.1f' } })
 
 /**
  * Overview figure: horizontal bars of one metric for the four rungs under one design, with 95% intervals and a grey tick
- * at the baseline (the robbery share for PR-AUC, 0.5 for ROC-AUC). Generic: pass `design` and `metric`.
+ * at guessing (the robbery share for PR-AUC, 0.5 for ROC-AUC), both written as decimals like the scores. Generic: pass
+ * `design` and `metric`.
  */
 export function stepChart(d: PageResults, opts: { design?: typeof DESIGN_A | typeof DESIGN_B; metric?: 'pr_auc' | 'roc_auc' } = {}): FigureData {
   const design = opts.design ?? DESIGN_A
   const metric = opts.metric ?? 'pr_auc'
   const rows = stepRows(d, [design], metric)
-  const baseKey = metric === 'pr_auc' ? `${ABL}:designs.${design}.prevalence` : `${ABL}:designs.${design}.L0.roc_auc`
+  const baseKey = guessKey(design, metric)
   const base = num(d, baseKey)
-  const baseText = `${metric === 'pr_auc' ? 'Guessing' : 'Chance'}: ${fmt(d, baseKey)}`
+  const baseText = `Guessing: ${fmt(d, baseKey)}`
   const x = stepX(metric)
   const data = rows.map((r) => ({ ...r, base }))
   const spec: Spec = {
@@ -460,37 +531,39 @@ export function stepChart(d: PageResults, opts: { design?: typeof DESIGN_A | typ
   return {
     spec,
     table: stepTable(rows, metric),
-    description: `Horizontal bars of ${METRIC_LABEL[metric]} with 95% intervals for four models: time only, plus premises and location type, the full model, and the full model without premises. A grey tick marks the score of guessing. Time only sits close to it; the models with premises and location type are far above it.`,
+    description: `Horizontal bars of ${METRIC_LABEL[metric]} with 95% intervals for four models: time only, time and type of place, the full model, and the full model without type of place. A grey tick marks the score of guessing. Time only sits only a little above it; the models with type of place are far above it.`,
   }
 }
 
 /**
- * Predict figure: the four rungs under both evaluation designs. Grouped cross-validation is filled and the temporal
- * holdout hollow, each with its 95% interval; a grey tick beside each point marks the guessing score of its design.
+ * Predict figure: the four rungs under both tests. New neighbourhoods (grouped cross-validation) are filled and later
+ * years (the temporal holdout) hollow, each with its 95% interval; a grey tick beside each point marks the guessing
+ * score of its test. The key sits in the chart, above the rows, so the chart is readable on its own.
  */
 export function rungSteps(d: PageResults, metric: 'pr_auc' | 'roc_auc' = 'pr_auc'): FigureData {
-  const baseOf = (design: string) => num(d, metric === 'pr_auc' ? `${ABL}:designs.${design}.prevalence` : `${ABL}:designs.${design}.L0.roc_auc`)
-  const rows = stepRows(d, [DESIGN_A, DESIGN_B], metric).map((r) => ({ ...r, base: baseOf(r.design === 'Grouped CV' ? DESIGN_A : DESIGN_B) }))
+  const baseOf = (test: string) => num(d, guessKey(test === TEST_LABEL[DESIGN_A] ? DESIGN_A : DESIGN_B, metric))
+  const rows = stepRows(d, [DESIGN_A, DESIGN_B], metric).map((r) => ({ ...r, base: baseOf(r.design) }))
   const x = stepX(metric)
-  const yOffset = { field: 'design', type: 'nominal', sort: ['Grouped CV', 'Temporal holdout'] }
-  const tooltip = [{ field: 'label', title: 'Model' }, { field: 'design', title: 'Design' }, { field: 'estimate', format: '.3f', title: METRIC_LABEL[metric] }, { field: 'lo', format: '.3f', title: '95% low' }, { field: 'hi', format: '.3f', title: '95% high' }]
+  const yOffset = { field: 'design', type: 'nominal', sort: TESTS }
+  const tooltip = [{ field: 'label', title: 'Model' }, { field: 'design', title: 'Test' }, { field: 'estimate', format: '.3f', title: METRIC_LABEL[metric] }, { field: 'lo', format: '.3f', title: '95% low' }, { field: 'hi', format: '.3f', title: '95% high' }]
+  const first = `datum.id === 'L1' && datum.design === ${JSON.stringify(TESTS[0])}`
   const spec: Spec = {
-    height: STEPS.length * 84,
+    height: STEPS.length * 60,
     data: { values: rows },
     layer: [
       { mark: { type: 'tick', style: 'muted', orient: 'vertical', thickness: 2, size: 22 }, encoding: { y: stepY(), yOffset, x: { field: 'base', ...x } } },
-      { mark: { type: 'rule', style: 'accent', strokeWidth: 2 }, encoding: { y: stepY(), yOffset, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
-      {
-        mark: { type: 'point', style: ['accent', 'accentOutline'], size: 90, strokeWidth: 2 },
-        encoding: { y: stepY(), yOffset, x: { field: 'estimate', ...x }, fillOpacity: { field: 'design', type: 'nominal', sort: ['Grouped CV', 'Temporal holdout'], scale: { domain: ['Grouped CV', 'Temporal holdout'], range: [1, 0] }, legend: null }, tooltip },
-      },
-      { transform: [{ filter: "datum.design === 'Grouped CV'" }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -28, fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
+      { transform: [{ filter: first }], mark: { type: 'text', style: 'muted', align: 'right', baseline: 'middle', dx: -8, fontWeight: 600 }, encoding: { y: stepY(), yOffset, x: { field: 'base', ...x }, text: { value: 'guessing' } } },
+      { mark: { type: 'rule', style: 'accent', strokeWidth: 2.5 }, encoding: { y: stepY(), yOffset, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
+      { mark: { type: 'point', style: ['accent', 'accentOutline'], size: 110, strokeWidth: 2.5 }, encoding: { y: stepY(), yOffset, x: { field: 'estimate', ...x }, fillOpacity: { field: 'design', type: 'nominal', sort: TESTS, scale: { domain: TESTS, range: [1, 0] }, legend: null }, tooltip } },
+      // the key: each test is named beside its own marker in the first row
+      { transform: [{ filter: "datum.id === 'L1'" }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'middle', dx: 10 }, encoding: { y: stepY(), yOffset, x: { field: 'hi', ...x }, text: { field: 'design' } } },
+      { transform: [{ filter: `datum.design === ${JSON.stringify(TESTS[0])}` }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -24, fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
     ],
   }
   return {
     spec,
     table: stepTable(rows, metric),
-    description: `Points with 95% intervals for ${METRIC_LABEL[metric]} at four models: time only, plus premises and location type, the full model, and the full model without premises, under grouped cross-validation (filled) and the temporal holdout (hollow). Grey ticks mark the score of guessing in each design. Models with premises and location type score far above it; time alone barely does.`,
+    description: `Points with 95% intervals for ${METRIC_LABEL[metric]} at four models: time only, time and type of place, the full model, and the full model without type of place, tested on new neighbourhoods (filled) and on later years (hollow). Grey ticks mark the score of guessing in each test. Models with type of place score far above it; time alone only a little.`,
   }
 }
 
@@ -532,6 +605,6 @@ export function censusScatter2d(d: PageResults): FigureData {
     spec,
     table: rows.map((r) => ({ Neighbourhood: r.name, 'Job ratio': r.ratioText, 'Median income (CAD)': r.incomeText, 'Robberies, 2020': r.robberiesText })),
     description:
-      'Scatter plot of the neighbourhoods: permanent job to labour force ratio across, median income up, with colour and marker area showing the number of robberies reported in 2020. The highest counts sit in mid-income downtown areas; there is only a weak tendency for lower-income areas to have more.',
+      'Scatter plot of the neighbourhoods: permanent job to labour force ratio across, median income up, with colour and marker area showing the number of robberies reported in 2020. The largest counts occur at a range of incomes; there is only a weak tendency for lower-income areas to have more.',
   }
 }

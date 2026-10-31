@@ -30,8 +30,8 @@ export function summaryText(data: CensusScatterData, results: PageResults): stri
   const s = data.summary
   const n = (path: string, v: number) => formatNumber(v, formatFor(results, `${KEY}:summary.${path}`))
   return [
-    `Neighbourhood scatter of ${n('n', s.n)} neighbourhoods: permanent job to labour force ratio, individual median income and robberies reported in 2020.`,
-    `Rank correlation of robberies with median income is ${n('spearman_income.rho', s.spearman_income.rho)}, and with the job ratio ${n('spearman_ratio.rho', s.spearman_ratio.rho)}.`,
+    `Neighbourhood scatter of ${n('n', s.n)} neighbourhoods: permanent job to labour force ratio, individual median income and robberies reported in 2020, from the course extract.`,
+    `The rank correlation of robbery counts with median income is ${n('spearman_income.rho', s.spearman_income.rho)}, and with the job ratio ${n('spearman_ratio.rho', s.spearman_ratio.rho)}.`,
     `The top tenth of neighbourhoods by robbery count (${n('top_decile.n', s.top_decile.n)} of them) have a median income of ${n('top_decile.median_income', s.top_decile.median_income)} dollars, against ${n('rest.median_income', s.rest.median_income)} dollars in the rest.`,
     `The most robberies were reported in ${s.max.name}, ${n('max.robberies', s.max.robberies)}.`,
     'These are counts of reported incidents, not rates per resident and not risk.',
