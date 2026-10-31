@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 PYTHON ?= python3.12
 
-.PHONY: python env data rref parity analysis web paper audit check all versions
+.PHONY: python env data rlib rref pages parity analysis web paper audit check all versions
 
 # Project-local Python 3.12 (uv in .cache/); use when python3.12 is not installed system-wide.
 python:
@@ -16,7 +16,10 @@ data:
 
 # R reference re-runs (hours; needs R and ./.r-lib). Outputs land in build/r-work; copy them into
 # parity/r_outputs with parity/r/collect_exports.sh as in PROGRESS.md (P2). Committed outputs are used otherwise.
-rref:
+rlib:
+	source tools/env.sh; Rscript --vanilla parity/r/install_r_lib.R
+
+rref: rlib
 	source tools/env.sh; bash parity/r/run_sta303.sh; bash parity/r/run_jsc370.sh full en_CA; bash parity/r/run_explorer.sh; bash parity/r/run_charts.sh
 
 # Python ports against the committed R outputs (fast).
@@ -27,12 +30,17 @@ parity:
 analysis:
 	source tools/env.sh; export PYTHONPATH=pipeline/src; python -m tca.explain.sta303_v2; python -m tca.predict.ablation_run; python -m tca.predict.ablation_report; python -m tca.predict.eda_corrections; python -m tca.predict.inference_vs_prediction; python parity/compare/xgb_grid_fix.py; python parity/compare/jsc370_benchmark_results.py; python -m tca.explore.export; python tools/hash_outputs.py; python tools/gen_results_md.py
 
-web:
-	source tools/env.sh; python tools/gen_web_data.py; cd web; npm run build; npm run package
+# Per-page results JSON the site and the paper figures read.
+pages:
+	source tools/env.sh; python tools/gen_web_data.py
+
+# The site packages web/public/paper/paper.pdf, so `all` builds the paper first.
+web: pages
+	source tools/env.sh; cd web; npm run build; npm run package
 
 # Paper: numbers, tables and figures from results/, then LaTeX (needs `make env`; fonts in .cache/fonts).
-paper:
-	source tools/env.sh; python tools/spikes/fetch_assets.py; python tools/gen_web_data.py; python tools/gen_paper.py all
+paper: pages
+	source tools/env.sh; python tools/spikes/fetch_assets.py; python tools/gen_paper.py all
 	source tools/env.sh; python tools/check_paper_numerals.py
 	source tools/env.sh; cd paper; tectonic --outdir build --keep-logs paper.tex
 	source tools/env.sh; python tools/check_paper_pdf.py paper/build/paper.pdf 7
@@ -46,7 +54,7 @@ audit:
 check:
 	source tools/env.sh; python -m pytest -q; python -m pytest tools/tests -q; ruff check .; cd web; npm test; npm run lint
 
-all: data rref parity analysis web paper audit
+all: data rref parity analysis paper web audit
 
 versions:
 	source tools/env.sh; .venv/bin/python tools/tool_versions.py

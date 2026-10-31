@@ -28,6 +28,8 @@ FORMATS = [
 def cases() -> list[tuple[float, dict]]:
     rng = random.Random(303313)
     ties = [
+        0.0625,
+        0.5625,
         0.125,
         1.005,
         2.5,
@@ -64,3 +66,11 @@ def test_python_formatting_matches_the_site():
     got = [gen_paper.format_number(v, f) for v, f in pairs]
     bad = [(p, e, g) for p, e, g in zip(pairs, expected, got, strict=True) if e != g]
     assert not bad, bad[:5]
+
+
+def test_rung_labels_match_the_site():
+    import re
+
+    ts = (ROOT / "web" / "src" / "lib" / "specs.ts").read_text()
+    block = ts[ts.index("export const RUNG_LABEL") : ts.index("export type Metric")]
+    assert dict(re.findall(r"(L\d): '([^']+)'", block)) == gen_paper.RUNG_LABEL

@@ -90,7 +90,12 @@ def format_for(ref: str) -> dict:
 def format_number(v: float, fmt: dict) -> str:
     """Same text as formatNumber in web/src/lib/results.ts (Intl en-CA; ICU rounds the shortest decimal half up)."""
     if fmt.get("p"):
-        return "< 0.001" if v < 0.001 else f"{v:.3f}"
+        # JS toFixed rounds an exact tie up (Python's format rounds it to even)
+        return (
+            "< 0.001"
+            if v < 0.001
+            else str(Decimal(v).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+        )
     decimals = fmt.get("decimals", 0)
     scaled = v * 100 if fmt.get("percent") else v
     exact = Decimal(repr(float(scaled))).quantize(

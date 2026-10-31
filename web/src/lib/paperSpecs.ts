@@ -70,6 +70,8 @@ export function paperFig2(d: PageResults): Spec {
   }
 }
 
+const PANEL_WIDTH = 300
+
 /** Fig 3: PR-AUC of the five rungs, one panel per evaluation design; hollow diamonds drop premises and location type. */
 export function paperFig3(d: PageResults): Spec {
   const rows = ablationRows(d, 'pr_auc')
@@ -81,19 +83,19 @@ export function paperFig3(d: PageResults): Spec {
     const prevalence = num(d, `${ABL}:designs.${key}.prevalence`)
     const values = rows
       .filter((r) => r.design === design)
-      .map((r) => ({ ...r, kind: r.premises.startsWith('with ') ? WITH : WITHOUT }))
+      .map((r) => ({ ...r, kind: r.withPremises ? WITH : WITHOUT }))
     const common = {
       x: { field: 'rung', type: 'nominal', sort: order, title: null, axis: { labelAngle: 0, labelPadding: 6, labelExpr: "split(datum.value, ' ')[0]" } },
       xOffset: { field: 'kind', type: 'nominal', sort: [WITH, WITHOUT] },
     }
     return {
       title: { text: title, fontSize: 13, anchor: 'start' },
-      width: 300,
+      width: PANEL_WIDTH,
       height: 230,
       data: { values },
       layer: [
         { data: { values: [{ v: prevalence }] }, mark: { type: 'rule', style: 'muted', strokeDash: [2, 4] }, encoding: { y: { field: 'v', ...y } } },
-        { data: { values: [{ v: prevalence, t: `Share of robberies: ${fmt(d, `${ABL}:designs.${key}.prevalence`)}` }] }, mark: { type: 'text', style: 'muted', align: 'right', baseline: 'top', dy: 4, fontSize: 11, x: 296 }, encoding: { y: { field: 'v', ...y }, text: { field: 't' } } },
+        { data: { values: [{ v: prevalence, t: `Share of robberies: ${fmt(d, `${ABL}:designs.${key}.prevalence`)}` }] }, mark: { type: 'text', style: 'muted', align: 'right', baseline: 'top', dy: 4, fontSize: 11, x: PANEL_WIDTH - 4 }, encoding: { y: { field: 'v', ...y }, text: { field: 't' } } },
         { mark: { type: 'rule', style: 'accent', strokeWidth: 2 }, encoding: { ...common, y: { field: 'lo', ...y }, y2: { field: 'hi' } } },
         {
           mark: { type: 'point', style: 'accent', size: 60, strokeWidth: 2, filled: true },

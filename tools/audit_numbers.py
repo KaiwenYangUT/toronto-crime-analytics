@@ -105,7 +105,7 @@ def site_texts() -> dict[str, str]:
     for page in sorted(SITE.rglob("index.html")):
         parser = Text()
         parser.feed(page.read_text())
-        texts[str(page.parent.relative_to(SITE) or "/")] = "".join(parser.chunks)
+        texts[page.parent.relative_to(SITE).as_posix()] = "".join(parser.chunks)
     return texts
 
 
@@ -115,9 +115,13 @@ def paper_text() -> str:
     ).stdout
     cut = text.rfind("\nReferences")
     text = text[:cut] if cut > 0 else text
-    lines = [
-        ln for ln in text.splitlines() if not re.fullmatch(r"\s*\d{1,2}\s*", ln)
-    ]  # page numbers
+    pages = []
+    for number, page in enumerate(text.split("\f"), 1):
+        rows = page.rstrip().splitlines()
+        if rows and rows[-1].strip() == str(number):  # the page number, and only that
+            rows = rows[:-1]
+        pages += rows
+    lines = pages
     lines = [re.sub(r"^\d+(?:\.\d+)*\s+(?=[A-Z])", "", ln) for ln in lines]  # section numbers
     return "\n".join(lines)
 

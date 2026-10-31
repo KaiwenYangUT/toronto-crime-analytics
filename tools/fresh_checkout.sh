@@ -10,6 +10,8 @@ steps=("$@"); [ ${#steps[@]} -gt 0 ] || steps=(env data parity analysis web pape
 if [ ! -d "$fresh/.git" ]; then
   mkdir -p "$root/build"
   git clone --quiet "$root" "$fresh"
+else
+  git -C "$fresh" pull --quiet --ff-only
 fi
 cd "$fresh"
 echo "fresh checkout at $(git rev-parse --short HEAD) in $fresh"
@@ -18,4 +20,4 @@ for s in "${steps[@]}"; do
   if [ "$s" = env ]; then make env PYTHON="$root/.cache/tools/bin/python3.12"; else make "$s"; fi
 done
 echo "=== compare result hashes"
-diff "$root/results/CHECKSUMS.sha256" "$fresh/results/CHECKSUMS.sha256" && echo "IDENTICAL result hashes"
+git -C "$root" show HEAD:results/CHECKSUMS.sha256 | diff - "$fresh/results/CHECKSUMS.sha256" && echo "IDENTICAL result hashes (fresh vs committed)"

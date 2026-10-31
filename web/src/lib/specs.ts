@@ -120,7 +120,7 @@ export function forestPlot(d: PageResults): FigureData {
   }
 }
 
-type Row = { rung: string; series: string; design: string; premises: string; estimate: number; lo: number; hi: number; text: [string, string, string] }
+type Row = { rung: string; series: string; design: string; withPremises: boolean; premises: string; estimate: number; lo: number; hi: number; text: [string, string, string] }
 
 export function ablationRows(d: PageResults, metric: Metric): Row[] {
   const rows: Row[] = []
@@ -134,6 +134,7 @@ export function ablationRows(d: PageResults, metric: Metric): Row[] {
           rung: `${rung} ${RUNG_LABEL[rung]}`,
           series: `${dlabel}${noPrem ? ', no premises' : ''}`,
           design: dlabel,
+          withPremises: !noPrem,
           premises: noPrem ? 'without premises and location type' : 'with premises and location type',
           estimate: num(d, `${p}.estimate`),
           lo: num(d, `${p}.lo`),
