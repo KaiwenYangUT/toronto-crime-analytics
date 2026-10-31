@@ -33,6 +33,8 @@
 @media (min-width: 768px) { .main { padding-top: var(--space-6); } }
 /* Explore: the dashboard uses the whole viewport */
 .mainWide { max-width: none; padding-top: var(--space-4); padding-bottom: var(--space-5); }
+/* ...and the nav, mobile menu and footer content line up with it (same gutter, no container cap) */
+.shellWide .headerInner, .shellWide .mobileNav, .shellWide .footerInner { max-width: none; }
 .footer { border-top: 1px solid var(--border); background: var(--surface); }
 .footerInner { max-width: var(--page-max); margin: 0 auto; padding: var(--space-5) var(--gutter); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-5); font-size: var(--text-sm); color: var(--text-muted); }
 .footerInner a { color: var(--text-muted); display: inline-flex; align-items: center; min-height: var(--target); }
@@ -44,6 +46,7 @@
 
 /* PageHeader: full container width */
 .pageHeader { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-7); }
+@media (max-width: 599.98px) { .pageHeader { margin-bottom: var(--space-5); } }
 .eyebrow { font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
 .question { font-size: var(--text-lg); line-height: var(--leading-lg); font-weight: 500; max-width: var(--measure); border-left: 4px solid var(--accent); padding-left: var(--space-4); }
 .questionTag { display: block; font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
@@ -54,18 +57,24 @@
 .section { margin-top: var(--space-7); }
 .section > h2 { margin-bottom: var(--space-4); }
 
-/* ResultSection: takeaway h2, figure over 8 columns, aside over 4; stacked figure-first under 1024 px */
+/* ResultSection: takeaway h2, figure over 8 columns, aside over 4; stacked figure-first under 1024 px.
+   `below` sits under the figure in the same 8 columns (the notes that would otherwise stretch the aside past the figure). */
 .resultSection { margin-top: var(--space-8); }
 .resultSection:first-of-type { margin-top: 0; }
 .resultSection > h2 { margin-bottom: var(--space-5); }
+@media (max-width: 599.98px) { .resultSection > h2 { margin-bottom: var(--space-3); } }
 .resultGrid, .resultGridSolo { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 1fr); }
-.resultFigure { min-width: 0; }
+.resultFigure, .resultBelow { min-width: 0; }
+.resultBelow { display: flex; flex-direction: column; gap: var(--space-4); }
 .resultAside { min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
 .resultMore { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+@media (max-width: 1023.98px) { .resultGrid, .resultGridSolo { gap: var(--space-4); } }
 @media (min-width: 1024px) {
   .resultGrid { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
-  .resultGrid > .resultFigure { grid-column: 1 / span 8; }
-  .resultGrid > .resultAside { grid-column: 9 / span 4; }
+  .resultGrid > .resultFigure { grid-column: 1 / span 8; grid-row: 1; }
+  .resultGrid > .resultBelow { grid-column: 1 / span 8; grid-row: 2; }
+  .resultGrid > .resultAside { grid-column: 9 / span 4; grid-row: 1 / span 2; }
+  .resultGrid { row-gap: var(--space-5); }
 }
 
 /* StatCard (and FindingCard, which renders one) */
@@ -118,6 +127,21 @@
 .sortBtn { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; min-height: var(--target); }
 .sortBtn:focus-visible { outline: var(--focus-ring) solid var(--accent); outline-offset: 2px; }
 
+/* DataTable on a phone: each row becomes a card of label / value pairs instead of a scrolling strip. */
+.sortSelect { display: none; }
+@media (max-width: 599.98px) {
+  .sortSelect { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-2); }
+  .sortSelect select { min-height: var(--target); border: 1px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); color: var(--text); padding: 0 var(--space-3); font-size: var(--text-sm); }
+  .tableStack { border: 0; max-height: none; overflow: visible; background: none; }
+  .tableStack .table, .tableStack tbody, .tableStack tr, .tableStack td, .tableStack caption { display: block; width: 100%; }
+  .tableStack caption { padding: 0 0 var(--space-2); }
+  .tableStack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tableStack tbody tr { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: var(--space-1) 0; margin-bottom: var(--space-3); }
+  .tableStack td { display: grid; grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr); gap: var(--space-3); align-items: baseline; border: 0; white-space: normal; text-align: left; padding: var(--space-2) var(--space-3); }
+  .tableStack td::before { content: attr(data-label); color: var(--text-muted); font-weight: 500; }
+  .tableStack .table .num { text-align: left; }
+}
+
 /* Disclosure */
 .disclosure { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
 .disclosure + .disclosure { margin-top: var(--space-3); }
@@ -139,19 +163,31 @@
 .tab[data-state='active'] { color: var(--text); border-bottom-color: var(--accent); }
 .tabPanel { padding-top: var(--space-4); }
 
-/* Figure: the title and the Data menu share the first row; everything else spans both columns */
+/* Figure: the title and the tools (optional control + Data menu) share the first row; everything else spans both columns.
+   Inside a ResultSection the h2 already states the takeaway, so on a phone the title is kept for assistive technology only
+   and the subtitle takes its place beside the Data menu. */
 .figure { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-4); row-gap: var(--space-3); align-items: start; }
 .figure > * { grid-column: 1 / -1; }
-.figure > .figureTitle { grid-column: 1; }
-.figure > .dataMenu { grid-column: 2; grid-row: 1; }
+.figure > .figureTitle { grid-column: 1; grid-row: 1; }
+.figure > .figureTools { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: var(--space-2); justify-content: flex-end; }
 .figureTitle { font-size: var(--text-lg); line-height: var(--leading-lg); font-weight: 600; text-wrap: balance; }
 .figureSub { font-size: var(--text-sm); color: var(--text-muted); margin-top: calc(var(--space-2) * -1); max-width: var(--measure); }
+.figureLegend { margin-top: calc(var(--space-1) * -1); }
+@media (max-width: 599.98px) {
+  .figureInSection > .figureTitle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .figureInSection { row-gap: var(--space-2); }
+  .figureInSection > .figureTools { grid-column: 1 / -1; justify-content: space-between; }
+  .figureInSection > .figureTools > :only-child { margin-left: auto; }
+  .figureInSection.hasSub:not(.hasControls) > .figureTools { grid-column: 2; }
+  .figureInSection.hasSub:not(.hasControls) > .figureSub { grid-column: 1; grid-row: 1; margin-top: 0; align-self: center; }
+}
 .figureBody { min-height: 120px; overflow-x: auto; }
 .figureBody svg, .figureBody canvas { display: block; max-width: 100%; height: auto; }
 .figureCaption { font-size: var(--text-sm); color: var(--text-muted); max-width: var(--measure); }
 .figureActions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .dataMenu { position: relative; }
 .dataMenuPanel { position: absolute; right: 0; top: 100%; margin-top: var(--space-1); z-index: 15; min-width: 14rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-1); display: flex; flex-direction: column; }
+.dataMenuUp { top: auto; bottom: 100%; margin: 0 0 var(--space-1); }
 .dataMenuPanel > * { min-height: var(--target); padding: 0 var(--space-3); border: 0; border-radius: 4px; background: transparent; color: var(--text); font-size: var(--text-sm); font-weight: 500; text-align: left; text-decoration: none; display: flex; align-items: center; cursor: pointer; white-space: nowrap; }
 .dataMenuPanel > *:hover { background: var(--surface); }
 .btn { border: 1px solid var(--border); background: var(--bg); border-radius: var(--radius); padding: 0 var(--space-4); gap: var(--space-2); font-size: var(--text-sm); font-weight: 500; cursor: pointer; min-height: var(--target); color: var(--text); text-decoration: none; display: inline-flex; align-items: center; }

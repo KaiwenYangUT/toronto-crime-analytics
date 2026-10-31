@@ -89,6 +89,8 @@ function downtownShare(t: EventTable, selected: Int32Array) {
   return { inside, total: selected.length }
 }
 
+const UNION = STATIONS.find((x) => x.name === 'Union Station')
+
 type When = 'hour' | 'weekday'
 
 export function Explore() {
@@ -264,7 +266,7 @@ export function Explore() {
           )}
           {load.status === 'ready' && table && (
             <>
-              <MapView table={table} selected={derived?.selected ?? NO_ROWS} center={derived?.center} site={state.mode === 'station' ? derived?.site : undefined} radiusM={state.mode === 'city' ? undefined : state.radius} catColors={colors} />
+              <MapView table={table} selected={derived?.selected ?? NO_ROWS} center={derived?.center} site={state.mode === 'station' ? derived?.site : undefined} radiusM={state.mode === 'city' ? undefined : state.radius} catColors={colors} landmark={UNION} />
               <ul className={s.legend} aria-label="Map legend">
                 {shown.map((c) => (
                   <li key={c} className={s.legendItem}><span className={s.legendSwatch} style={{ background: colors[c] }} aria-hidden="true" />{c}</li>

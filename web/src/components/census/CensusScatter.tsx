@@ -83,12 +83,10 @@ export function CensusScatter({ data, spec, svgs }: CensusScatterProps) {
   const stage = useRef<HTMLDivElement>(null)
   const scene = useRef<Scene | null>(null)
 
-  // The host sits inside the Figure's chart box, so the 3D view takes the flat chart's place.
-  const attach = useCallback((el: HTMLDivElement | null) => {
-    root.current = el
-    if (!el) return
-    const body = el.querySelector<HTMLElement>('[class*="figureBody"]') ?? el.querySelector('figure')
+  // The host sits inside the Figure's chart box (its body slot), so the 3D view takes the flat chart's place.
+  const attach = useCallback((body: HTMLDivElement | null) => {
     if (!body) return
+    body.querySelectorAll('[data-census-host]').forEach((n) => n.remove())
     const box = document.createElement('div')
     box.setAttribute('data-census-host', '')
     body.appendChild(box)
@@ -184,7 +182,7 @@ export function CensusScatter({ data, spec, svgs }: CensusScatterProps) {
     availability === 'no-webgl' || availability === 'reduced-motion' ? flatNote(availability) : null
 
   return (
-    <div className={s.root} ref={attach} data-testid="census-scatter" data-mode={mode}>
+    <div className={s.root} ref={root} data-testid="census-scatter" data-mode={mode}>
       <Figure
         title="Neighbourhoods by job ratio, income and robberies, 2020"
         spec={spec}
@@ -192,6 +190,8 @@ export function CensusScatter({ data, spec, svgs }: CensusScatterProps) {
         description={summary}
         table={rows}
         minHeight={320}
+        bodyClassName={s.figBody}
+        bodyRef={attach}
       />
       {host &&
         createPortal(

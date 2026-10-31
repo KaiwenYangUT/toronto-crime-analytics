@@ -10,7 +10,7 @@ export function Num({ k }: { k: string }) {
   const data = useResults()
   return (
     <span className="tnum" title={provenanceOf(data, k)}>
-      {numberText(data, k)}
+      {numberText(data, k).replace(/^-(?=\d)/, '\u2212')}
     </span>
   )
 }

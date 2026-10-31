@@ -5,7 +5,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
-| In progress | P10 R3a and R3b (parallel subagents) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
+| In progress | P10 simplify and code review of R2/R3, then R4 \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
 | Next action | P10 R2 then Gate B, then R3 and R4. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
@@ -166,7 +166,8 @@ Add a row whenever work moves to a different machine or app.
 - [x] Gate B GREEN (`reviews/gate-b.md`, no blockers). Should-fix S1-S8 (Predict 375 fold, empty space under figures, tables at 375, Explore 1440 alignment and map noise, trend series, odds chart ticks, Explain copy contradictions) go to R3b; R3a does Overview, Paper, Methods, About
 - [x] Paper Discussion sentence (Spearman rho income -0.23, job ratio 0.07 via `\res`, pointer to the three-dimensional view): `make paper` = 6 content pages + references; `predict.inference_vs_prediction` stays in the predict page JSON because the paper's figure 4 reads it
 - [x] R3a Overview (5/7 landing with stepChart), Paper (download card, lazy PDF preview), Methods (sticky On-this-page aside, Reproducibility section removed), About; words Overview 127/150, Paper 86/150, Methods 367/450, About 107/120; `xgb_grid_fix` removed from the methods page data. Overview section h2 says the robbery share fell after 2017 (the data: 21.6% in 2017 to 10.5% in 2023; 2019 is already 15.9%)
-- [ ] R3b polish (Gate B should-fix S1-S8); then `simplify`, code review of R2/R3, then R4
+- [x] R3b polish: S1-S8 done (Predict chart body top 629 at 375, empty space under figures, tables as cards on phones, Explore 1440 alignment and quieter map with a Union Station marker, distinct trend series with end labels, odds-chart ticks, Explain copy: adjusted odds ratios, h2 now "None of the course report's four patterns holds as stated, though Saturday has the highest robbery share"); Figure gained controls/legend/bodyClassName/bodyRef, DataMenu exported. Open: Explain at 375 shows only ~135 px of plot above the fold (long dek and h2); scratch `web/scripts/_r3b-*.mjs` and `_probe*.mjs` untracked, deletion needs approval
+- [ ] `simplify`, code review of R2/R3, then R4
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
 - [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`
 

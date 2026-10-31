@@ -17,7 +17,7 @@
 /* The 3D view replaces the flat chart in the same box. The flat chart is collapsed to zero height rather than
    display:none, so a Vega re-render while it is hidden (theme switch) still measures its full width. */
 @media screen {
-  .root[data-mode='3d'] [class*='figureBody'] > :not([data-census-host]) { height: 0; overflow: hidden; visibility: hidden; }
+  .root[data-mode='3d'] .figBody > :not([data-census-host]) { height: 0; overflow: hidden; visibility: hidden; }
 }
 /* print always shows the flat chart */
 @media print {

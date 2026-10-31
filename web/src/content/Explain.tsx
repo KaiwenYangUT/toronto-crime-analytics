@@ -67,11 +67,11 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
     },
     {
       claim: 'weekend_peak',
-      pattern: 'Robberies peak at weekends',
+      pattern: 'Robberies are higher at weekends',
       evidence: (
         <>
-          Friday and Saturday tie for the most robberies (<Num k={`${E}.weekend_peak.robberies_by_day.Fri`} /> and <Num k={`${E}.weekend_peak.robberies_by_day.Sat`} />); Sunday has the fewest (
-          <Num k={`${E}.weekend_peak.robberies_by_day.Sun`} />).
+          Not on average: Friday and Saturday tie for the most robberies (<Num k={`${E}.weekend_peak.robberies_by_day.Fri`} /> and <Num k={`${E}.weekend_peak.robberies_by_day.Sat`} />), and Sunday has the fewest (<Num k={`${E}.weekend_peak.robberies_by_day.Sun`} />).
+          Saturday does have the highest robbery share, <Num k={`${E}.weekend_peak.robbery_share_by_day.Sat`} />.
         </>
       ),
     },
@@ -86,10 +86,10 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
     },
     {
       claim: 'hourly_shape',
-      pattern: 'Counts follow a smooth curve through the day',
+      pattern: 'Counts fall steadily from 1am to 11am and from 1pm to 11pm',
       evidence: (
         <>
-          Counts rise <Num k={`${E}.hourly_shape.rises_between_1am_and_11am`} /> times between 1am and 11am and <Num k={`${E}.hourly_shape.rises_between_1pm_and_11pm`} /> times between 1pm and 11pm.
+          They kept going up and down. Hour to hour, counts rose <Num k={`${E}.hourly_shape.rises_between_1am_and_11am`} /> times in the morning span and <Num k={`${E}.hourly_shape.rises_between_1pm_and_11pm`} /> times in the evening span.
         </>
       ),
     },
@@ -101,7 +101,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
         title="After 2019, a reported incident was much less likely to be a robbery."
         dek={
           <>
-            Odds of robbery against other major property crime in <Num k={`${K}:n`} /> reported incidents from 2014 to 2023: an association, not a measure of risk.
+            Odds of robbery against other major property crime in <Num k={`${K}:n`} /> reported incidents from 2014 to 2023. The figures are adjusted odds ratios, not probability ratios, and show an association, not a measure of risk.
           </>
         }
       />
@@ -113,7 +113,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
           <Figure
             id="odds-by-time"
             title="Odds of robbery by hour, month and weekday"
-            subtitle="Against noon, January and Monday (open markers). Bars are cluster-robust 95% intervals."
+            subtitle="Against noon, January and Monday (open markers). Bars: robust 95% intervals."
             spec={time.spec}
             svg={svgs.time}
             description={time.description}
@@ -148,13 +148,15 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
               meaning="A small difference once the hour is already in the model."
               notMean="It describes reported incidents only; it does not show that darkness explains robberies."
             />
-            <KeyPoints
-              items={[
-                { stat: <>×<Num k={`${K}:hour_or_vs_12.15.or`} /></>, text: ' the odds at 15:00 against noon, the largest hourly ratio.' },
-                { text: 'Month and weekday ratios stay much closer to one.' },
-              ]}
-            />
           </>
+        }
+        below={
+          <KeyPoints
+            items={[
+              { stat: <>×<Num k={`${K}:hour_or_vs_12.15.or`} /></>, text: ' the odds at 15:00 against noon, the largest hourly ratio.' },
+              { text: 'Month and weekday ratios stay much closer to one.' },
+            ]}
+          />
         }
       >
         <Disclosure id="all-terms" title="Show all model terms">
@@ -218,7 +220,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
 
       <ResultSection
         id="patterns"
-        title="The course report's four patterns do not hold in its own 2020 data."
+        title="None of the course report's four patterns holds as stated, though Saturday has the highest robbery share."
         figure={
           <DataTable
             caption="Four patterns from the course report, checked"

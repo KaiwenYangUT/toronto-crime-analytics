@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     setOpen(false)
   }
   return (
-    <div className={s.shell}>
+    <div className={wide ? `${s.shell} ${s.shellWide}` : s.shell}>
       <a className={s.skip} href="#main">
         Skip to content
       </a>

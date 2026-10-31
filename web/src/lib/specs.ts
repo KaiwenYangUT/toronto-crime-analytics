@@ -360,7 +360,12 @@ export function oddsByTime(d: PageResults): FigureData {
   MONTHS.forEach((m, i) => (initials[MONTH_POS(i + 1)] = m[0]))
   WEEKDAYS.forEach((w, i) => (initials[DAY_POS(i + 1)] = w[0]))
   const ticks = [0, 3, 6, 9, 12, 15, 18, 21, ...Object.keys(initials).map(Number)]
-  const xs = { type: 'quantitative', scale: { domain: [-1, 45], nice: false }, axis: { values: ticks, labelExpr: `datum.value < 24 ? datum.label : ${JSON.stringify(initials)}[datum.value]`, labelAngle: 0, labelOverlap: 'greedy', grid: false, ticks: false, title: null } }
+  // Under 420 px of plot the labels thin out: hours every six, every second month (Jan, Mar, ...) and Mon, Wed, Fri, Sun.
+  const skipNarrow: Record<number, number> = {}
+  for (let m = 2; m <= 12; m += 2) skipNarrow[MONTH_POS(m)] = 1
+  for (let w = 2; w <= 6; w += 2) skipNarrow[DAY_POS(w)] = 1
+  const labelExpr = `datum.value < 24 ? (width < 420 && datum.value % 6 ? '' : datum.label) : (width < 420 && ${JSON.stringify(skipNarrow)}[datum.value] ? '' : ${JSON.stringify(initials)}[datum.value])`
+  const xs = { type: 'quantitative', scale: { domain: [-1, 45], nice: false }, axis: { values: ticks, labelExpr, labelAngle: 0, labelOverlap: 'greedy', grid: false, ticks: false, title: null } }
   const x = { field: 'pos', ...xs }
   const y = { type: 'quantitative', scale: { type: 'log', domain: [0.35, 3.4], nice: false }, axis: { values: OR_TICKS, format: '~g', title: 'Odds ratio (log scale)' } }
   const heading = (text: string, at: number, align: 'left' | 'right', dx: number) => ({ at, text, align, dx })

@@ -1,7 +1,8 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useContext, useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react'
 import type { View } from 'vega'
 import { csvOf, type Spec } from '../lib/chart.ts'
 import type { ChartSvgs } from '../lib/vegaServer.ts'
+import { InFigureSlot } from './figureSlot.ts'
 import { VegaChart } from './VegaChart.tsx'
 import s from './ui.module.css'
 
@@ -28,6 +29,13 @@ interface Props {
   compact?: boolean
   /** omit the generic CSV button when the page offers its own full export */
   noCsv?: boolean
+  /** a small control in the header row, left of the Data menu (for example a metric toggle) */
+  controls?: ReactNode
+  /** a legend, set under the chart so the chart starts higher on a phone */
+  legend?: ReactNode
+  /** class and callback ref for the chart box, for components that mount extra content inside it */
+  bodyClassName?: string
+  bodyRef?: Ref<HTMLDivElement>
 }
 
 function download(name: string, mime: string, body: string) {
@@ -40,7 +48,7 @@ function download(name: string, mime: string, body: string) {
 }
 
 /** One "Data" menu holds every action: the table toggle, CSV, SVG and any page-specific export. */
-function DataMenu({ children, label }: { children: ReactNode; label: string }) {
+export function DataMenu({ children, label, up, className }: { children: ReactNode; label: string; up?: boolean; className?: string }) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const button = useRef<HTMLButtonElement>(null)
@@ -62,7 +70,7 @@ function DataMenu({ children, label }: { children: ReactNode; label: string }) {
     }
   }, [open])
   return (
-    <div className={s.dataMenu} ref={root}>
+    <div className={`${s.dataMenu} ${className ?? ''}`} ref={root}>
       <button ref={button} type="button" className={s.btn} aria-expanded={open} aria-controls={open ? panel : undefined} aria-label={label} onClick={() => setOpen((o) => !o)}>
         Data
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -70,7 +78,7 @@ function DataMenu({ children, label }: { children: ReactNode; label: string }) {
         </svg>
       </button>
       {open && (
-        <div id={panel} className={s.dataMenuPanel} onClick={() => setOpen(false)}>
+        <div id={panel} className={`${s.dataMenuPanel} ${up ? s.dataMenuUp : ''}`} onClick={() => setOpen(false)}>
           {children}
         </div>
       )}
@@ -78,44 +86,51 @@ function DataMenu({ children, label }: { children: ReactNode; label: string }) {
   )
 }
 
-export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv }: Props) {
+export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv, controls, legend, bodyClassName, bodyRef }: Props) {
+  const inSection = useContext(InFigureSlot)
   const view = useRef<View | null>(null)
   const [showTable, setShowTable] = useState(false)
   const slug = (id ?? title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   const cols = table && table.length ? Object.keys(table[0]) : []
   const hasMenu = Boolean(table) || Boolean(extraActions) || !compact
   return (
-    <figure className={s.figure} id={id}>
+    <figure className={`${s.figure} ${inSection ? s.figureInSection : ''} ${subtitle ? s.hasSub : ''} ${controls ? s.hasControls : ''}`} id={id}>
       <figcaption className={s.figureTitle}>{title}</figcaption>
-      {hasMenu && (
-        <DataMenu label={`Data options for ${title}`}>
-          {table && (
-            <button type="button" aria-expanded={showTable} onClick={() => setShowTable((v) => !v)}>
-              {showTable ? 'Hide data table' : 'View data table'}
-            </button>
+      {(hasMenu || controls) && (
+        <div className={s.figureTools}>
+          {controls}
+          {hasMenu && (
+          <DataMenu label={`Data options for ${title}`}>
+            {table && (
+              <button type="button" aria-expanded={showTable} onClick={() => setShowTable((v) => !v)}>
+                {showTable ? 'Hide data table' : 'View data table'}
+              </button>
+            )}
+            {table && !noCsv && (
+              <button type="button" onClick={() => download(`${slug}.csv`, 'text/csv', csvOf(table))}>
+                Download CSV
+              </button>
+            )}
+            {extraActions}
+            {!compact && (
+              <button type="button" onClick={async () => {
+                // before the live chart mounts, fall back to the prerendered SVG for the theme in effect
+                const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches)
+                const body = view.current ? await view.current.toSVG() : svg && (dark ? svg.dark : svg.light)
+                if (body) download(`${slug}.svg`, 'image/svg+xml', body)
+              }}>
+                Download SVG
+              </button>
+            )}
+          </DataMenu>
           )}
-          {table && !noCsv && (
-            <button type="button" onClick={() => download(`${slug}.csv`, 'text/csv', csvOf(table))}>
-              Download CSV
-            </button>
-          )}
-          {extraActions}
-          {!compact && (
-            <button type="button" onClick={async () => {
-              // before the live chart mounts, fall back to the prerendered SVG for the theme in effect
-              const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches)
-              const body = view.current ? await view.current.toSVG() : svg && (dark ? svg.dark : svg.light)
-              if (body) download(`${slug}.svg`, 'image/svg+xml', body)
-            }}>
-              Download SVG
-            </button>
-          )}
-        </DataMenu>
+        </div>
       )}
       {subtitle && <p className={s.figureSub}>{subtitle}</p>}
-      <div className={s.figureBody}>
+      <div className={`${s.figureBody} ${bodyClassName ?? ''}`} ref={bodyRef}>
         <VegaChart spec={spec} svg={svg} label={`${title}. ${description}`} viewRef={view} minHeight={minHeight} onSignal={onSignal} />
       </div>
+      {legend && <div className={s.figureLegend}>{legend}</div>}
       {caption && <p className={s.figureCaption}>{caption}</p>}
       {source && <p className={s.figureCaption}>{source}</p>}
       {table && showTable && (

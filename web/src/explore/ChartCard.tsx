@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { csvOf, type Spec } from '../lib/chart.ts'
 import { VegaChart } from '../components/VegaChart.tsx'
-import type { TableRow } from '../components/Figure.tsx'
+import { DataMenu, type TableRow } from '../components/Figure.tsx'
 import ui from '../components/ui.module.css'
 import s from './explore.module.css'
 
@@ -37,45 +37,6 @@ function download(name: string, body: string) {
 
 const isNumeric = (v: string | number | null) => typeof v === 'number' || /^[<−-]?\s?[\d.,]+%?$/.test(String(v ?? ''))
 
-/** The same "Data" menu as Figure (table, CSV, extras), sized for a dashboard card. */
-function DataMenu({ label, up, children }: { label: string; up?: boolean; children: ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const root = useRef<HTMLDivElement>(null)
-  const button = useRef<HTMLButtonElement>(null)
-  const panel = useId()
-  useEffect(() => {
-    if (!open) return
-    const onDown = (e: MouseEvent) => root.current && !root.current.contains(e.target as Node) && setOpen(false)
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false)
-        button.current?.focus()
-      }
-    }
-    document.addEventListener('mousedown', onDown)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('mousedown', onDown)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open])
-  return (
-    <div className={`${ui.dataMenu} ${s.menuSlot}`} ref={root}>
-      <button ref={button} type="button" className={ui.btn} aria-expanded={open} aria-controls={open ? panel : undefined} aria-label={label} onClick={() => setOpen((o) => !o)}>
-        Data
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <path d="m3 6 5 5 5-5" />
-        </svg>
-      </button>
-      {open && (
-        <div id={panel} className={`${ui.dataMenuPanel} ${up ? s.menuUp : ''}`} onClick={() => setOpen(false)}>
-          {children}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export function ChartCard({ id, title, srTitle, controls, spec, height, description, table, csvName, menuExtra, footnote, onSignal, menuUp }: Props) {
   const [showTable, setShowTable] = useState(false)
   const heading = title ?? srTitle ?? ''
@@ -85,7 +46,7 @@ export function ChartCard({ id, title, srTitle, controls, spec, height, descript
       <div className={s.cardHead}>
         {title ? <h2 className={s.cardTitle}>{title}</h2> : <h2 className="sr-only">{srTitle}</h2>}
         {controls}
-        <DataMenu label={`Data options for ${heading}`} up={menuUp}>
+        <DataMenu label={`Data options for ${heading}`} up={menuUp} className={s.menuSlot}>
           <button type="button" aria-expanded={showTable} onClick={() => setShowTable((v) => !v)}>
             {showTable ? 'Show the chart' : 'View data table'}
           </button>

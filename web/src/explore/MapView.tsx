@@ -13,6 +13,8 @@ interface Props {
   site?: NamedPoint
   radiusM?: number
   catColors: Record<string, string>
+  /** a fixed reference point for the citywide view (Union Station), so "downtown" can be checked on the map */
+  landmark?: NamedPoint
 }
 
 const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim()
@@ -22,6 +24,22 @@ function palette() {
     bg: css('--bg'), surface: css('--surface'), border: css('--border'), text: css('--text'), muted: css('--text-muted'), accent: css('--accent'),
     density: [1, 2, 3, 4, 5].map((i) => css(`--density-${i}`)),
   }
+}
+
+const rgb = (hex: string): [number, number, number] => {
+  const h = hex.replace('#', '')
+  const v = h.length === 3 ? h.replace(/./g, (c) => c + c) : h
+  return [0, 2, 4].map((i) => parseInt(v.slice(i, i + 2), 16)) as [number, number, number]
+}
+const luminance = (hex: string) => {
+  const [r, g, b] = rgb(hex)
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+}
+/** `from` moved `t` of the way to `to` (both hex), as a hex colour. */
+function mix(from: string, to: string, t: number) {
+  const a = rgb(from)
+  const b = rgb(to)
+  return `#${a.map((c, i) => Math.round(c + (b[i] - c) * t).toString(16).padStart(2, '0')).join('')}`
 }
 
 function circlePolygon(c: Point, radiusM: number) {
@@ -36,14 +54,14 @@ function circlePolygon(c: Point, radiusM: number) {
 
 const EMPTY = { type: 'FeatureCollection' as const, features: [] }
 
-export function MapView({ table, selected, center, site, radiusM, catColors }: Props) {
+export function MapView({ table, selected, center, site, radiusM, catColors, landmark }: Props) {
   const el = useRef<HTMLDivElement>(null)
   const map = useRef<MlMap | null>(null)
   const markers = useRef<Marker[]>([])
   const popup = useRef<Popup | null>(null)
-  const latest = useRef({ table, selected, center, site, radiusM, catColors })
+  const latest = useRef({ table, selected, center, site, radiusM, catColors, landmark })
   useEffect(() => {
-    latest.current = { table, selected, center, site, radiusM, catColors }
+    latest.current = { table, selected, center, site, radiusM, catColors, landmark }
   })
   const loaded = useRef(false)
   const lastFit = useRef('')
@@ -57,8 +75,10 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
     set('water', 'fill-color', c.border)
     set('park', 'fill-color', c.bg)
     set('buildings', 'fill-color', c.border)
-    set('roads-minor', 'line-color', c.border)
-    set('roads-major', 'line-color', c.muted)
+    // Roads are context, not data: they stay close to the land colour (a faint grey in light, dimmer than the labels in dark).
+    const dark = luminance(c.bg) < 0.5
+    set('roads-minor', 'line-color', mix(c.surface, c.border, dark ? 0.7 : 0.8))
+    set('roads-major', 'line-color', mix(c.border, c.muted, 0.2))
     set('radius-fill', 'fill-color', c.accent)
     set('radius-line', 'line-color', c.accent)
     set('clusters', 'circle-color', ['step', ['get', 'point_count'], c.density[1], 50, c.density[2], 300, c.density[3], 1500, c.density[4]])
@@ -71,7 +91,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
   const sync = () => {
     const m = map.current
     if (!m || !loaded.current) return
-    const { table: t, selected: sel, center: ctr, site: st, radiusM: r } = latest.current
+    const { table: t, selected: sel, center: ctr, site: st, radiusM: r, landmark: lm } = latest.current
     const features = new Array(sel.length)
     for (let k = 0; k < sel.length; k++) {
       const i = sel[k]
@@ -94,6 +114,16 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
         text.textContent = p.name
         node.append(text)
         markers.current.push(new ml.Marker({ element: node }).setLngLat([p.lon, p.lat]).addTo(map.current as MlMap))
+      }
+      if (!ctr && lm) {
+        const node = document.createElement('div')
+        node.className = s.landmark
+        node.setAttribute('role', 'img')
+        node.setAttribute('aria-label', `Reference point: ${lm.name}`)
+        const text = document.createElement('span')
+        text.textContent = lm.name
+        node.append(text)
+        markers.current.push(new ml.Marker({ element: node }).setLngLat([lm.lon, lm.lat]).addTo(map.current as MlMap))
       }
       // Re-frame the map only when the spatial scope changes, not on every filter tweak.
       const fitKey = `${ctr?.id ?? 'city'}|${r ?? 0}`
@@ -136,12 +166,12 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
             { id: 'park', type: 'fill', source: 'base', 'source-layer': 'landuse', filter: ['in', 'kind', 'park', 'nature_reserve', 'forest', 'garden'], paint: { 'fill-color': '#fff', 'fill-opacity': 0.8 } },
             { id: 'water', type: 'fill', source: 'base', 'source-layer': 'water', paint: { 'fill-color': '#ccc' } },
             { id: 'buildings', type: 'fill', source: 'base', 'source-layer': 'buildings', minzoom: 14, paint: { 'fill-color': '#ddd', 'fill-opacity': 0.6 } },
-            { id: 'roads-minor', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'minor_road', 'medium_road', 'other'], minzoom: 13, paint: { 'line-color': '#ddd', 'line-width': ['interpolate', ['linear'], ['zoom'], 13, 0.4, 16, 2.5] } },
-            { id: 'roads-major', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'highway', 'major_road'], paint: { 'line-color': '#999', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.5, 16, 4] } },
+            { id: 'roads-minor', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'minor_road', 'medium_road', 'other'], minzoom: 13, paint: { 'line-color': '#ddd', 'line-width': ['interpolate', ['linear'], ['zoom'], 13, 0.3, 16, 1.6] } },
+            { id: 'roads-major', type: 'line', source: 'base', 'source-layer': 'roads', filter: ['in', 'kind', 'highway', 'major_road'], paint: { 'line-color': '#999', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.4, 16, 2.4] } },
             { id: 'radius-fill', type: 'fill', source: 'radius', paint: { 'fill-color': '#06c', 'fill-opacity': 0.08 } },
             { id: 'radius-line', type: 'line', source: 'radius', paint: { 'line-color': '#06c', 'line-width': 2, 'line-dasharray': [3, 2] } },
-            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 9, 50, 12, 300, 16, 1500, 22], 'circle-stroke-width': 2, 'circle-opacity': 0.9 } },
-            { id: 'points', type: 'circle', source: 'events', filter: ['!', ['has', 'point_count']], paint: { 'circle-color': '#666', 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-opacity': 0.9 } },
+            { id: 'clusters', type: 'circle', source: 'events', filter: ['has', 'point_count'], paint: { 'circle-color': '#666', 'circle-radius': ['step', ['get', 'point_count'], 9, 50, 12, 300, 16, 1500, 22], 'circle-stroke-width': 2, 'circle-opacity': 1 } },
+            { id: 'points', type: 'circle', source: 'events', filter: ['!', ['has', 'point_count']], paint: { 'circle-color': '#666', 'circle-radius': 4.5, 'circle-stroke-width': 1.5, 'circle-opacity': 1 } },
           ],
         },
         center: [-79.38, 43.69],
@@ -203,7 +233,7 @@ export function MapView({ table, selected, center, site, radiusM, catColors }: P
   useEffect(() => {
     sync()
     paint()
-  }, [table, selected, center, site, radiusM, catColors])
+  }, [table, selected, center, site, radiusM, catColors, landmark])
 
   // The box fills its grid cell; the map is absolutely positioned inside it, and MapLibre follows the box size.
   return (

@@ -89,37 +89,32 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
         id="steps"
         title={
           <>
-            Adding premises and location type lifts the score from <Num k={L('L1', DESIGN_A, 'pr_auc', 'estimate')} /> to <Num k={L('L2', DESIGN_A, 'pr_auc', 'estimate')} />; time alone barely beats guessing.
+            In grouped cross-validation, premises and location type lift <span className={r.nowrap}>PR-AUC</span> from <Num k={L('L1', DESIGN_A, 'pr_auc', 'estimate')} /> to <Num k={L('L2', DESIGN_A, 'pr_auc', 'estimate')} />; time alone barely beats guessing.
           </>
         }
         figure={
-          <>
-            <div className={r.legendRow}>
-              <Segmented label="Metric" value={metric} onChange={setMetric} options={[{ value: 'pr_auc', label: 'PR-AUC' }, { value: 'roc_auc', label: 'ROC-AUC' }]} />
-            </div>
-            <Glyphs />
-            <Figure
-              id="ladder"
-              title={`${METRIC_LABEL[metric]} of four models, two ways of testing`}
-              subtitle="Dot: test score. Line: 95% interval. The full model is XGBoost."
-              spec={steps.spec}
-              svg={metric === 'pr_auc' ? svgs.steps : undefined}
-              description={steps.description}
-              table={steps.table}
-              minHeight={396}
-              caption={
-                metric === 'pr_auc' ? (
-                  <>
-                    PR-AUC is a score from zero to one where guessing scores the robbery share (<Num k={`${A}:designs.${DESIGN_A}.prevalence`} /> in grouped CV, <Num k={`${A}:designs.${DESIGN_B}.prevalence`} /> in the holdout).
-                  </>
-                ) : (
-                  <>
-                    ROC-AUC is how often a robbery is ranked above another incident; guessing scores <Num k={`${A}:designs.${DESIGN_A}.L0.roc_auc`} />.
-                  </>
-                )
-              }
-            />
-          </>
+          <Figure
+            id="ladder"
+            title={`${METRIC_LABEL[metric]} of four models, two ways of testing`}
+            controls={<Segmented label="Metric" value={metric} onChange={setMetric} options={[{ value: 'pr_auc', label: 'PR-AUC' }, { value: 'roc_auc', label: 'ROC-AUC' }]} />}
+            legend={<Glyphs />}
+            spec={steps.spec}
+            svg={metric === 'pr_auc' ? svgs.steps : undefined}
+            description={steps.description}
+            table={steps.table}
+            minHeight={396}
+            caption={
+              metric === 'pr_auc' ? (
+                <>
+                  Dot: test score; line: 95% interval; the full model is XGBoost. PR-AUC is a score from zero to one where guessing scores the robbery share (<Num k={`${A}:designs.${DESIGN_A}.prevalence`} /> in grouped CV, <Num k={`${A}:designs.${DESIGN_B}.prevalence`} /> in the holdout).
+                </>
+              ) : (
+                <>
+                  Dot: test score; line: 95% interval; the full model is XGBoost. ROC-AUC is how often a robbery is ranked above another incident; guessing scores <Num k={`${A}:designs.${DESIGN_A}.L0.roc_auc`} />.
+                </>
+              )
+            }
+          />
         }
         aside={
           <>
@@ -166,15 +161,15 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
                 { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.time`} />, text: ' lost when time is shuffled; census and geography cost less.' },
               ]}
             />
-            <Callout variant="caveat" title="Premises partly define the crime type">
-              <p>
-                A break and enter happens in a building, and robberies are mostly recorded outdoors or in shops, so part of the lift is built into the labels. Without premises and location type, the second model&rsquo;s ROC-AUC falls from{' '}
-                <Num k={L('L2', DESIGN_A, 'roc_auc', 'estimate')} /> to <Num k={L('L2-nopremises', DESIGN_A, 'roc_auc', 'estimate')} />: read these scores as a map of what separates the classes, not a forecast of robbery.
-              </p>
-            </Callout>
           </>
         }
       >
+        <Callout variant="caveat" title="Premises partly define the crime type">
+          <p>
+            A break and enter happens in a building, and robberies are mostly recorded outdoors or in shops, so part of the lift is built into the labels. Without premises and location type, the second model&rsquo;s ROC-AUC falls from{' '}
+            <Num k={L('L2', DESIGN_A, 'roc_auc', 'estimate')} /> to <Num k={L('L2-nopremises', DESIGN_A, 'roc_auc', 'estimate')} />: read these scores as a map of what separates the classes, not a forecast of robbery.
+          </p>
+        </Callout>
         <Disclosure id="all-models" title="All models and both designs">
           <DataTable
             caption="Scores with 95% intervals"

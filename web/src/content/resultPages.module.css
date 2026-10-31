@@ -14,4 +14,11 @@
 .chipGlyph { font-weight: 700; }
 
 .note { margin: 0; max-width: var(--measure); }
-.legendRow { margin-bottom: var(--space-3); }
+
+/* On a phone the table rows are cards (components/ui.module.css): cells shrink to the card and the chip hugs its text. */
+@media (max-width: 599.98px) {
+  .wrap { min-width: 0; max-width: none; }
+  .chip { justify-self: start; }
+}
+
+.nowrap { white-space: nowrap; }
