@@ -30,7 +30,9 @@ def main() -> int:
             for pat in ALLOWED:
                 line = re.sub(pat, " ", line)
             text, math = strip_math(line)
-            hits = re.findall(r"\d[\d.,]*", text) + [m for m in re.findall(r"\d+(?:\.\d+)?", " ".join(math)) if len(m) > 1]
+            hits = re.findall(r"\d[\d.,]*", text) + [
+                m for m in re.findall(r"\d+(?:\.\d+)?", " ".join(math)) if len(m) > 1
+            ]
             if hits:
                 bad += 1
                 print(f"{path.relative_to(ROOT)}:{no}: literal numeral {hits}: {raw.strip()[:90]}")

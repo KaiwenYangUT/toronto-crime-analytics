@@ -75,7 +75,9 @@ def format_for(ref: str) -> dict:
         if sep and pat_key != key:
             continue
         segs = (pat_path if sep else pattern).split(".")
-        if len(segs) != len(path) or any(s != "*" and s != p for s, p in zip(segs, path, strict=True)):
+        if len(segs) != len(path) or any(
+            s != "*" and s != p for s, p in zip(segs, path, strict=True)
+        ):
             continue
         wild = segs.count("*")
         if wild < best_wild:
@@ -91,7 +93,9 @@ def format_number(v: float, fmt: dict) -> str:
         return "< 0.001" if v < 0.001 else f"{v:.3f}"
     decimals = fmt.get("decimals", 0)
     scaled = v * 100 if fmt.get("percent") else v
-    exact = Decimal(repr(float(scaled))).quantize(Decimal(1).scaleb(-decimals), rounding=ROUND_HALF_UP)
+    exact = Decimal(repr(float(scaled))).quantize(
+        Decimal(1).scaleb(-decimals), rounding=ROUND_HALF_UP
+    )
     text = format(exact, "f" if fmt.get("plain") else ",f")
     return f"{text}%" if fmt.get("percent") else text
 
@@ -136,7 +140,13 @@ def write_numbers() -> None:
     print(f"numbers.tex: {len(refs)} values")
 
 
-RUNG_LABEL = {"L1": "Time only", "L2": "+ place", "L3": "+ census", "L4": "Random forest", "L5": "XGBoost"}
+RUNG_LABEL = {
+    "L1": "Time only",
+    "L2": "+ place",
+    "L3": "+ census",
+    "L4": "Random forest",
+    "L5": "XGBoost",
+}
 
 
 def write_tables() -> None:
@@ -144,13 +154,19 @@ def write_tables() -> None:
     classes = "explain.sta303_v2:classes"
     flow = [
         ("Rows in the four Toronto Police files", f"{log}.source_rows"),
-        ("Removed: occurrence outside 2014 to 2023, or invalid date", f"{log}.rows_outside_2014_2023_or_invalid_date"),
+        (
+            "Removed: occurrence outside 2014 to 2023, or invalid date",
+            f"{log}.rows_outside_2014_2023_or_invalid_date",
+        ),
         ("Rows in the unified table", f"{log}.ledger_final_rows"),
         ("Removed: no neighbourhood (NSA)", f"{log}.nsa_rows_dropped"),
         ("Rows used by the models", f"{log}.model_rows"),
     ]
     body = [f"{label} & {tex(fmt(ref))} \\\\" for label, ref in flow]
-    cls = [f"{name} & {tex(fmt(f'{classes}.{name}'))} \\\\" for name in ("Robbery", "Auto Theft", "Break and Enter", "Theft Over")]
+    cls = [
+        f"{name} & {tex(fmt(f'{classes}.{name}'))} \\\\"
+        for name in ("Robbery", "Auto Theft", "Break and Enter", "Theft Over")
+    ]
     (GENERATED / "tab_flow.tex").write_text(
         HEADER
         + "\\begin{tabular}{@{}lr@{}}\n\\toprule\nStep & Rows \\\\\n\\midrule\n"
@@ -161,17 +177,28 @@ def write_tables() -> None:
     )
 
     def ci(base: str) -> str:
-        return f"{tex(fmt(f'{base}.estimate'))} [{tex(fmt(f'{base}.lo'))}, {tex(fmt(f'{base}.hi'))}]"
+        return (
+            f"{tex(fmt(f'{base}.estimate'))} [{tex(fmt(f'{base}.lo'))}, {tex(fmt(f'{base}.hi'))}]"
+        )
 
     rows: list[str] = []
-    for design, title in ((DESIGN_A, "Neighbourhood-grouped 5-fold cross-validation"), (DESIGN_B, "Temporal holdout (train to 2021, test 2022 to 2023)")):
+    for design, title in (
+        (DESIGN_A, "Neighbourhood-grouped 5-fold cross-validation"),
+        (DESIGN_B, "Temporal holdout (train to 2021, test 2022 to 2023)"),
+    ):
         rows.append(f"\\multicolumn{{6}}{{@{{}}l}}{{\\textit{{{title}}}}} \\\\")
         names = ["L1", "L2", "L3", "L4", "L5", "L2-nopremises", "L5-nopremises"]
         for name in names:
             base = f"predict.ablation:designs.{design}.variants.{name}"
             rung, _, suffix = name.partition("-")
             label = f"{rung} {RUNG_LABEL[rung]}" + (", no premises" if suffix else "")
-            cells = [ci(f"{base}.roc_auc"), ci(f"{base}.pr_auc"), ci(f"{base}.f1"), tex(fmt(f"{base}.precision.estimate")), tex(fmt(f"{base}.recall.estimate"))]
+            cells = [
+                ci(f"{base}.roc_auc"),
+                ci(f"{base}.pr_auc"),
+                ci(f"{base}.f1"),
+                tex(fmt(f"{base}.precision.estimate")),
+                tex(fmt(f"{base}.recall.estimate")),
+            ]
             rows.append(f"{label} & " + " & ".join(cells) + " \\\\")
         if design == DESIGN_A:
             rows.append("\\midrule")
@@ -190,11 +217,17 @@ def write_figures() -> None:
     specs = BUILD / "specs"
     out = BUILD / "figures"
     out.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["node", "scripts/export-paper-specs.mjs", str(specs)], cwd=ROOT / "web", check=True)
+    subprocess.run(
+        ["node", "scripts/export-paper-specs.mjs", str(specs)], cwd=ROOT / "web", check=True
+    )
     vlc.register_font_directory(str(ROOT / ".cache" / "fonts" / "inter"))
     theme = json.loads((ROOT / "design" / "vega-theme.json").read_text())["light"]
     for path in sorted(specs.glob("fig*.vl.json")):
-        spec = {"$schema": "https://vega.github.io/schema/vega-lite/v6.json", **json.loads(path.read_text()), "config": theme}
+        spec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+            **json.loads(path.read_text()),
+            "config": theme,
+        }
         name = path.name.removesuffix(".vl.json")
         (out / f"{name}.pdf").write_bytes(vlc.vegalite_to_pdf(spec))
     print("figures:", ", ".join(sorted(p.name for p in out.glob("*.pdf"))))

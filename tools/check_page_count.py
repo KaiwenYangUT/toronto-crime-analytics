@@ -7,7 +7,7 @@ import sys
 
 def page_count(pdf: str) -> int:
     info = subprocess.run(["pdfinfo", pdf], capture_output=True, text=True, check=True).stdout
-    return int(re.search(r"^Pages:\s+(\d+)", info, re.M).group(1))
+    return int(re.search(r"^Pages:\s+(\d+)", info, re.MULTILINE).group(1))
 
 
 if __name__ == "__main__":

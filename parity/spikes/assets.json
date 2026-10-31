@@ -6,7 +6,9 @@
       "sha256": "9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e",
       "extract": {
         "extras/otf/Inter-Regular.otf": ".cache/fonts/inter/Inter-Regular.otf",
-        "LICENSE.txt": ".cache/fonts/inter/LICENSE.txt"
+        "LICENSE.txt": ".cache/fonts/inter/LICENSE.txt",
+        "extras/otf/Inter-Medium.otf": ".cache/fonts/inter/Inter-Medium.otf",
+        "extras/otf/Inter-SemiBold.otf": ".cache/fonts/inter/Inter-SemiBold.otf"
       }
     },
     {
@@ -26,6 +28,21 @@
       "extract": {
         "pmtiles": ".cache/tools/bin/pmtiles"
       }
+    },
+    {
+      "path": ".cache/fonts/source-serif/SourceSerif4-It.otf",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/OTF/SourceSerif4-It.otf",
+      "sha256": "f8062257f4693e438a8e317c9fe2b4393f0d4eed84d897edcbfd733c30a1c1a1"
+    },
+    {
+      "path": ".cache/fonts/source-serif/SourceSerif4-Semibold.otf",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/OTF/SourceSerif4-Semibold.otf",
+      "sha256": "25e034392847d9965c92f98971b3646436b7ab919ece9118b0c0e5ec94c02efc"
+    },
+    {
+      "path": ".cache/fonts/source-serif/SourceSerif4-Bold.otf",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/OTF/SourceSerif4-Bold.otf",
+      "sha256": "f5fb9a7b1611353fdfebcf8b1e46c7d9108470f25999b841816d8b643b1856ff"
     }
   ],
   "static_font_checks": [

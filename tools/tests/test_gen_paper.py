@@ -11,7 +11,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
-import gen_paper  # noqa: E402
+import gen_paper
 
 pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
 
@@ -27,8 +27,22 @@ FORMATS = [
 
 def cases() -> list[tuple[float, dict]]:
     rng = random.Random(303313)
-    ties = [0.125, 1.005, 2.5, 0.0005, 0.045, 12.345, 159056, 0.9995, 1e-7, 0.10545470884255931, 2020]
-    values = ties + [rng.uniform(-5, 5) for _ in range(150)] + [rng.uniform(0, 1) for _ in range(150)]
+    ties = [
+        0.125,
+        1.005,
+        2.5,
+        0.0005,
+        0.045,
+        12.345,
+        159056,
+        0.9995,
+        1e-7,
+        0.10545470884255931,
+        2020,
+    ]
+    values = (
+        ties + [rng.uniform(-5, 5) for _ in range(150)] + [rng.uniform(0, 1) for _ in range(150)]
+    )
     return [(v, f) for v in values for f in FORMATS]
 
 
@@ -41,7 +55,10 @@ def test_python_formatting_matches_the_site():
     )
     out = subprocess.run(
         ["node", "--input-type=module", "-e", script, json.dumps(pairs)],
-        cwd=ROOT, capture_output=True, text=True, check=True,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
     ).stdout
     expected = json.loads(out)
     got = [gen_paper.format_number(v, f) for v, f in pairs]

@@ -108,7 +108,7 @@ export function paperFig3(d: PageResults): Spec {
   }
   return {
     hconcat: [
-      panel('Grouped CV', 'Neighbourhood-grouped 5-fold CV', DESIGN_A),
+      panel('Grouped CV', 'Neighbourhood-grouped five-fold CV', DESIGN_A),
       panel('Temporal holdout', 'Temporal holdout: train to 2021, test 2022 to 2023', DESIGN_B),
     ],
     spacing: 24,

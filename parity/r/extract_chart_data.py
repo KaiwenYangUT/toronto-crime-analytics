@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / "build" / "r-work" / "charts" / "docs"
 OUT = ROOT / "parity" / "r_outputs" / "charts"
-BLOCK = re.compile(r'<script type="application/json" data-for="([^"]+)"[^>]*>(.*?)</script>', re.S)
+BLOCK = re.compile(r'<script type="application/json" data-for="([^"]+)"[^>]*>(.*?)</script>', re.DOTALL)
 
 
 def digest(values) -> dict:

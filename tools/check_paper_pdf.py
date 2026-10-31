@@ -15,13 +15,17 @@ def main(pdf: str, limit: int) -> int:
     pages = page_count(pdf)
     if pages > limit:
         problems.append(f"{pages} pages exceeds the limit of {limit}")
-    fonts = subprocess.run(["pdffonts", pdf], capture_output=True, text=True, check=True).stdout.splitlines()[2:]
+    fonts = subprocess.run(
+        ["pdffonts", pdf], capture_output=True, text=True, check=True
+    ).stdout.splitlines()[2:]
     rows = [line.split() for line in fonts if line.strip()]
     unembedded = [r[0] for r in rows if r[-5] != "yes"]
     problems += [f"font not embedded: {name}" for name in unembedded]
     names = " ".join(r[0] for r in rows)
     problems += [f"font missing: {f}" for f in REQUIRED_FONTS if f not in names]
-    text = subprocess.run(["pdftotext", pdf, "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(
+        ["pdftotext", pdf, "-"], capture_output=True, text=True, check=True
+    ).stdout
     problems += [f"text not extractable: {t!r}" for t in FIGURE_TEXT if t not in text]
     print(f"{pdf}: {pages} pages (limit {limit}), {len(rows)} font entries")
     for p in problems:

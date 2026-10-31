@@ -16,7 +16,8 @@ PUBLISHED_MATRICES = {  # TN, FP, FN, TP (test); GBM and XGB were not printed in
     "glm_test": (4124, 12, 823, 25), "tree_test": (4087, 49, 777, 71),
     "bag_test": (3946, 190, 441, 407), "rf_test": (4024, 112, 468, 380)}
 base = "parity/r_outputs/jsc370/"
-rows = list(csv.DictReader(open(base + "summary_table.csv")))
+with open(base + "summary_table.csv") as fh:
+    rows = list(csv.DictReader(fh))
 out, worst = [], 0.0
 for r in rows:
     for col, pub in zip(COLS, PUBLISHED[r["Model"]]):
@@ -26,7 +27,8 @@ for r in rows:
         out.append({"model": r["Model"], "metric": col, "published": f"{pub:.7f}",
                     "rerun": f"{rerun:.17g}", "rerun_rounded_7dp": f"{round(rerun, 7):.7f}",
                     "diff_at_7dp": f"{diff:.7f}"})
-cms = json.load(open(base + "confusion_matrices.json"))
+with open(base + "confusion_matrices.json") as fh:
+    cms = json.load(fh)
 mat = {}
 for k, pub in PUBLISHED_MATRICES.items():
     c = cms[k]["counts"]  # column-major: [TN, FN, FP, TP] for Actual rows x Predicted cols
@@ -36,7 +38,8 @@ with open(base + "published_vs_rerun.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=list(out[0]))
     w.writeheader()
     w.writerows(out)
-json.dump({"max_abs_diff_at_7dp": worst, "matrices": mat}, open(base + "published_vs_rerun.json", "w"), indent=1)
+with open(base + "published_vs_rerun.json", "w") as fh:
+    json.dump({"max_abs_diff_at_7dp": worst, "matrices": mat}, fh, indent=1)
 print("max |diff| at 7 dp:", worst)
 for k, v in mat.items():
     print(k, "equal" if v["equal"] else "DIFFERENT", v["rerun"])
