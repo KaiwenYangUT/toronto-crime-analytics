@@ -16,6 +16,7 @@ OUT = ROOT / "web" / "src" / "data" / "pages"
 # Per page: results key -> dotted path patterns to keep ("*" matches one segment; a kept node keeps its subtree).
 ABLATION_SUMMARY = [
     "designs.*.prevalence",
+    "designs.*.L0",
     "designs.*.rows",
     "designs.*.clusters",
     "designs.*.bootstrap_replicates",

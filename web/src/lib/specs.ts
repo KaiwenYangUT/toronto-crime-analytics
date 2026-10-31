@@ -253,7 +253,7 @@ export function patternChart(d: PageResults, kind: 'weekday' | 'hour'): FigureDa
   return {
     spec,
     table: rows.map((r) => ({ [kind === 'hour' ? 'Hour' : 'Weekday']: r.x, 'Robbery share': r.label })),
-    description: kind === 'hour' ? 'Bars of the robbery share by hour of day; the share jumps between hours rather than following a smooth curve.' : 'Bars of the robbery share by weekday; Saturday is highest and Sunday lowest.',
+    description: kind === 'hour' ? 'Bars of the robbery share by hour of day; the share jumps between hours rather than following a smooth curve.' : 'Bars of the robbery share by weekday; Saturday is highest; Tuesday and Sunday are lowest and close together.',
   }
 }
 

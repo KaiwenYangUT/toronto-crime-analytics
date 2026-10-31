@@ -165,7 +165,7 @@ export function Explore() {
               </div>
               <Callout variant="caveat" title="How to read these counts">
                 <p>
-                  They are counts of reported incidents. They are not adjusted for how many people or properties are present, so a busy place will show more records. The time-of-year
+                  They are counts of reported incidents. They are not adjusted for how many people or properties are present, so counts alone do not rank places. The time-of-year
                   presets are illustrative, not official calendars. Bicycle theft records also carry a status such as stolen or recovered that these counts do not separate.
                 </p>
               </Callout>

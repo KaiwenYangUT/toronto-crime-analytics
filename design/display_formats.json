@@ -211,8 +211,7 @@
     "decimals": 2
   },
   "predict.ablation:designs.*.L0.pr_auc_baseline": {
-    "decimals": 1,
-    "percent": true
+    "decimals": 3
   },
   "predict.eda_corrections:claims.hourly_shape.robbery_share_by_hour.*": {
     "decimals": 1,
@@ -301,6 +300,18 @@
     "decimals": 3
   },
   "predict.ablation:designs.*.variants.*.recall.estimate": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.precision.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.precision.hi": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.recall.lo": {
+    "decimals": 3
+  },
+  "predict.ablation:designs.*.variants.*.recall.hi": {
     "decimals": 3
   }
 }

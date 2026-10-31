@@ -40,7 +40,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
       <div className={ui.split}>
         <Figure
           id="forest"
-          title="The hour of day moves the odds of robbery most; month and weekday barely do"
+          title="The hour of day moves the odds of robbery most; month and weekday effects are smaller"
           subtitle="Odds ratios with cluster-robust 95% intervals (clustered by neighbourhood); highlighted terms are discussed in the cards."
           spec={forest.spec}
           svg={svgs.forest}
@@ -65,8 +65,10 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
             notMean={
               <>
                 It cannot say whether robberies fell or other reports rose. Against auto theft alone the odds ratio is{' '}
-                <Num k={`${K}:composition.Auto Theft.post2019.or`} />; against break and enter <Num k={`${K}:composition.Break and Enter.post2019.or`} />; against theft over{' '}
-                <Num k={`${K}:composition.Theft Over.post2019.or`} />. The size depends on the comparison group.
+                <Num k={`${K}:composition.Auto Theft.post2019.or`} /> (<Num k={`${K}:composition.Auto Theft.post2019.robust_or_lo`} /> to <Num k={`${K}:composition.Auto Theft.post2019.robust_or_hi`} />);
+                against break and enter <Num k={`${K}:composition.Break and Enter.post2019.or`} /> (<Num k={`${K}:composition.Break and Enter.post2019.robust_or_lo`} /> to{' '}
+                <Num k={`${K}:composition.Break and Enter.post2019.robust_or_hi`} />); against theft over <Num k={`${K}:composition.Theft Over.post2019.or`} /> (
+                <Num k={`${K}:composition.Theft Over.post2019.robust_or_lo`} /> to <Num k={`${K}:composition.Theft Over.post2019.robust_or_hi`} />), all cluster-robust 95% intervals. The size depends on the comparison group.
               </>
             }
             sourceKey={`${K}:post2019`}
@@ -81,7 +83,12 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
               </>
             }
             meaning="Among incidents reported for mid-afternoon, a larger share were robberies than among those reported for noon."
-            notMean="It does not mean robberies are more likely to happen at 15:00. It compares the mix of crime types among reported incidents."
+            notMean={
+              <>
+                It does not mean robberies are more likely to happen at 15:00; it compares the mix of crime types among reported incidents. Noon is an unusual reference: 11:00 (
+                <Num k={`${K}:hour_or_vs_12.11.or`} />) and 13:00 (<Num k={`${K}:hour_or_vs_12.13.or`} />) are themselves well above it, so read each hour ratio as a comparison with noon only.
+              </>
+            }
             sourceKey={`${K}:hour_or_vs_12.15`}
           />
           <FindingCard
@@ -104,7 +111,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
         <div className={ui.stack}>
           <p className="prose">
             The original course report described four patterns in the <Num k="predict.eda_corrections:year" /> data. The table repeats each caption and
-            compares it with the same data. Counts here are reported incidents, not risk.
+            compares it with the same data. Counts here are reported incidents, not risk, and the year was the first pandemic year, so seasonal comparisons are confounded: January to March came before lockdown.
           </p>
           <DataTable
             caption="Original captions and what the data show"
@@ -141,7 +148,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
                 data: (
                   <>
                     By the original 18:00 to 06:00 clock rule, <Num k={`${E}.darkness.dark_share`} /> of after-dark incidents were robberies against{' '}
-                    <Num k={`${E}.darkness.light_share`} /> in daylight hours: slightly lower, not higher.
+                    <Num k={`${E}.darkness.light_share`} /> in daylight hours: no higher, and the small difference is within sampling noise. This is the unadjusted 2020 clock rule; the adjusted solar-darkness estimate above is a different quantity.
                   </>
                 ),
               },
@@ -165,7 +172,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
           />
           <Figure
             id="pattern"
-            title={pattern === 'weekday' ? 'Saturday has the highest robbery share and Sunday the lowest' : 'The robbery share jumps between hours instead of following a smooth curve'}
+            title={pattern === 'weekday' ? 'Saturday has the highest robbery share; Tuesday and Sunday the lowest' : 'The robbery share jumps between hours instead of following a smooth curve'}
             subtitle={`Share of reported incidents that were robberies, ${pattern === 'weekday' ? 'by weekday' : 'by hour of day'}, 2020 course data.`}
             spec={chart.spec}
             svg={svgs[pattern]}
@@ -201,9 +208,9 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
         <Disclosure id="model-checks" title="Fit, cross-validation and calibration">
           <div className={ui.stack}>
             <p className="prose">
-              Five-fold cross-validation grouped by neighbourhood gives a ROC-AUC of <Num k={`${K}:cv.auc_mean`} /> (standard deviation <Num k={`${K}:cv.auc_sd`} /> across{' '}
+              Stratified random five-fold cross-validation (not grouped by neighbourhood, and including the post-2019 term, so it is not comparable with the Predict page) gives a ROC-AUC of <Num k={`${K}:cv.auc_mean`} /> (standard deviation <Num k={`${K}:cv.auc_sd`} /> across{' '}
               <Num k={`${K}:cv.folds`} /> folds). That is a weak separation, although <Num k="predict.inference_vs_prediction:time_terms_clear" /> of{' '}
-              <Num k="predict.inference_vs_prediction:time_terms" /> time terms are statistically clear: many small, reliable differences do not make an incident easy to classify.
+              <Num k="predict.inference_vs_prediction:time_terms" /> time terms are statistically clear (robust 95% interval excludes one; no adjustment for the number of terms): many small, reliable differences do not make an incident easy to classify.
             </p>
             <p className="prose">
               Replacing the hour and month factors by a smooth cyclic form raises AIC by <Num k={`${K}:fit.harmonic.delta_aic`} />, so the factor version fits better.

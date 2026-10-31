@@ -33,8 +33,10 @@ export function Paper() {
             <Num k={`${I}:time_terms_clear`} /> of <Num k={`${I}:time_terms`} /> time terms have intervals that exclude one.
           </p>
           <p>
-            In the ladder, time alone reaches a PR-AUC of <Num k={v('L1', 'pr_auc', 'estimate')} /> where the baseline is <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />. The full model reaches{' '}
-            <Num k={v('L5', 'pr_auc', 'estimate')} />, and without premises and location type only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} />. The estimates describe the mix of reported crime types, not
+            In the ladder, under neighbourhood-grouped cross-validation, time alone reaches a PR-AUC of <Num k={v('L1', 'pr_auc', 'estimate')} /> (95% interval <Num k={v('L1', 'pr_auc', 'lo')} /> to{' '}
+            <Num k={v('L1', 'pr_auc', 'hi')} />) where a constant score would reach <Num k={`${A}:designs.${DESIGN_A}.prevalence`} />. The full model reaches <Num k={v('L5', 'pr_auc', 'estimate')} /> (
+            <Num k={v('L5', 'pr_auc', 'lo')} /> to <Num k={v('L5', 'pr_auc', 'hi')} />), and without premises and location type only <Num k={v('L5-nopremises', 'pr_auc', 'estimate')} /> (
+            <Num k={v('L5-nopremises', 'pr_auc', 'lo')} /> to <Num k={v('L5-nopremises', 'pr_auc', 'hi')} />). The estimates describe the mix of reported crime types, not
             the risk of being robbed.
           </p>
           </div>
@@ -48,7 +50,7 @@ export function Paper() {
             <li>A side-by-side reading of inference and prediction, and the limitations of both.</li>
           </ul>
           <p>
-            Precision–recall curves, calibration and the original six-model benchmark do not fit the page budget; they are on <Link to="/predict">Predict</Link>. The{' '}
+            Precision–recall curves and the original six-model benchmark do not fit the page budget; they are on <Link to="/predict">Predict</Link>, and calibration is on <Link to="/explain">Explain</Link>. The{' '}
             <Link to="/explore">Explorer</Link> is a site feature and is not part of the paper.
           </p>
           </div>

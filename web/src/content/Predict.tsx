@@ -54,7 +54,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
     <>
       <PageHeader
         eyebrow="Predict · classification"
-        title="Place separates robbery from other property crime; time and census context add little."
+        title="Premises and location type separate robbery from other property crime; time and census context add little."
         dek={
           <>
             Five models on the same <Num k={`${A}:designs.${DESIGN_A}.rows`} /> reported incidents, each scored with a 95% interval.
@@ -91,7 +91,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
         />
         <Callout variant="caveat" title="Premises and location type partly define the crime type">
           <p>
-            A break and enter happens in a dwelling or business and a robbery usually in the open, so part of the lift from place is built into the labels. Without premises and
+            A break and enter happens in a dwelling or business and robberies are most often recorded outdoors or in commercial premises, so part of the lift from premises is built into the labels. Without premises and
             location type, the second rung falls from a ROC-AUC of <Num k={L('L2', DESIGN_A, 'roc_auc', 'estimate')} /> to{' '}
             <Num k={L('L2-nopremises', DESIGN_A, 'roc_auc', 'estimate')} />. Treat the ladder as a map of what information separates the classes, not as a tool to forecast robbery.
           </p>
@@ -109,11 +109,16 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
           ]}
           rows={[...ADDED]}
         />
+        <p className="prose">
+          This table is for grouped cross-validation. Under the temporal holdout the XGBoost step changes PR-AUC by{' '}
+          <Num k={`${V}:designs.${DESIGN_B}.added_by_block.xgboost_L5_minus_L4.pr_auc.estimate`} /> (<Num k={`${V}:designs.${DESIGN_B}.added_by_block.xgboost_L5_minus_L4.pr_auc.lo`} /> to{' '}
+          <Num k={`${V}:designs.${DESIGN_B}.added_by_block.xgboost_L5_minus_L4.pr_auc.hi`} />), so XGBoost is not simply equal to the forest in later years.
+        </p>
       </Section>
 
       <Section id="models" title="All models, both evaluation designs">
         <DataTable
-          caption="Scores with 95% intervals; the baseline row is the share of robberies"
+          caption="Scores with 95% intervals"
           rowKey={(r) => r.key}
           columns={[
             { key: 'design', header: 'Design', render: (r) => r.design },
@@ -147,7 +152,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
           />
           <Figure
             id="pr-curves"
-            title="Each rung's curve rises above the baseline only when place is in the model"
+            title="Each rung's curve rises well above the baseline only when premises and location type are in the model"
             subtitle="Precision against recall for each rung; the dotted line is the share of robberies."
             spec={pr.spec}
             svg={design === 'A' ? svgs.prA : svgs.prB}
@@ -175,9 +180,9 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
       <Section id="temporal" title="The temporal holdout and a shift in the base rate">
         <div className="prose">
           <p>
-            Training up to 2021 and testing on 2022 and 2023 is the harder, more realistic split. The share of robberies in the incidents fell from{' '}
+            Training up to 2021 and testing on 2022 and 2023 is the stricter split. The share of robberies in the incidents fell from{' '}
             <Num k={`${A}:designs.${DESIGN_A}.prevalence_by_year.2014`} /> in 2014 to <Num k={`${A}:designs.${DESIGN_A}.prevalence_by_year.2023`} /> in 2023, so a threshold tuned on earlier
-            years meets a different mix. PR-AUC is not comparable across the two designs for that reason: the baselines differ.
+            years meets a different mix. ROC-AUC, which does not depend on the base rate, is also lower in this split, so the shift in period matters beyond the base rate. PR-AUC is not comparable across the two designs for that reason: the baselines differ.
           </p>
         </div>
       </Section>
@@ -186,7 +191,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
         <div className={ui.stack}>
           <p className="prose">
             The original report compared six models on <Num k="predict.eda_corrections:rows" /> robbery and other incidents from <Num k="predict.eda_corrections:year" />. The R re-run equals the published table at seven
-            decimals. The Python port stays within tolerance, with the same tier ranking: bagging and the random forest first, XGBoost second, the tree third, the logistic and gradient-boosting models last.
+            decimals. The Python port matches R for logistic regression and gradient boosting and stays within tolerance for bagging and the random forest, but deviates for the decision tree (true positives) and for XGBoost (F1 and true positives; see Methods). The tier ranking is the same: bagging and the random forest first, XGBoost second, the tree third, the logistic and gradient-boosting models last.
           </p>
           <DataTable
             caption="Test accuracy and F1 on the original split, R re-run and Python port"

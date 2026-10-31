@@ -21,7 +21,7 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
     <>
       <PageHeader
         eyebrow="Toronto Police open data · 2014 to 2023"
-        title="Where a property-type crime happens says far more about whether it is a robbery than when."
+        title="Premises and location type say far more about whether an incident is a robbery than the time does."
         dek={
           <>
             Among <Num k={`${X}:n`} /> reported incidents, which crime type is it? An answer about reports, not risk.
@@ -46,7 +46,7 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
           value={<><Num k={v('L1', 'pr_auc', 'estimate')} /> to <Num k={v('L5', 'pr_auc', 'estimate')} /></>}
           unit="PR-AUC, grouped cross-validation"
           ci={<>Intervals <Num k={v('L1', 'pr_auc', 'lo')} /> to <Num k={v('L1', 'pr_auc', 'hi')} />, then <Num k={v('L5', 'pr_auc', 'lo')} /> to <Num k={v('L5', 'pr_auc', 'hi')} /></>}
-          meaning="Time of day, month and weekday leave a model close to the baseline; adding place and premises roughly triples the score."
+          meaning="Time of day, month and weekday leave a model close to the baseline; adding premises, location, census and a stronger model roughly triples the score."
           notMean="It is not a forecast of where robberies will happen."
           sourceKey={A}
           to="/predict"
@@ -63,7 +63,7 @@ export function Overview({ svg }: { svg: ChartSvgs }) {
         />
       </CardGrid>
 
-      <Section id="share" title="The robbery share of these reports fell over the decade">
+      <Section id="share" title="The robbery share of these reports fell after 2017">
         <Figure
           id="share-by-year"
           title="Robberies were a fifth of these reports in 2014 and about a tenth in 2023"

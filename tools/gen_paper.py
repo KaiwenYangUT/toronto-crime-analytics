@@ -201,15 +201,15 @@ def write_tables() -> None:
                 ci(f"{base}.roc_auc"),
                 ci(f"{base}.pr_auc"),
                 ci(f"{base}.f1"),
-                tex(fmt(f"{base}.precision.estimate")),
-                tex(fmt(f"{base}.recall.estimate")),
+                ci(f"{base}.precision"),
+                ci(f"{base}.recall"),
             ]
             rows.append(f"{label} & " + " & ".join(cells) + " \\\\")
         if design == DESIGN_A:
             rows.append("\\midrule")
     (GENERATED / "tab_metrics.tex").write_text(
         HEADER
-        + "\\begin{tabular}{@{}lccccc@{}}\n\\toprule\nModel & ROC-AUC & PR-AUC & F1 & Precision & Recall \\\\\n\\midrule\n"
+        + "\\begin{tabular}{@{}l@{\\hskip 4pt}ccccc@{}}\n\\toprule\nModel & ROC-AUC & PR-AUC & F1 & Precision & Recall \\\\\n\\midrule\n"
         + "\n".join(rows)
         + "\n\\bottomrule\n\\end{tabular}\n"
     )

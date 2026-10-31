@@ -143,7 +143,7 @@ export function paperFig4(d: PageResults): Spec {
   const P = `predict.ablation:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop`
   const imp = IMPORTANCE_BLOCKS.map(([k, label]) => ({ label, drop: num(d, `${P}.${k}`), text: fmt(d, `${P}.${k}`) }))
   const left: Spec = {
-    title: { text: 'Inference: time terms with a clear effect', fontSize: 13, anchor: 'start' },
+    title: { text: 'Inference: clear time terms', fontSize: 13, anchor: 'start' },
     width: 200,
     height: { step: 26 },
     data: { values: inf },

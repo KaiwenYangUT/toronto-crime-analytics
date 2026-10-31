@@ -80,7 +80,7 @@ export function Methods() {
             <div className="prose">
               <p>
                 The inference model uses hour of day (one level per hour), month, weekday, a post-2019 indicator and solar darkness. The prediction ladder adds premises and location type,
-                neighbourhood geography (latitude, longitude, distances) and census measures at the neighbourhood level.
+                a smooth function of latitude and longitude and census measures at the neighbourhood level.
               </p>
             </div>
           </Section>
@@ -89,7 +89,7 @@ export function Methods() {
             <div className="prose">
               <p>
                 <strong>Inference.</strong> A binomial logistic regression of robbery against the other three types, with cluster-robust standard errors by neighbourhood (
-                <Num k={`${X}:log.neighbourhoods`} /> clusters), five-fold grouped cross-validation (<Num k={`${X}:cv.folds`} /> folds) and a calibration check.
+                <Num k={`${X}:log.neighbourhoods`} /> clusters), stratified random five-fold cross-validation (<Num k={`${X}:cv.folds`} /> folds) and a calibration check.
               </p>
               <p>
                 <strong>Prediction.</strong> Five rungs on identical rows: time-only logistic, plus place and premises, plus census, a random forest, and XGBoost. A variant without
@@ -126,7 +126,7 @@ export function Methods() {
             <div className="prose">
               <p>
                 One command rebuilds everything (<code>make all</code>). The global seed is <Num k={`${X}:cv.seed`} />, every random generator receives it explicitly, and two runs on the same
-                machine produce identical result hashes. Each number on this site and in the paper traces to one of these result files:
+                machine produce identical result hashes. Every number on Overview, Explain, Predict, Methods and the paper traces to one of these result files (Explore counts are computed in your browser from the checksummed bundle):
               </p>
             </div>
             <div style={{ marginTop: 'var(--space-4)' }}>
