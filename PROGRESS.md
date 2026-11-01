@@ -5,8 +5,8 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Field | Value |
 |---|---|
 | Current phase | P10 complete locally (R0 to R4, three review gates); push and deploy wait for the user |
-| In progress | P10 R4 fix round (F1 Explain/Predict, F2 other pages and theme switch) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
-| Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
+| In progress | — |
+| Last sitting | 2026-10-31 (Claude Code on Kevins-iMac.local: P10 redesign R0 to R4 complete locally) |
 | Next action | Ask the user: push to GitHub (CI), then run the `pages` workflow. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
