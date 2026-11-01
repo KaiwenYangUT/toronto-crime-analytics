@@ -9,6 +9,15 @@
   .landingText { grid-column: 1 / span 5; }
   .landingVisual { grid-column: 6 / span 7; order: 0; }
 }
+/* The models under the chart: a name and what it is given, one line each where the column allows. */
+.landingVisual { display: flex; flex-direction: column; gap: var(--space-5); }
+.modelsBox { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
+.modelsTitle { font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-2); }
+.models { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-sm); line-height: var(--leading-sm); }
+.model { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.models dt { font-weight: 600; }
+.models dd { margin: 0; color: var(--text-muted); }
+@media (min-width: 600px) { .model { grid-template-columns: 14rem minmax(0, 1fr); gap: var(--space-3); } }
 .landingHeader { margin-bottom: var(--space-5); }
 .textLink { font-weight: 600; white-space: nowrap; }
 

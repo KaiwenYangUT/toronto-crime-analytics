@@ -188,6 +188,7 @@ Add a row whenever work moves to a different machine or app.
 | 2026-10-29 | P4 (close) | chart checklist 81/81 from unmodified R widgets, Python-tuned row, TypeScript Explore engine + bundle, code review fixed, `parity-pass` tagged locally | P5 |
 | 2026-10-29 | P5 | STA303 v2; ablation ladder (18 variants, 1,000-replicate cluster bootstrap); XGBoost grid fix; caption evidence; inference vs prediction; CHANGES/RESULTS; determinism checks; code review (9 findings fixed: cache signature, verdict logic, dirty flag, DST reading, message criteria, bootstrap memory) | P6 |
 | 2026-10-31 | P10 R0 | Approved redesign plan copied into PLAN.md §5 P10; AGENTS.md rule 4 and paper limit amended; DESIGN.md and PROGRESS.md updated; review tooling committed | R1 |
+| 2026-11-01 | P10 owner feedback | CI fixed (rung-label test) and green on 4e72983; Explain: course-report pattern table removed, plain scatter section with income and job-ratio fifths (`predict.census_scatter` bands), three-dimensional guide; Predict restructured (full-width chart, two tables, curves and PR-AUC vs ROC-AUC sections, no drop-downs, plain interpretations); Overview model list; evidence for the four course claims given to the owner in chat (2020 course extract: summer lowest 564 vs winter 872; Fri-Sun mean 406 vs Mon-Thu 390 robberies/day; dark 1,678 vs day 1,101 robberies; hourly rise 8am to 8pm); job-ratio bands flat (medians 12,15,16,16,15) | owner to compare their slide; push and run `pages` |
 
 ## P1 verification notes
 

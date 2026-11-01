@@ -20,6 +20,14 @@ const v = (rung: string, m: string, f: string) => `${A}:designs.${DESIGN_A}.vari
 const D = (d: string) => `${A}:designs.${DESIGN_A}.deltas.${d}.pr_auc.estimate`
 const BASE = `${A}:designs.${DESIGN_A}.L0.pr_auc_baseline`
 
+/** What each bar's model is given, in the order of the bars (pipeline/src/tca/predict/ablation.py: time, geo, premises and census blocks). */
+const MODELS = [
+  { name: 'Time only', text: 'hour, weekday, month and whether it was dark.' },
+  { name: 'Time and type of place', text: 'adds premises and location type (a street or shop, say) and coordinates.' },
+  { name: 'Full model', text: 'adds neighbourhood census data and XGBoost, a stronger method.' },
+  { name: 'Full model, no type of place', text: 'the full model without premises and location type.' },
+]
+
 const LENSES = [
   { to: '/explore', name: 'Explore', text: 'Filter incidents on a map.' },
   { to: '/explain', name: 'Explain', text: 'What changes the odds.' },
@@ -53,10 +61,10 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
               },
               { stat: <Num k={`${X}:post2019.or`} />, text: <>times the odds of a robbery in 2020 to 2023 compared with 2014 to 2019. Odds are robberies per other incident.</> },
               {
-                stat: <Num k={`${C}:summary.spearman_income.rho`} />,
+                stat: <Num k={`${C}:summary.income_bands.0.median_robberies`} />,
                 text: (
                   <>
-                    a weak link: lower-income neighbourhoods reported somewhat more robberies in 2020. <Link className={p.textLink} to="/explain#income">See Explain</Link>
+                    robberies in a typical lower-income neighbourhood in 2020, against <Num k={`${C}:summary.income_bands.4.median_robberies`} /> in a typical higher-income one. <Link className={p.textLink} to="/explain#income">See Explain</Link>
                   </>
                 ),
               },
@@ -64,7 +72,7 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
           />
           <Callout variant="caveat" title="Partly built in">
             <p>
-              The type of place is the premises and location type in the police record, such as a street or a shop. It partly defines the crime types: <Num k={D('L2_minus_L2-nopremises')} /> of the <Num k={D('L2_minus_L1')} /> gain from the first bar to the second comes from it.
+              Type of place partly defines the crime types: <Num k={D('L2_minus_L2-nopremises')} /> of the <Num k={D('L2_minus_L1')} /> gain from the first bar to the second comes from it.
             </p>
           </Callout>
         </div>
@@ -72,13 +80,24 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
           <Figure
             id="what-tells-apart"
             title="What tells robbery apart"
-            subtitle="PR-AUC runs from zero to one. Tested on new neighbourhoods; lines are 95% intervals, grey ticks are guessing."
+            subtitle="PR-AUC is a score from zero to one for finding robberies without false alarms. Tested on new neighbourhoods; lines are 95% intervals, grey ticks are guessing."
             spec={steps.spec}
             svg={svgs.steps}
             description={steps.description}
             table={steps.table}
             minHeight={300}
           />
+          <div className={p.modelsBox} id="models">
+            <p className={p.modelsTitle}>The models</p>
+            <dl className={p.models}>
+              {MODELS.map((m) => (
+                <div key={m.name} className={p.model}>
+                  <dt>{m.name}</dt>
+                  <dd>{m.text}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </div>
 

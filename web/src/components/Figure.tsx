@@ -33,6 +33,8 @@ interface Props {
   controls?: ReactNode
   /** a legend, set under the chart so the chart starts higher on a phone */
   legend?: ReactNode
+  /** set the legend between the subtitle and the chart, so a key for the marks is read before the marks (default: under the chart) */
+  legendFirst?: boolean
   /** class and callback ref for the chart box, for components that mount extra content inside it */
   bodyClassName?: string
   bodyRef?: Ref<HTMLDivElement>
@@ -86,7 +88,7 @@ export function DataMenu({ children, label, up, className }: { children: ReactNo
   )
 }
 
-export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv, controls, legend, bodyClassName, bodyRef }: Props) {
+export function Figure({ title, subtitle, spec, svg, description, caption, source, table, minHeight, id, onSignal, extraActions, compact, noCsv, controls, legend, legendFirst, bodyClassName, bodyRef }: Props) {
   const inSection = useContext(InFigureSlot)
   const view = useRef<View | null>(null)
   const [showTable, setShowTable] = useState(false)
@@ -127,10 +129,11 @@ export function Figure({ title, subtitle, spec, svg, description, caption, sourc
         </div>
       )}
       {subtitle && <p className={s.figureSub}>{subtitle}</p>}
+      {legend && legendFirst && <div className={s.figureLegend}>{legend}</div>}
       <div className={`${s.figureBody} ${bodyClassName ?? ''}`} ref={bodyRef}>
         <VegaChart spec={spec} svg={svg} label={`${title}. ${description}`} viewRef={view} minHeight={minHeight} onSignal={onSignal} />
       </div>
-      {legend && <div className={s.figureLegend}>{legend}</div>}
+      {legend && !legendFirst && <div className={s.figureLegend}>{legend}</div>}
       {caption && <p className={s.figureCaption}>{caption}</p>}
       {source && <p className={s.figureCaption}>{source}</p>}
       {table && showTable && (

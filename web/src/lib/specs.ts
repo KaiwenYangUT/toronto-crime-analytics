@@ -25,18 +25,23 @@ export const RUNG_LABEL: Record<string, string> = {
   L4: 'Random forest',
   L5: 'XGBoost',
 }
-/** Plain model names for the site (RUNG_LABEL keeps the rung codes the paper's figure uses). */
+/** Plain model names for the site (RUNG_LABEL keeps the rung codes the paper's figure uses). The Overview's model list explains each. */
 const PLAIN_RUNG: Record<string, string> = {
   L1: 'Time only',
-  L2: 'Time, place and coordinates',
-  L3: 'Adds census data',
+  L2: 'Time and type of place',
+  L3: 'Plus census data',
   L4: 'Random forest',
-  L5: 'XGBoost',
+  L5: 'Full model (XGBoost)',
+}
+const NO_PLACE_RUNG: Record<string, string> = {
+  L2: 'Time and coordinates',
+  L3: 'Plus census data, no type of place',
+  L4: 'Random forest, no type of place',
+  L5: 'Full model, no type of place',
 }
 /** The name of one model on the site: no rung codes; the no-premises variants say what they leave out. */
 export function modelLabel(rung: string, noPremises = false): string {
-  if (!noPremises) return PLAIN_RUNG[rung]
-  return rung === 'L2' ? 'Time and coordinates' : `${PLAIN_RUNG[rung]}, without type of place`
+  return noPremises ? NO_PLACE_RUNG[rung] : PLAIN_RUNG[rung]
 }
 /** A clock hour as '3am', '3pm', 'noon' or '12am'. */
 export const hourText = (h: number): string => (h === 0 ? '12am' : h === 12 ? 'noon' : h < 12 ? `${h}am` : `${h - 12}pm`)
@@ -65,7 +70,8 @@ export function shareByYear(d: PageResults, opts: { labelSize?: number | null } 
   const spec: Spec = {
     height: 220,
     data: { values: rows },
-    encoding: { x: { field: 'year', type: 'ordinal', title: null, axis: { labelAngle: 0 } } },
+    // on the site (labelSize null) years that would collide on a phone are thinned out; the paper's figure keeps every label
+    encoding: { x: { field: 'year', type: 'ordinal', title: null, axis: { labelAngle: 0, ...(labelSize === null ? { labelOverlap: 'greedy' } : {}) } } },
     layer: [
       { mark: { type: 'line', style: 'accent', point: { filled: true, size: 70, style: 'accent' } }, encoding: { y: { field: 'share', type: 'quantitative', title: 'Robbery share of incidents', axis: { format: '.0%' }, scale: { domain: [0, 0.25] } } } },
       { transform: [{ filter: "datum.year === '2014' || datum.year === '2023'" }], mark: { type: 'text', style: 'ink', dy: -14, fontWeight: 600, ...labelMark }, encoding: { y: { field: 'share', type: 'quantitative' }, text: { field: 'label' } } },
@@ -210,7 +216,15 @@ export function ablationLadder(d: PageResults, metric: Metric): FigureData {
   }
 }
 
-/** Precision-recall curves for the five rungs of one evaluation design. */
+/** Dash pattern of each model's precision-recall curve, in model order (the Predict page's key draws the same). */
+export const CURVE_DASH: Record<string, number[]> = { L1: [1, 0], L2: [6, 3], L3: [2, 2], L4: [8, 3, 2, 3], L5: [4, 4] }
+
+/**
+ * Precision-recall curves for the five models of one test. The test is a small multiple: the Predict page sets the two
+ * tests side by side, each with its own dotted guessing line (the robbery share of that test). Colour (the ordinal blue
+ * ramp) and dash both encode the model, so the lines are not told apart by colour alone; the key is one HTML legend
+ * shared by both charts (Predict.tsx), so no label sits in either plot.
+ */
 export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN_B): FigureData {
   const rows: { rung: string; recall: number; precision: number; text: [string, string] }[] = []
   for (const rung of RUNGS) {
@@ -221,18 +235,19 @@ export function prCurves(d: PageResults, design: typeof DESIGN_A | typeof DESIGN
   }
   const order = RUNGS.map((r) => modelLabel(r))
   const prev = num(d, `${ABL}:designs.${design}.prevalence`)
+  const x = { field: 'recall', type: 'quantitative', title: 'Recall', scale: { domain: [0, 1] }, axis: { values: [0, 0.2, 0.4, 0.6, 0.8, 1], format: '.1f' } }
   const spec: Spec = {
-    height: 320,
+    height: 300,
     data: { values: rows },
     layer: [
       { data: { values: [{ v: prev }] }, mark: { type: 'rule', style: 'muted', strokeDash: [2, 4] }, encoding: { y: { field: 'v', type: 'quantitative' } } },
-      { mark: { type: 'line', interpolate: 'step-after' }, encoding: { x: { field: 'recall', type: 'quantitative', title: 'Recall', scale: { domain: [0, 1] }, axis: { values: [0, 0.2, 0.4, 0.6, 0.8, 1], format: '.1f' } }, y: { field: 'precision', type: 'quantitative', title: 'Precision', scale: { domain: [0, 1] } }, color: { field: 'rung', type: 'ordinal', sort: order, title: null, scale: { domain: order } }, strokeDash: { field: 'rung', type: 'ordinal', sort: order, legend: null, scale: { domain: order, range: [[1, 0], [6, 3], [2, 2], [8, 3, 2, 3], [4, 4]] } } } },
+      { mark: { type: 'line', interpolate: 'step-after' }, encoding: { x, y: { field: 'precision', type: 'quantitative', title: 'Precision', scale: { domain: [0, 1] }, axis: { values: [0, 0.2, 0.4, 0.6, 0.8, 1], format: '.1f' } }, color: { field: 'rung', type: 'ordinal', sort: order, title: null, scale: { domain: order }, legend: null }, strokeDash: { field: 'rung', type: 'ordinal', sort: order, legend: null, scale: { domain: order, range: RUNGS.map((r) => CURVE_DASH[r]) } } } },
     ],
   }
   return {
     spec,
     table: rows.filter((_, i) => i % 10 === 0).map((r) => ({ Model: r.rung, Recall: r.text[0], Precision: r.text[1] })),
-    description: 'Precision against recall for the five models. The time-only curve sits only a little above the dotted line for the robbery share; the curves for the models that know the type of place rise well above it.',
+    description: 'Precision against recall for the five models. The time-only curve sits only a little above the dotted line for guessing; the curves for the models that know the type of place rise well above it.',
   }
 }
 
@@ -478,7 +493,7 @@ export const STEPS: { id: string; label: string; lines: string[] }[] = [
   { id: 'L1', label: 'Time only', lines: ['Time only'] },
   { id: 'L2', label: 'Time and type of place', lines: ['Time and', 'type of place'] },
   { id: 'L5', label: 'Full model', lines: ['Full model'] },
-  { id: 'L5-nopremises', label: 'Full model without type of place', lines: ['Full model', 'without type of place'] },
+  { id: 'L5-nopremises', label: 'Full model, no type of place', lines: ['Full model', 'no type of place'] },
 ]
 /** The two tests, by the names the site uses: grouped cross-validation and the temporal holdout (2022 to 2023). */
 export const TEST_LABEL: Record<string, string> = { [DESIGN_A]: 'New neighbourhoods', [DESIGN_B]: 'Later years' }
@@ -535,10 +550,13 @@ export function stepChart(d: PageResults, opts: { design?: typeof DESIGN_A | typ
   }
 }
 
+/** Height of one model's row in the Predict chart: a label line, then one marker line per test. */
+const STEP_ROW = 92
 /**
- * Predict figure: the four rungs under both tests. New neighbourhoods (grouped cross-validation) are filled and later
- * years (the temporal holdout) hollow, each with its 95% interval; a grey tick beside each point marks the guessing
- * score of its test. The key sits in the chart, above the rows, so the chart is readable on its own.
+ * Predict figure: the four models under both tests. New neighbourhoods (grouped cross-validation) are filled dots and
+ * later years (the temporal holdout) hollow, each with its 95% interval; a grey tick beside each dot marks the guessing
+ * score of its test. Inside the plot there is only the model's name, set on its own line above its two dots, so no
+ * label can sit on a mark; the key for dots and ticks is an HTML legend outside the plot (Predict.tsx).
  */
 export function rungSteps(d: PageResults, metric: 'pr_auc' | 'roc_auc' = 'pr_auc'): FigureData {
   const baseOf = (test: string) => num(d, guessKey(test === TEST_LABEL[DESIGN_A] ? DESIGN_A : DESIGN_B, metric))
@@ -546,18 +564,14 @@ export function rungSteps(d: PageResults, metric: 'pr_auc' | 'roc_auc' = 'pr_auc
   const x = stepX(metric)
   const yOffset = { field: 'design', type: 'nominal', sort: TESTS }
   const tooltip = [{ field: 'label', title: 'Model' }, { field: 'design', title: 'Test' }, { field: 'estimate', format: '.3f', title: METRIC_LABEL[metric] }, { field: 'lo', format: '.3f', title: '95% low' }, { field: 'hi', format: '.3f', title: '95% high' }]
-  const first = `datum.id === 'L1' && datum.design === ${JSON.stringify(TESTS[0])}`
   const spec: Spec = {
-    height: STEPS.length * 60,
+    height: STEPS.length * STEP_ROW,
     data: { values: rows },
     layer: [
       { mark: { type: 'tick', style: 'muted', orient: 'vertical', thickness: 2, size: 22 }, encoding: { y: stepY(), yOffset, x: { field: 'base', ...x } } },
-      { transform: [{ filter: first }], mark: { type: 'text', style: 'muted', align: 'right', baseline: 'middle', dx: -8, fontWeight: 600 }, encoding: { y: stepY(), yOffset, x: { field: 'base', ...x }, text: { value: 'guessing' } } },
       { mark: { type: 'rule', style: 'accent', strokeWidth: 2.5 }, encoding: { y: stepY(), yOffset, x: { field: 'lo', ...x }, x2: { field: 'hi' } } },
       { mark: { type: 'point', style: ['accent', 'accentOutline'], size: 110, strokeWidth: 2.5 }, encoding: { y: stepY(), yOffset, x: { field: 'estimate', ...x }, fillOpacity: { field: 'design', type: 'nominal', sort: TESTS, scale: { domain: TESTS, range: [1, 0] }, legend: null }, tooltip } },
-      // the key: each test is named beside its own marker in the first row
-      { transform: [{ filter: "datum.id === 'L1'" }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'middle', dx: 10 }, encoding: { y: stepY(), yOffset, x: { field: 'hi', ...x }, text: { field: 'design' } } },
-      { transform: [{ filter: `datum.design === ${JSON.stringify(TESTS[0])}` }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -24, fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
+      { transform: [{ filter: `datum.design === ${JSON.stringify(TESTS[0])}` }], mark: { type: 'text', style: 'ink', align: 'left', baseline: 'bottom', x: 0, dy: -(STEP_ROW / 2 - 16), fontWeight: 600 }, encoding: { y: stepY(), text: { field: 'label' } } },
     ],
   }
   return {

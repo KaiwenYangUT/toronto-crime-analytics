@@ -1,0 +1,32 @@
+/* Predict page only; shared pieces come from components/ui.module.css. */
+
+/* Two short boxes side by side from tablet width, stacked on a phone. */
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+@media (min-width: 768px) { .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pair > * { max-width: none; }
+
+/* A block of prose or bullets under a table or a chart: a small heading and at most three short lines. */
+.note { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.note > h3 { font-size: var(--text-lg); line-height: var(--leading-lg); }
+.note p { max-width: var(--measure); margin: 0; }
+
+/* One test: a heading, its two-line reading, then its table, held to a readable width. */
+.test { display: flex; flex-direction: column; gap: var(--space-3); max-width: 56rem; }
+.test > h3 { font-size: var(--text-lg); line-height: var(--leading-lg); }
+.test > p { max-width: var(--measure); margin: 0; }
+.tests { display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* The score, with its interval on the same line on wide screens and under it in a phone card. */
+.score { white-space: nowrap; }
+.guessRow td { color: var(--text-muted); }
+
+/* The two precision-recall charts: side by side from 1024 px, stacked below. */
+.curves { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+.curves > * { min-width: 0; }
+@media (min-width: 1024px) { .curves { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); } }
+.lede { max-width: var(--measure); margin: 0 0 var(--space-4); }
+
+.textLink { font-weight: 600; }
+
+.afterTables, .afterCurves { margin-top: var(--space-6); }
+.curves { margin-top: var(--space-4); }

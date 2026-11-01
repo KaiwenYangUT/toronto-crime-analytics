@@ -81,7 +81,8 @@ export function VegaChart({ spec, svg, label, viewRef, minHeight = 240, onSignal
         },
         { rootMargin: '300px' },
       )
-      near.observe(el)
+      // the live div sits below the prerendered SVG, so watch the wrapper that holds both
+      near.observe(el.parentElement ?? el)
     } else {
       handle = start()
     }
