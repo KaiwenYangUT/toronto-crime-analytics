@@ -1,9 +1,14 @@
-# Deploy to GitHub Pages. Manual only (workflow_dispatch) so nothing deploys by accident; enable it only after the
-# user approves the deploy and sets Settings > Pages > Source to "GitHub Actions". Written in P9, never run.
+# Deploy to GitHub Pages. Runs automatically after the `ci` workflow succeeds for a push to main, and can still be run by hand
+# (workflow_dispatch). Requires Settings > Pages > Source = "GitHub Actions". Because a push to main now publishes, the
+# rule "ask before any push" in AGENTS.md also covers the deployment.
 # The 20 MB Toronto basemap is committed (web/public/basemap/toronto.pmtiles); its checksum is verified below.
 name: pages
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -16,12 +21,16 @@ concurrency:
 
 jobs:
   deploy:
+    # a manual run always deploys; an automatic one only when ci passed for a push (not a pull request)
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
