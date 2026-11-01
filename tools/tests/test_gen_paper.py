@@ -72,5 +72,6 @@ def test_rung_labels_match_the_site():
     import re
 
     ts = (ROOT / "web" / "src" / "lib" / "specs.ts").read_text()
-    block = ts[ts.index("export const RUNG_LABEL") : ts.index("export type Metric")]
+    start = ts.index("export const RUNG_LABEL")
+    block = ts[start : ts.index("\n}", start)]  # this object only, not PLAIN_RUNG after it
     assert dict(re.findall(r"(L\d): '([^']+)'", block)) == gen_paper.RUNG_LABEL
