@@ -7,7 +7,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P10 complete locally (R0 to R4, three review gates); push and deploy wait for the user |
 | In progress | — |
 | Last sitting | 2026-10-31 (Claude Code on Kevins-iMac.local: P10 redesign R0 to R4 complete locally) |
-| Next action | Ask the user: push to GitHub (CI), then run the `pages` workflow. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
+| Next action | `main` pushed to origin at 9969d4d on 2026-10-31 with the user's OK (21 commits). Check the CI run in the Actions tab; once green the user runs the `pages` workflow. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
