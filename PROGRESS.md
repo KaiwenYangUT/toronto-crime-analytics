@@ -4,10 +4,10 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 
 | Field | Value |
 |---|---|
-| Current phase | P10: results-first redesign (R0 done, then R1 to R4); deploy only after it |
+| Current phase | P10 complete locally (R0 to R4, three review gates); push and deploy wait for the user |
 | In progress | P10 R4 fix round (F1 Explain/Predict, F2 other pages and theme switch) \| started 2026-10-31 \| files: see PLAN.md §5 P10 §8 ownership table \| machine: Kevins-iMac.local |
 | Last sitting | 2026-10-29 (Claude Code on Kevins-iMac.local: P2 to P4 complete, tag parity-pass local) |
-| Next action | P10 R2 then Gate B, then R3 and R4. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
+| Next action | Ask the user: push to GitHub (CI), then run the `pages` workflow. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log
@@ -170,7 +170,9 @@ Add a row whenever work moves to a different machine or app.
 - [x] `simplify` (no unused exports found; done inline) and code review of R2/R3 (7 findings: README link depends on Q1 repo visibility, paper-only data in the predict page JSON, hand-appended DOM host in the Figure body, slot-width bisection edge case and build cost, split bundle budget wording, scene remount on results identity; all left open, none blocking)
 - [x] R4 reviews written: `reviews/{comprehension,design-review,content,honesty-audit}-p10.md`; Gate C green (0 blockers, 9 should-fix); honesty audit 0 blockers, 13 should-fix (Explore, Explain and Predict H1 wording, darkness contradiction, 2020 extract basis); numbers audit 0 unmatched; pytest 122 passed
 - [x] F3 Explore fixes: H1 "Reported robbery, bicycle theft and theft over cluster downtown." with dek "late afternoon into the evening"; claim numbers re-run on the engine (31.6% within 3 km of Union Station; bicycle theft 43.8%, robbery 22.0%, theft over 20.3%; hours 15-21 hold 41.5% vs 29.2%); cluster colour key and visible 'not risk' note; open: the high 0:00 bar is unexplained
-- [ ] F1 Explain/Predict fixes; F2 Overview/Paper/Methods/About + phone theme switch; then re-check failed items only, README screenshots/3D link, DESIGN.md, ask before push
+- [x] F1 Explain/Predict (H1s: robbery a smaller share of reported major property crime after 2019; type of place separates robbery far more than time; comparator figure; darkness, 2020-extract and month/weekday caveats), F2 Overview/Paper/Methods/About + 44 px phone theme button
+- [x] Final verification on the combined tree: lint, typecheck, vitest 45/45, bundle (shared core 180 KB, route chunks 40 KB, plotly line), smoke 7 routes x 3 widths x 2 schemes, audit 0 unmatched, explore fold/explore/v2/census3d checks, pytest 122 passed, `make paper` 6 content pages + references; Lighthouse mobile after charts load only near the viewport: Explain 92, Predict 95, Overview 95, Explore 85 (accessibility 100); README (screenshots, 3D, page rule) and DESIGN.md updated
+- [ ] Open: Explore layout shift CLS 0.23; Overview step-chart 'Guessing' label tight against 'Time only' at 375; KeyPoints stat column alignment; the high 0:00 bar on Explore's hour chart is unexplained; R2/R3 code-review items (README link needs the repo public (Q1), paper-only data in predict page JSON, hand-appended DOM host in Figure body); scratch scripts `web/scripts/_probe*.mjs`, `_r3b-*.mjs`, `_f3-shots.mjs` and empty `web/reviews/` need deletion approval; push and `pages` run need the user
 - [ ] R3 Overview, Paper, Methods, About; paper Discussion sentence; `make paper web`
 - [ ] R4 verification (plan §9), comprehension test, content pass, accessibility, design review, honesty audit, code review, README/DESIGN update; ask before push; user runs `pages`
 

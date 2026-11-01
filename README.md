@@ -7,12 +7,13 @@ question twice, from Toronto Police Service open data for 2014 to 2023:
 
 - **Explain**: a binomial model of the odds that a reported incident is a robbery rather than an auto theft, break and
   enter or theft over, by hour, month, weekday, solar darkness and a post-2019 period, with neighbourhood-cluster-robust
-  intervals.
+  intervals, and a rotatable three-dimensional view of neighbourhood robbery counts against income and job ratio
+  (loaded on demand, with a flat fallback).
 - **Predict**: a five-rung ladder of models (time only, plus premises and place, plus census, random forest, XGBoost),
   evaluated on held-out neighbourhoods and on a held-out later period, with bootstrap intervals for every score and
   every rung-to-rung difference.
 - **Explore**: a map and charts of reported incidents with filters, computed in the browser.
-- **Paper**: a six-page write-up, built from the same result files.
+- **Paper**: a six-page write-up plus a references page, built from the same result files.
 
 The quantity is P(robbery | reported incident). It is **not** the risk of being robbed at a place or time, and nothing
 here is causal. The headline result: many time terms are statistically clear, yet time alone predicts little; premises and
@@ -49,7 +50,7 @@ make env        # Python venv, node dependencies, Playwright Chromium (make pyth
 make data       # fetch the pinned input files and verify their checksums
 make parity     # Python ports against the committed R outputs
 make analysis   # result files (about 70 minutes, mostly the ablation ladder)
-make paper      # numbers, tables, figures and the PDF (at most 7 pages)
+make paper      # numbers, tables, figures and the PDF (at most 7 content pages; references on their own page)
 make web        # build the static site in web/site
 make audit      # honesty audit of every numeral, bundle budgets, PDF checks
 make check      # unit tests and lint

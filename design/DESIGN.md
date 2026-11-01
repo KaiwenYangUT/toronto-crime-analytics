@@ -41,13 +41,13 @@ carries a headline, a visual and 2 to 4 bullets; details sit behind `Disclosure`
 ## Charts
 Vega-Lite 6 with the generated theme. Marks take colour from the named styles `accent`, `accentOutline`,
 `muted` and `ink` in the theme, so one spec serves light and dark. Every chart ships a prerendered SVG
-(both themes, built in the route loader), swaps to the interactive view when the browser is idle, and has a
+(both themes, built in the route loader), swaps to the interactive view once it is near the viewport and the browser is idle, and has a
 "View data table" toggle with the displayed (rounded) values, a CSV download and an SVG download.
 Counts on a background use the magnitude ramp (`ramp.magnitude`, viridis: reversed in light so high counts are
 dark, forward in dark so they are bright; end stops validated in `design/palette-validation.md`).
 
 **3D exception (2026-10-31, user decision).** The neighbourhood scatter on Explain uses
-`plotly.js-gl3d-dist-min`, lazy-loaded in its own chunk on that page only and never in the main bundle, with a
+`plotly.js-gl3d-dist-min` (chunk `plotly-gl3d.min-*`, own budget line in `tools/check_bundle_size.mjs`), lazy-loaded in its own chunk on that page only and never in the main bundle, with a
 prerendered Vega-Lite flat view as first paint, fallback (no WebGL, reduced motion, load failure) and print
 view. Scene colours come from the CSS variables and follow the theme live. No other chart uses Plotly.
 
@@ -71,4 +71,4 @@ the accent colour, `prefers-reduced-motion` honoured. Breakpoints 375 / 768 / 10
 `npm run lint` (ESLint and the numerals lint), `npm test` (Explore parity fixtures, results formatting,
 URL state), `node scripts/smoke.mjs` (every route at three widths in both themes: console errors, one H1,
 no horizontal overflow, zero serious or critical axe issues), `node tools/check_bundle_size.mjs`
-(budgets of PLAN.md section 3.3), Lighthouse on the gzip-serving local preview.
+(budgets of PLAN.md section 3.3; since P10 the shared core is 180 KB gzip and each route chunk 40 KB), Lighthouse on the gzip-serving local preview.
