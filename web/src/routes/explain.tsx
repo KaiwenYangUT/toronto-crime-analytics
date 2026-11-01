@@ -2,7 +2,7 @@ import type { Route } from './+types/explain'
 import { ResultsProvider } from '../components/Num.tsx'
 import { Explain } from '../content/Explain.tsx'
 import pageData from '../data/pages/explain.json'
-import { censusScatter2d, oddsByTime, postByComparator, SLOT_WIDTH, svgsForSlot } from '../lib/specs.ts'
+import { censusRatioTrend, censusScatter2d, oddsByTime, postByComparator, SLOT_WIDTH, svgsForSlot } from '../lib/specs.ts'
 import type { PageResults } from '../lib/results.ts'
 
 export function meta() {
@@ -21,6 +21,7 @@ export async function loader() {
       after: await svgsForSlot(one, postByComparator(data).spec, eight, narrow),
       time: await svgsForSlot(one, oddsByTime(data).spec, eight, narrow),
       scatter: await svgsForSlot(one, censusScatter2d(data).spec, eight, narrow),
+      ratio: await svgsForSlot(one, censusRatioTrend(data).spec, eight, narrow),
     },
   }
 }

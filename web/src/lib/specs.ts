@@ -622,3 +622,31 @@ export function censusScatter2d(d: PageResults): FigureData {
       'Scatter plot of the neighbourhoods: permanent job to labour force ratio across, median income up, with colour and marker area showing the number of robberies reported in 2020. The largest counts occur at a range of incomes; there is only a weak tendency for lower-income areas to have more.',
   }
 }
+
+/** Robberies against job ratio only, with the straight-line trend, to show that the count does not move with the ratio. */
+export function censusRatioTrend(d: PageResults): FigureData {
+  const points = getValue(d, `${CENSUS}:points`) as { name: string; ratio: number; income: number; robberies: number }[]
+  const rows = points.map((p, i) => {
+    const f = (field: string) => fmt(d, `${CENSUS}:points.${i}.${field}`)
+    return { ...p, ratioText: f('ratio'), robberiesText: f('robberies') }
+  })
+  const x = { field: 'ratio', type: 'quantitative', scale: { zero: false, domain: [0.47, 0.77], nice: false }, axis: { title: 'Permanent job to labour force ratio', format: '.2f', values: [0.5, 0.55, 0.6, 0.65, 0.7, 0.75] } }
+  const y = { field: 'robberies', type: 'quantitative', scale: { zero: true, domain: [0, 140], nice: false }, axis: { title: 'Robberies reported in 2020', format: ',d', values: [0, 40, 80, 120] } }
+  const spec: Spec = {
+    height: 300,
+    data: { values: rows },
+    layer: [
+      {
+        mark: { type: 'point', style: ['accent', 'accentOutline'], filled: true, size: 60, opacity: 0.75, strokeWidth: 1 },
+        encoding: { x, y, tooltip: [{ field: 'name', title: 'Neighbourhood' }, { field: 'ratioText', title: 'Job-to-labour-force ratio' }, { field: 'robberiesText', title: 'Robberies, 2020' }] },
+      },
+      { transform: [{ regression: 'robberies', on: 'ratio' }], mark: { type: 'line', style: 'ink', strokeWidth: 3 }, encoding: { x, y } },
+    ],
+  }
+  return {
+    spec,
+    table: rows.map((r) => ({ Neighbourhood: r.name, 'Job ratio': r.ratioText, 'Robberies, 2020': r.robberiesText })),
+    description:
+      'Scatter plot of the neighbourhoods: permanent job to labour force ratio across, robberies reported in 2020 up, with a straight trend line through the points. The line is close to flat: neighbourhoods with a low or a high job ratio report about the same typical number of robberies, and the highest counts occur at several ratios.',
+  }
+}

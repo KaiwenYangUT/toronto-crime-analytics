@@ -7,7 +7,7 @@ The source of truth for resuming work. Follow `RESUME.md` §2 to resume and §3 
 | Current phase | P10 complete locally (R0 to R4, three review gates); push and deploy wait for the user |
 | In progress | — |
 | Last sitting | 2026-10-31 (Claude Code on Kevins-iMac.local: P10 redesign R0 to R4 complete locally) |
-| Next action | `main` is pushed (origin at 50e828e, CI green on 2026-11-01). The user runs the `pages` workflow (Actions > pages > Run workflow) to publish. Honesty re-check of the new Explain/Predict/Overview copy: `reviews/honesty-recheck-p10b.md` (4 blockers and the minor wording fixes applied 2026-11-01; build, audit_numbers 0 unmatched, lint and 45 web tests pass). The user chose to keep the `pages` workflow manual for now. Not yet pushed. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
+| Next action | `main` is pushed (origin at 50e828e, CI green on 2026-11-01). The user runs the `pages` workflow (Actions > pages > Run workflow) to publish. Honesty re-check of the new Explain/Predict/Overview copy: `reviews/honesty-recheck-p10b.md` (4 blockers and the minor wording fixes applied 2026-11-01; build, audit_numbers 0 unmatched, lint and 45 web tests pass). The user chose to keep the `pages` workflow manual for now. Explain gained a robberies-against-job-ratio chart with a straight-line trend (2026-11-01; build, audit_numbers 0 unmatched, lint, 45 tests pass). Not yet pushed. Spec: PLAN.md §5 P10 (the approved plan, `/Users/kevinyang/.claude/plans/claude-code-you-are-shimmying-locket.md`) |
 | Blockers | Q1 blocks P9. Outside-folder installations beyond the approved R/tectonic setup still require approval. |
 
 ## Machine log

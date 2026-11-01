@@ -12,10 +12,10 @@ import { ResultSection } from '../components/ResultSection.tsx'
 import { StatCard } from '../components/StatCard.tsx'
 import { useResults } from '../lib/results.ts'
 import type { ChartSvgs } from '../lib/vegaServer.ts'
-import { calibrationChart, censusScatter2d as flatScatter, forestPlot, oddsByTime, postByComparator } from '../lib/specs.ts'
+import { calibrationChart, censusRatioTrend, censusScatter2d as flatScatter, forestPlot, oddsByTime, postByComparator } from '../lib/specs.ts'
 import e from './explain.module.css'
 
-export type ExplainSvgs = Record<'after' | 'time' | 'scatter', ChartSvgs>
+export type ExplainSvgs = Record<'after' | 'time' | 'scatter' | 'ratio', ChartSvgs>
 
 const K = 'explain.sta303_v2'
 const E = 'predict.eda_corrections:claims'
@@ -49,6 +49,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
   const time = oddsByTime(data)
   const forest = forestPlot(data)
   const scatter = flatScatter(data)
+  const ratioTrend = censusRatioTrend(data)
   const calibration = calibrationChart(data)
   const census = data.results[C].values as CensusScatterData
   const yongeEast = census.points.findIndex((p) => p.name === 'Downtown Yonge East')
@@ -250,6 +251,17 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
           </>
         }
       >
+        <Figure
+          id="ratio-trend"
+          title="Robberies against job ratio"
+          subtitle="Each dot is a neighbourhood. The line is the straight-line trend."
+          spec={ratioTrend.spec}
+          svg={svgs.ratio}
+          description={ratioTrend.description}
+          table={ratioTrend.table}
+          minHeight={300}
+          caption="The line is close to flat: neighbourhoods with a low or a high job ratio report about the same typical number of robberies. Counts, not rates."
+        />
         <Disclosure id="income-groups" title="Show the five groups">
           <div className={e.half}>
             <BandTable caption="Robbery counts by fifth of median income" group="Income fifth" bands="income_bands" unit="income" />
