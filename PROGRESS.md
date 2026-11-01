@@ -196,3 +196,8 @@ Add a row whenever work moves to a different machine or app.
 
 - P1 environment acceptance: `make env` completed twice, `pip check` reports no broken requirements, analysis imports pass, `npm run lint` and `npm run build` pass, Playwright Chromium downloaded. TypeScript 6.0 selected for typescript-eslint compatibility; no analysis or parity result generated. System installation: R/tectonic and their required dependencies; Homebrew cleanup disabled.
 
+
+### README refresh (2026-11-01, Codex)
+- Reframed the README around motivation, research questions, and findings; removed course-project framing and the stale publication-status paragraph.
+- Added a concise PR-AUC comparison with bootstrap intervals and the no-premises result, checked against results/predict/predict.ablation.json. Verified all Markdown relative links. Retained reproduction and licence information.
+- Documentation-only change; no model rerun needed. Existing next action above is unchanged.
