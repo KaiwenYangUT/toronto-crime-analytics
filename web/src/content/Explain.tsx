@@ -1,5 +1,6 @@
 import { Callout } from '../components/Callout.tsx'
 import { CensusScatter } from '../components/census/CensusScatter.tsx'
+import { otherBandExtremes } from '../components/census/text.ts'
 import type { CensusBand, CensusScatterData } from '../components/census/types.ts'
 import { DataTable } from '../components/DataTable.tsx'
 import { Disclosure } from '../components/Disclosure.tsx'
@@ -51,6 +52,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
   const calibration = calibrationChart(data)
   const census = data.results[C].values as CensusScatterData
   const yongeEast = census.points.findIndex((p) => p.name === 'Downtown Yonge East')
+  const { lo: otherLo, hi: otherHi } = otherBandExtremes(census.summary.ratio_bands)
   const ci = (base: string) => (
     <>
       95% interval <Num k={`${K}:${base}.robust_or_lo`} /> to <Num k={`${K}:${base}.robust_or_hi`} />
@@ -142,7 +144,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
             meaning="The model's measured-darkness effect: dark against light dates at the same hour."
             notMean={
               <>
-                It describes reported incidents only, and comes only from hours that are dark on some dates and light on others. A plain night-versus-day split of the raw data shows robbery shares of <Num k={`${E}.darkness.dark_share`} /> and <Num k={`${E}.darkness.light_share`} />, because night and day differ in other ways.
+                It describes reported incidents only, and comes only from hours that are dark on some dates and light on others. In the 2020 extract, a plain night (18:00 to 06:00) versus day split gives robbery shares of <Num k={`${E}.darkness.dark_share`} /> and <Num k={`${E}.darkness.light_share`} />. That split mixes hour of day with darkness, which the model separates.
               </>
             }
           />
@@ -173,7 +175,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
           <div className={e.half}>
             <ul className={e.fitList}>
               <li>
-                On random five-fold splits, the model ranks a robbery above another incident <Num k={`${K}:cv.auc_mean`} /> of the time. Guessing scores one half.
+                On random five-fold splits, the model gives a robbery a higher score than another incident in <Num k={`${K}:cv.auc_mean`} /> of pairs (ROC-AUC). Guessing scores one half.
               </li>
               <li>
                 Of <Num k="predict.inference_vs_prediction:time_terms" /> time terms, <Num k="predict.inference_vs_prediction:time_terms_clear" /> are statistically clear (their 95% interval excludes no difference), yet the separation is weak.
@@ -217,28 +219,28 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
                 {
                   text: (
                     <>
-                      Lower-income neighbourhoods reported more robberies. The median count falls from <Num k={`${C}:summary.income_bands.0.median_robberies`} /> in the lowest-income fifth to <Num k={`${C}:summary.income_bands.4.median_robberies`} /> in the highest.
+                      Lower-income neighbourhoods reported more robberies. The median count is <Num k={`${C}:summary.income_bands.0.median_robberies`} /> in the lowest-income fifth and <Num k={`${C}:summary.income_bands.4.median_robberies`} /> in the highest.
                     </>
                   ),
                 },
                 {
                   text: (
                     <>
-                      The job ratio shows no consistent pattern. The median is <Num k={`${C}:summary.ratio_bands.0.median_robberies`} /> in the lowest fifth and <Num k={`${C}:summary.ratio_bands.1.median_robberies`} /> to <Num k={`${C}:summary.ratio_bands.2.median_robberies`} /> in the other four, and the highest counts occur at every ratio.
+                      The job ratio shows no consistent pattern. The median is <Num k={`${C}:summary.ratio_bands.0.median_robberies`} /> in the lowest fifth and <Num k={`${C}:summary.ratio_bands.${otherLo}.median_robberies`} /> to <Num k={`${C}:summary.ratio_bands.${otherHi}.median_robberies`} /> in the other four, and the highest counts occur at every ratio.
                     </>
                   ),
                 },
                 {
                   text: (
                     <>
-                      The largest counts are a few central neighbourhoods: {census.summary.max.name} (<Num k={`${C}:summary.max.robberies`} />) and Downtown Yonge East (<Num k={`${C}:points.${yongeEast}.robberies`} />).
+                      The largest counts are {census.summary.max.name} (<Num k={`${C}:summary.max.robberies`} />) and Downtown Yonge East (<Num k={`${C}:points.${yongeEast}.robberies`} />).
                     </>
                   ),
                 },
               ]}
             />
             <p className={e.note}>
-              Fifths: all <Num k={`${C}:summary.n`} /> neighbourhoods ranked, then cut into five groups of about equal size. Median: the middle value. Job ratio: permanent jobs per member of the labour force.
+              Fifths: all <Num k={`${C}:summary.n`} /> neighbourhoods grouped by median income (or job ratio) into five groups of about equal size; tied values stay together. Median: the middle value. Job ratio: permanent jobs per member of the labour force.
             </p>
             <Callout variant="caveat" title="Counts, not rates">
               <p>

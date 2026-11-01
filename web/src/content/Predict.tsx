@@ -106,7 +106,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
       <PageHeader
         eyebrow="Predict · telling types apart"
         title="Type of place separates robbery from other major property crime far more than time."
-        dek={<>Type of place is the premises and location type in the record.</>}
+        dek={<>Telling robbery from the other three major property crimes in reported incidents, 2014 to 2023: not risk. Type of place is the premises and location type in the record.</>}
       />
 
       <ResultSection
@@ -165,7 +165,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
             unit="PR-AUC"
             meaning={
               <>
-                Far above guessing at <Num k={guess(DESIGN_A)} />. The 95% interval, <Num k={L('L5', DESIGN_A, 'pr_auc', 'lo')} /> to <Num k={L('L5', DESIGN_A, 'pr_auc', 'hi')} />, is the range another sample of incidents would likely give, so the score is steady.
+                Far above guessing at <Num k={guess(DESIGN_A)} />. The 95% interval, <Num k={L('L5', DESIGN_A, 'pr_auc', 'lo')} /> to <Num k={L('L5', DESIGN_A, 'pr_auc', 'hi')} />, comes from resampling whole neighbourhoods. It is narrow, so the score is steady across neighbourhoods.
               </>
             }
           />
@@ -210,22 +210,22 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
         aside={
           <KeyPoints
             items={[
-              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.premises`} />, text: ' of the score is lost when type of place is shuffled.' },
-              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.time`} />, text: ' is lost when time is; census data and coordinates cost far less.' },
+              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.premises`} />, text: <> PR-AUC points are lost when type of place is shuffled, from <Num k={L('L5', DESIGN_A, 'pr_auc', 'estimate')} />.</> },
+              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.time`} />, text: ' points are lost when time is shuffled; census data and coordinates cost less.' },
             ]}
           />
         }
       >
         <Callout variant="caveat" title="Type of place partly defines the crime type">
           <p>
-            A break and enter happens in a building, so some of the lift is built in. Without type of place, the time-and-place model&rsquo;s ROC-AUC falls from <Num k={L('L2', DESIGN_A, 'roc_auc', 'estimate')} /> to{' '}
+            A break and enter happens in a building, so some of the lift is built in. Without type of place, the Time and type of place model&rsquo;s ROC-AUC falls from <Num k={L('L2', DESIGN_A, 'roc_auc', 'estimate')} /> to{' '}
             <Num k={L('L2-nopremises', DESIGN_A, 'roc_auc', 'estimate')} />: read the scores as telling types apart, not forecasting robberies.
           </p>
         </Callout>
       </ResultSection>
 
       <section id="tables" className={ui.resultSection} aria-labelledby="tables-h">
-        <h2 id="tables-h">Later-years scores are lower, but the same models come out on top.</h2>
+        <h2 id="tables-h">Later-years PR-AUC is lower, but the same models come out on top.</h2>
         <div className={p.tests}>
           <div className={p.test} id="table-neighbourhoods">
             <h3>Tested on new neighbourhoods</h3>
@@ -256,7 +256,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
             <KeyPoints
               items={[
                 { text: <>ROC-AUC reads higher for every model: <Num k={L('L5', DESIGN_A, 'roc_auc', 'estimate')} /> against <Num k={L('L5', DESIGN_A, 'pr_auc', 'estimate')} /> for the full model.</> },
-                { text: <>Robberies are rare, so false alarms barely move ROC-AUC. PR-AUC counts them, so it is the stricter score.</> },
+                { text: <>Robberies are a minority of incidents, so false alarms barely move ROC-AUC. PR-AUC counts them, so it is the harder score to do well on.</> },
                 { text: <>Both agree: time alone adds little (<Num k={L('L1', DESIGN_A, 'pr_auc', 'estimate')} /> and <Num k={L('L1', DESIGN_A, 'roc_auc', 'estimate')} />) and type of place adds the most.</> },
               ]}
             />
@@ -265,7 +265,7 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
       </section>
 
       <section id="curves" className={ui.resultSection} aria-labelledby="curves-h">
-        <h2 id="curves-h">Only models that know the type of place rise well above guessing.</h2>
+        <h2 id="curves-h">Models that know the type of place rise far above guessing; time alone barely does.</h2>
         <p className={p.lede}>Precision is how many flagged incidents were robberies; recall is how many robberies were caught. The dotted line is guessing, so a curve that stays above it is useful.</p>
         <Legend label="Key to the curves" items={CURVE_KEY} />
         <div className={p.curves}>

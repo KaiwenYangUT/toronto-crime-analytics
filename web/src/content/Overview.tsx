@@ -64,7 +64,7 @@ export function Overview({ svgs }: { svgs: OverviewSvgs }) {
                 stat: <Num k={`${C}:summary.income_bands.0.median_robberies`} />,
                 text: (
                   <>
-                    robberies in a typical lower-income neighbourhood in 2020, against <Num k={`${C}:summary.income_bands.4.median_robberies`} /> in a typical higher-income one. <Link className={p.textLink} to="/explain#income">See Explain</Link>
+                    robberies (median count) in the lowest-income fifth of neighbourhoods in 2020, against <Num k={`${C}:summary.income_bands.4.median_robberies`} /> in the highest-income fifth; counts, not rates. <Link className={p.textLink} to="/explain#income">See Explain</Link>
                   </>
                 ),
               },
