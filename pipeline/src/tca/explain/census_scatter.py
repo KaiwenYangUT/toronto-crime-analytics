@@ -10,6 +10,14 @@ Top decile (explicit rule): the neighbourhoods whose 2020 robbery count is at le
 percentile of the 158 counts, taken as the smallest observed count at or above the 0.9 quantile
 (``numpy`` method ``"higher"``). Ties at the threshold stay in the group, so ``n`` can exceed 16.
 ``rest`` is every other neighbourhood. Medians are plain medians over neighbourhoods.
+
+Bands (explicit rule): ``income_bands`` and ``ratio_bands`` split the 158 neighbourhoods into five groups
+by quintile of median income and of the permanent-job ratio. The edges are the 0.2, 0.4, 0.6 and 0.8
+quantiles (linear interpolation); a band is closed on the right, so a value equal to an edge goes to the
+lower band and neighbourhoods with the same value always share a band. Band sizes are therefore close to,
+not exactly, 158 / 5. Bands run from the lowest to the highest value; ``low`` and ``high`` are the smallest
+and largest observed value in the band. Each band reports its neighbourhood count ``n`` and the median,
+mean and largest robbery count; the statistics do not depend on row order.
 """
 
 from __future__ import annotations
@@ -32,6 +40,8 @@ INPUTS = [
     "Income_Dataset.xlsx",
 ]
 INT = {"decimals": 0}
+ONE = {"decimals": 1}
+BAND_EDGES = (0.2, 0.4, 0.6, 0.8)
 RATIO = {"decimals": 3}
 INCOME = {"decimals": 0}
 RHO = {"decimals": 2}
@@ -46,6 +56,27 @@ def names_in_figure1_order(df) -> list[str]:
 def spearman(a: np.ndarray, b: np.ndarray) -> dict:
     res = stats.spearmanr(a, b)
     return {"rho": float(res.statistic), "p": float(res.pvalue)}
+
+
+def bands(x: np.ndarray, count: np.ndarray) -> list[dict]:
+    """Five quantile bands of ``x`` (lowest first) with the robbery count statistics of each."""
+    edges = np.quantile(x, BAND_EDGES)
+    which = np.searchsorted(edges, x, side="left")  # value <= edge goes to the lower band
+    out = []
+    for b in range(len(BAND_EDGES) + 1):
+        m = which == b
+        out.append(
+            {
+                "band": b + 1,
+                "n": int(m.sum()),
+                "low": float(x[m].min()),
+                "high": float(x[m].max()),
+                "median_robberies": float(np.median(count[m])),
+                "mean_robberies": float(count[m].mean()),
+                "max_robberies": int(count[m].max()),
+            }
+        )
+    return out
 
 
 def build_values(df) -> dict:
@@ -84,6 +115,8 @@ def build_values(df) -> dict:
             "top_decile": {"threshold": threshold, **group(top)},
             "rest": group(rest),
             "max": {"name": names[imax], "robberies": int(count[imax])},
+            "income_bands": bands(income, count),
+            "ratio_bands": bands(ratio, count),
         },
         "axes": {
             "ratio_min": float(ratio.min()),
@@ -113,6 +146,20 @@ FORMATS = {
     "summary.rest.median_income": INCOME,
     "summary.rest.median_ratio": RATIO,
     "summary.max.robberies": INT,
+    "summary.income_bands.*.band": INT,
+    "summary.income_bands.*.n": INT,
+    "summary.income_bands.*.low": INCOME,
+    "summary.income_bands.*.high": INCOME,
+    "summary.income_bands.*.median_robberies": ONE,
+    "summary.income_bands.*.mean_robberies": ONE,
+    "summary.income_bands.*.max_robberies": INT,
+    "summary.ratio_bands.*.band": INT,
+    "summary.ratio_bands.*.n": INT,
+    "summary.ratio_bands.*.low": RATIO,
+    "summary.ratio_bands.*.high": RATIO,
+    "summary.ratio_bands.*.median_robberies": ONE,
+    "summary.ratio_bands.*.mean_robberies": ONE,
+    "summary.ratio_bands.*.max_robberies": INT,
     "axes.ratio_min": RATIO,
     "axes.ratio_max": RATIO,
     "axes.income_min": INCOME,
@@ -131,7 +178,7 @@ def run(write: bool = True) -> dict:
             values,
             producer="tca.explain.census_scatter",
             description="JSC370 Figure 1 data: one point per neighbourhood (job ratio, median income, 2020 "
-            "robbery count) and the rank correlations behind the corrected caption",
+            "robbery count) and the rank correlations and five-band summaries behind the corrected caption",
             formats=FORMATS,
             inputs=INPUTS,
         )

@@ -94,7 +94,7 @@ describe('text and table', () => {
   })
   it('summary uses the stored formats and never says risk is measured', () => {
     const t = summaryText(data, results)
-    expect(t).toContain(numberText(results, 'predict.census_scatter:summary.spearman_income.rho'))
+    expect(t).toContain(numberText(results, 'predict.census_scatter:summary.income_bands.0.median_robberies'))
     expect(t).toContain(numberText(results, 'predict.census_scatter:summary.top_decile.median_income'))
     expect(t).toContain(data.summary.max.name)
     expect(t).toMatch(/not risk/)

@@ -1,6 +1,7 @@
 """The census scatter results: values equal the arrays of the R-built Figure 1 widget."""
 
 import hashlib
+import itertools
 import json
 import lzma
 from pathlib import Path
@@ -76,3 +77,28 @@ def test_summary_is_consistent_with_the_points(values):
     assert s["spearman_income"]["rho"] < 0 and s["spearman_income"]["p"] < 0.05
     assert s["spearman_ratio"]["p"] > 0.05
     assert s["top_decile"]["median_income"] < s["rest"]["median_income"]
+
+
+@pytest.mark.parametrize(("name", "field"), [("income_bands", "income"), ("ratio_bands", "ratio")])
+def test_bands_partition_the_points_in_value_order(values, name, field):
+    pts, bands = values["points"], values["summary"][name]
+    x = np.array([p[field] for p in pts])
+    z = np.array([p["robberies"] for p in pts])
+    assert [b["band"] for b in bands] == [1, 2, 3, 4, 5]
+    assert sum(b["n"] for b in bands) == len(pts)
+    assert all(28 <= b["n"] <= 36 for b in bands)  # close to 158 / 5; ties keep a value in one band
+    for b in bands:
+        m = (x >= b["low"]) & (x <= b["high"])
+        assert int(m.sum()) == b["n"]  # observed ranges do not overlap, so this recovers the band
+        assert b["median_robberies"] == float(np.median(z[m]))
+        assert b["mean_robberies"] == pytest.approx(float(z[m].mean()))
+        assert b["max_robberies"] == int(z[m].max())
+    assert all(a["high"] < b["low"] for a, b in itertools.pairwise(bands))
+
+
+def test_income_bands_fall_and_ratio_bands_are_flat(values):
+    inc = [b["median_robberies"] for b in values["summary"]["income_bands"]]
+    ratio = [b["median_robberies"] for b in values["summary"]["ratio_bands"]]
+    assert inc[0] > inc[-1]  # the lowest-income fifth reports more than the highest
+    # no steady fall with the job ratio: the spread is small and the lowest band is the lowest
+    assert max(ratio) - min(ratio) <= 5 and ratio[0] == min(ratio)

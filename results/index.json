@@ -55,7 +55,7 @@
   "producer": "tca.predict.ablation_report"
  },
  "predict.census_scatter": {
-  "description": "JSC370 Figure 1 data: one point per neighbourhood (job ratio, median income, 2020 robbery count) and the rank correlations behind the corrected caption",
+  "description": "JSC370 Figure 1 data: one point per neighbourhood (job ratio, median income, 2020 robbery count) and the rank correlations and five-band summaries behind the corrected caption",
   "file": "results/predict/predict.census_scatter.json",
   "formats": {
    "axes.income_max": {
@@ -82,10 +82,52 @@
    "points.*.robberies": {
     "decimals": 0
    },
+   "summary.income_bands.*.band": {
+    "decimals": 0
+   },
+   "summary.income_bands.*.high": {
+    "decimals": 0
+   },
+   "summary.income_bands.*.low": {
+    "decimals": 0
+   },
+   "summary.income_bands.*.max_robberies": {
+    "decimals": 0
+   },
+   "summary.income_bands.*.mean_robberies": {
+    "decimals": 1
+   },
+   "summary.income_bands.*.median_robberies": {
+    "decimals": 1
+   },
+   "summary.income_bands.*.n": {
+    "decimals": 0
+   },
    "summary.max.robberies": {
     "decimals": 0
    },
    "summary.n": {
+    "decimals": 0
+   },
+   "summary.ratio_bands.*.band": {
+    "decimals": 0
+   },
+   "summary.ratio_bands.*.high": {
+    "decimals": 3
+   },
+   "summary.ratio_bands.*.low": {
+    "decimals": 3
+   },
+   "summary.ratio_bands.*.max_robberies": {
+    "decimals": 0
+   },
+   "summary.ratio_bands.*.mean_robberies": {
+    "decimals": 1
+   },
+   "summary.ratio_bands.*.median_robberies": {
+    "decimals": 1
+   },
+   "summary.ratio_bands.*.n": {
     "decimals": 0
    },
    "summary.rest.median_income": {

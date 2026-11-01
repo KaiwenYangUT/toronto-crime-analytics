@@ -12,6 +12,17 @@ export interface CensusGroup {
   median_ratio: number
 }
 
+/** One of five quantile bands of neighbourhoods (lowest value first). */
+export interface CensusBand {
+  band: number
+  n: number
+  low: number
+  high: number
+  median_robberies: number
+  mean_robberies: number
+  max_robberies: number
+}
+
 export interface CensusScatterData {
   points: CensusPoint[]
   summary: {
@@ -22,6 +33,8 @@ export interface CensusScatterData {
     top_decile: CensusGroup & { threshold: number }
     rest: CensusGroup
     max: { name: string; robberies: number }
+    income_bands: CensusBand[]
+    ratio_bands: CensusBand[]
   }
   axes: {
     ratio_min: number

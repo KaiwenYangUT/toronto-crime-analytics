@@ -1,8 +1,8 @@
 {
  "_provenance": {
   "code_dirty": true,
-  "created": "2026-10-31T21:56:45+00:00",
-  "git_sha": "8d62a684f49a113fd01fdcf3e571083dde78eb96",
+  "created": "2026-11-01T01:32:23+00:00",
+  "git_sha": "4e7298328ab4e66ba9400e15bbe297f57f50bc53",
   "inputs": {
    "Auto_Theft_Open_Data.csv": "19054a17541e9bee27a5b7beb5d5e6f435721fb691e056aafbca1339a097761c",
    "Bicycle_Thefts_Open_Data.csv": "ada41ff1eefc5ce5866a490e33790c79bb42904dabe87ff1132b03df61796f69",
@@ -976,11 +976,105 @@
    }
   ],
   "summary": {
+   "income_bands": [
+    {
+     "band": 1,
+     "high": 33200.0,
+     "low": 28400.0,
+     "max_robberies": 50,
+     "mean_robberies": 20.78787878787879,
+     "median_robberies": 20.0,
+     "n": 33
+    },
+    {
+     "band": 2,
+     "high": 36800.0,
+     "low": 33600.0,
+     "max_robberies": 76,
+     "mean_robberies": 18.8,
+     "median_robberies": 15.5,
+     "n": 30
+    },
+    {
+     "band": 3,
+     "high": 43200.0,
+     "low": 37200.0,
+     "max_robberies": 135,
+     "mean_robberies": 17.939393939393938,
+     "median_robberies": 12.0,
+     "n": 33
+    },
+    {
+     "band": 4,
+     "high": 48400.0,
+     "low": 43600.0,
+     "max_robberies": 87,
+     "mean_robberies": 16.90625,
+     "median_robberies": 16.0,
+     "n": 32
+    },
+    {
+     "band": 5,
+     "high": 74500.0,
+     "low": 48800.0,
+     "max_robberies": 45,
+     "mean_robberies": 13.2,
+     "median_robberies": 9.5,
+     "n": 30
+    }
+   ],
    "max": {
     "name": "Moss Park",
     "robberies": 135
    },
    "n": 158,
+   "ratio_bands": [
+    {
+     "band": 1,
+     "high": 0.632446134347275,
+     "low": 0.48928974069898534,
+     "max_robberies": 55,
+     "mean_robberies": 16.09375,
+     "median_robberies": 12.0,
+     "n": 32
+    },
+    {
+     "band": 2,
+     "high": 0.6640432857845548,
+     "low": 0.6324981017463933,
+     "max_robberies": 87,
+     "mean_robberies": 17.387096774193548,
+     "median_robberies": 15.0,
+     "n": 31
+    },
+    {
+     "band": 3,
+     "high": 0.6865912762520194,
+     "low": 0.6644423260247855,
+     "max_robberies": 135,
+     "mean_robberies": 19.15625,
+     "median_robberies": 16.0,
+     "n": 32
+    },
+    {
+     "band": 4,
+     "high": 0.7070401211203634,
+     "low": 0.6879749664729549,
+     "max_robberies": 47,
+     "mean_robberies": 16.0,
+     "median_robberies": 16.0,
+     "n": 31
+    },
+    {
+     "band": 5,
+     "high": 0.7522066034651848,
+     "low": 0.7071357779980179,
+     "max_robberies": 76,
+     "mean_robberies": 19.25,
+     "median_robberies": 15.0,
+     "n": 32
+    }
+   ],
    "rest": {
     "median_income": 39200.0,
     "median_ratio": 0.6762464822386236,

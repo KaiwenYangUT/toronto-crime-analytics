@@ -31,7 +31,8 @@ export function summaryText(data: CensusScatterData, results: PageResults): stri
   const n = (path: string, v: number) => formatNumber(v, formatFor(results, `${KEY}:summary.${path}`))
   return [
     `Neighbourhood scatter of ${n('n', s.n)} neighbourhoods: permanent job to labour force ratio, individual median income and robberies reported in 2020, from the course extract.`,
-    `The rank correlation of robbery counts with median income is ${n('spearman_income.rho', s.spearman_income.rho)}, and with the job ratio ${n('spearman_ratio.rho', s.spearman_ratio.rho)}.`,
+    `In five groups of neighbourhoods by median income, the median robbery count is ${n('income_bands.0.median_robberies', s.income_bands[0].median_robberies)} in the lowest-income group and ${n('income_bands.4.median_robberies', s.income_bands[4].median_robberies)} in the highest-income group.`,
+    `In five groups by job ratio, the median count is ${n('ratio_bands.0.median_robberies', s.ratio_bands[0].median_robberies)} in the lowest-ratio group and between ${n('ratio_bands.1.median_robberies', Math.min(...s.ratio_bands.slice(1).map((b) => b.median_robberies)))} and ${n('ratio_bands.1.median_robberies', Math.max(...s.ratio_bands.slice(1).map((b) => b.median_robberies)))} in the other four, with no steady pattern.`,
     `The top tenth of neighbourhoods by robbery count (${n('top_decile.n', s.top_decile.n)} of them) have a median income of ${n('top_decile.median_income', s.top_decile.median_income)} dollars, against ${n('rest.median_income', s.rest.median_income)} dollars in the rest.`,
     `The most robberies were reported in ${s.max.name}, ${n('max.robberies', s.max.robberies)}.`,
     'These are counts of reported incidents, not rates per resident and not risk.',
