@@ -56,3 +56,14 @@ def test_paper_cut_keeps_the_fallback_for_a_heading_inside_a_page():
 
 def test_paper_cut_leaves_text_without_references_alone():
     assert an.cut_references("Body.\n\f2\n\f") == "Body.\n\f2\n\f"
+
+
+def test_footer_build_id_is_not_a_published_number(tmp_path, monkeypatch):
+    import audit_numbers as an
+
+    (tmp_path / "x").mkdir()
+    (tmp_path / "x" / "index.html").write_text(
+        "<main><p>Counts.</p><footer><span>Build 4582561</span></footer></main>"
+    )
+    monkeypatch.setattr(an, "SITE", tmp_path)
+    assert "4582561" not in an.site_texts()["x"]

@@ -85,7 +85,7 @@ export function Explain({ svgs }: { svgs: ExplainSvgs }) {
       pattern: 'Robberies are more likely after dark',
       evidence: (
         <>
-          <Num k={`${E}.darkness.dark_share`} /> of incidents from 6pm to 6am, <Num k={`${E}.darkness.light_share`} /> by day: no clear difference. A clock cut-off, not measured darkness.
+          Robberies were <Num k={`${E}.darkness.dark_share`} /> of incidents from 6pm to 6am and <Num k={`${E}.darkness.light_share`} /> by day: no clear difference. A clock cut-off, not measured darkness.
         </>
       ),
     },

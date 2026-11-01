@@ -27,7 +27,7 @@ const STEPS = [
 export function Methods() {
   return (
     <>
-      <PageHeader eyebrow="Methods" title="One cleaned dataset of reported incidents feeds every result on this site." />
+      <PageHeader eyebrow="Methods" title="One cleaned dataset of reported incidents feeds the Explain and Predict models." />
       <div className={p.pageGrid}>
         <nav className={`${p.pageAside} ${p.asideFirst}`} aria-label="On this page">
           <div className={p.onThis}>

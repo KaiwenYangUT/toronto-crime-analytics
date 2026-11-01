@@ -130,8 +130,8 @@ export function Predict({ svgs }: { svgs: PredictSvgs }) {
         aside={
           <KeyPoints
             items={[
-              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.premises`} />, text: ' of the score is lost when type of place is scrambled.' },
-              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.time`} />, text: ' when time is; census data and coordinates cost less.' },
+              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.premises`} />, text: ' PR-AUC points are lost when type of place is scrambled.' },
+              { stat: <Num k={`${A}:designs.${DESIGN_A}.variants.L5.block_permutation_importance_pr_auc_drop.time`} />, text: ' PR-AUC points when time is; census data and coordinates cost less.' },
             ]}
           />
         }

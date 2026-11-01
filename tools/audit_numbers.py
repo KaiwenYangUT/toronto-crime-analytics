@@ -111,7 +111,9 @@ def site_texts() -> dict[str, str]:
     for page in sorted(SITE.rglob("index.html")):
         parser = Text()
         parser.feed(page.read_text())
-        texts[page.parent.relative_to(SITE).as_posix()] = "".join(parser.chunks)
+        # the footer's build id is a git hash, not a published number (an all-digit hash would be flagged)
+        text = re.sub(r"Build [0-9a-f]{7,40}", "Build", "".join(parser.chunks))
+        texts[page.parent.relative_to(SITE).as_posix()] = text
     return texts
 
 
